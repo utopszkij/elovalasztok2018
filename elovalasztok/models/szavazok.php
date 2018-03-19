@@ -88,10 +88,12 @@ class szavazokModel {
 		}  
 		if ($res) {
 			$result->oevkNev = $res->title;
-			$db->setQuery('select RAND(10) as rnd, c.*
+			$db->setQuery('select RAND(10) as rnd,
+			if(substr(title,1,2)="--","zzzzzzzz",title) as sort,
+			 c.*
 			from #__content c
 			where c.catid = '.$db->quote($szavazas_id).' and c.state=1 
-			order by 1');
+			order by 2, c.title');
 			try {
 				$res = $db->loadObjectList();
 			} catch (Exception $e) {
@@ -157,14 +159,12 @@ class szavazokModel {
 		$db = JFactory::getDBO();
 		$db->setQuery('START TRANSACTION');
 		$db->query();
-
-		// oevk szavazásoknál töröljük a user esetleges már meglévő szavazatait
+		// oevk, m.elnök és országos lista szavazásoknál töröljük a user esetleges már meglévő szavazatait
 		if (teheti($szavazas_id, $user, 'szavazas', $msg)) {
-			if (isOevkSzavazas($szavazas_id)) {
+			if (isOevkSzavazas($szavazas_id) | isMiniszterElnokSzavazas($szavazas_id) | isOrszagosListaSzavazas($szavazas_id) ) {
  				$result = $this->szavazatDelete($szavazas_id, $user, $evConfig->fordulo, 0);
 			}		
 		}
-		
 		// ada hitelesitési szint
 		$ada0 = 0;
 		$ada1 = 0;
@@ -182,7 +182,6 @@ class szavazokModel {
 			$catid = $res->parent_id;
 		else
 			$catid = 0;
-
 		if ($result) {
 			// string részekre bontása és tárolás ciklusban
 			$w1 = explode(',',$szavazat);
@@ -241,14 +240,12 @@ class szavazokModel {
 	
 	/**
 	* biztonságos törlés:  célszerü transaction -ban hívni!
-	* 1. update szavazat_id =0 - ezt az egy modositást engedi meg a trigger 
-	* 2. fizikai törlés - a trigger csak szavazat_id=0 -t enged törölni
-    * FIGYELEM!!!!! ez csak az oevk és önkormányzati szavazásokhoz jó!
-    *   ugyanis törli az azonos tulajdonos kategoriához tartozó összes szavazatot,
-    *   ez az oevk -nál, jó is, MÁSHOL AZONBAN NEM!
+	* 1. update szavazat_id =0
+	* 2. fizikai törlés
+	* a user korábbi szavazata által érintett cache -elt eredménxeket is törli
 	*/
 	public function szavazatDelete($szavazas_id, $user, $fordulo, $secret = 0) {
-		if (!isOevkSzavazas($szavazas_id)) {
+		if (!isOevkSzavazas($szavazas_id) & !isMiniszterElnokSzavazas($szavazas_id) & !isOrszagosListaSzavazas($szavazas_id)) {
 			$this->errorMsg = 'Ez nem OEVK szavazás';
 			return false;
 		}
@@ -264,49 +261,56 @@ class szavazokModel {
 		else
 			$catid = $defCatid;
 
-		/* secret kód kiolvasása - ezt a triggeres ellenörzést jelenleg nem használjuk 2017.11.6
-		if ($secret == 0) {
-			$db->setQuery('select * from #__szavazatok where user_id='.$db->quote($user->id));
-			$res = $db->loadObjectList();
-			if (count($res) > 0) {
-				$secret = $res[0]->secret;
-			}
-		}
-		$db->query();
-		*/
-
-		try {
-			$db->setQuery('update #__szavazatok 
-			set szavazas_id=0, user_id = 0, secret = 0 
-			where user_id='.$db->quote($user->id).' and fordulo='.$db->quote($fordulo).'
-			and temakor_id='.$db->quote($catid));
-			$result = $db->query();
-			$this->errorMsg = $db->getErrorMsg();
-		} catch (Exception $e) {
-			$this->errorMsg = $db->getErrorMsg();
-			$result = false;
-		}
-		
-		$this->errorMsg = $db->getErrorMsg();
-		if ($result) {
-			$db->setQuery('delete from #__szavazatok where szavazas_id = 0');
+		// ha OEVK szavazás akkor korábbi OEVK szavazatait készitjük elő törlésre 
+		// más esetekben az ugyanerre a szavazásra leadott korábbi szavazatát
+		if (isOevkSzavazas($szavazas_id)) {
 			try {
-			   $result = $db->query();
-			   $this->errorMsg = $db->getErrorMsg();
+				// most a catid/* szavazásokhoz tartozó user szavazattal érintett korábbi eredményeket kell törölni 
+				$db->setQuery('update #__eredmeny e, #__categories c, #__szavazatok sz
+				set e.report = ""
+				where e.pollid = c.id and sz.szavazas_id = c.id and 
+				c.parent_id = '.$catid.' and sz.user_id = "'.$user->id.'"');
+				$result = $db->query();
+				$this->errorMsg = $db->getErrorMsg();
+				// továbbá a catid/* hoz tartozó korábbi user szavazatokat
+				$db->setQuery('update #__szavazatok 
+				set szavazas_id=0, user_id = 0, secret = 0 
+				where user_id='.$db->quote($user->id).' and fordulo='.$db->quote($fordulo).'
+				and temakor_id='.$db->quote($catid).' and temakor_id<>'.MELNOK().' and temakor_id<>'.OLISTA());
+				$result = $db->query();
+				$this->errorMsg = $db->getErrorMsg();
+			} catch (Exception $e) {
+				$this->errorMsg = $db->getErrorMsg();
+				$result = false;
+			}
+		} else {
+			try {
+				// most a szavazas_id korábbi eredményét kell törölni
+				$db->setQuery('UPDATE #__eredmeny 
+				SET report="" 
+				WHERE pollid='.$db->quote($szavazas_id).' and fordulo='.$db->quote($fordulo) );
+				try {
+				  $db->query();
+				} catch (Exception $e) {
+				  $this->errorMsg = $db->getErrorMsg();
+				  $result = false;
+				}
+				// továbbá törölni kell a korábbi szavazatait a szavazas_id szavazásból
+				$db->setQuery('update #__szavazatok 
+				set szavazas_id=0, user_id = 0, secret = 0 
+				where user_id='.$db->quote($user->id).' and fordulo='.$db->quote($fordulo).'
+				and szavazas_id='.$db->quote($szavazas_id));
+				$result = $db->query();
+				$this->errorMsg = $db->getErrorMsg();
 			} catch (Exception $e) {
 				$this->errorMsg = $db->getErrorMsg();
 				$result = false;
 			}
 		}
-		// delete cached report
-		$db->setQuery('UPDATE #__eredmeny 
-		SET report="" 
-		WHERE pollid='.$db->quote($szavazas_id).' and fordulo='.$db->quote($fordulo) );
-		try {
-		  $db->query();
-		} catch (Exception $e) {
-			;
-		}
+
+		// fizikai törlés
+		$db->setQuery('delete from #__szavazatok where szavazas_id = 0');
+		$db->query();
 
 		return $result;  
 	}

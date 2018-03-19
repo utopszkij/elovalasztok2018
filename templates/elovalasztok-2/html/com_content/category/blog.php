@@ -29,104 +29,124 @@ $user = JFactory::getUser();
 </h1>
 <?php endif; ?>
 
-<?php if ($this->params->get('show_category_title')) : ?>
-<h2 class="subheading-category">
-    <?php if ($this->category->parent_id == 8) : ?>
-      <a href="<?php echo JURI::root()?>component/content/category?id=<?php echo $this->category->parent_id; ?>">
-	  <?php echo $this->category->title; ?>
-	  </a>
-	<?php else : ?>
-	  <?php echo $this->category->title; ?>
-	<?php endif; ?>
-</h2>
-<?php endif; ?>
+<?php if ($this->category->id == 8) : ?>
+	<?php include './templates/elovalasztok-2/html/com_content/category/terkep.php'; ?>
+	<h2><a href="<?php echo JURI::base(); ?>/component/content/category?id=155">Országos pártlista</a></h2>
+	<h2><a href="<?php echo JURI::base(); ?>/component/content/category?id=156">Miniszterelnök</a></h2>
+<?php else : ?>
 
-<?php if ($this->params->get('show_description', 1) || $this->params->def('show_description_image', 1)) : ?>
-	<div class="category-desc">
-	<?php if ($this->params->get('show_description_image') && $this->category->getParams()->get('image')) : ?>
-		<img src="<?php echo $this->category->getParams()->get('image'); ?>"/>
+	<?php if ($this->params->get('show_category_title')) : ?>
+	<h2 class="subheading-category">
+		<?php if ($this->category->parent_id == 8) : ?>
+		    <a href="<?php echo JURI::root()?>component/content/category?id=<?php echo $this->category->id; ?>">
+			<?php echo $this->category->title; ?>
+			</a>
+		<?php else : ?>
+			<?php echo $this->category->title; ?>
+		<?php endif; ?>
+	</h2>
 	<?php endif; ?>
-	<?php if ($this->params->get('show_description') && $this->category->description) : ?>
-		<?php echo JHtml::_('content.prepare', $this->category->description, '', 'com_content.category'); ?>
+
+
+	<?php echo JHtml::_('content.prepare', $this->category->description, '', 'com_content.category'); ?>
+
+<!--
+	<?php if ($this->params->get('show_description', 1) || $this->params->def('show_description_image', 1)) : ?>
+		<div class="category-desc">
+		<?php if ($this->params->get('show_description_image') && $this->category->getParams()->get('image')) : ?>
+			<img src="<?php echo $this->category->getParams()->get('image'); ?>"/>
+		<?php endif; ?>
+		<?php if ($this->params->get('show_description') && $this->category->description) : ?>
+			<?php echo JHtml::_('content.prepare', $this->category->description, '', 'com_content.category'); ?>
+		<?php endif; ?>
+		<div class="clr"></div>
+		</div>
 	<?php endif; ?>
-	<div class="clr"></div>
+-->
+
+	<?php if (empty($this->lead_items) && empty($this->link_items) && empty($this->intro_items)) : ?>
+		<?php if ($this->params->get('show_no_articles', 1)) : ?>
+			<p><?php echo JText::_('COM_CONTENT_NO_ARTICLES'); ?></p>
+		<?php endif; ?>
+	<?php endif; ?>
+
+	<?php $leadingcount = 0; ?>
+	<?php if (!empty($this->lead_items)) : ?>
+	<div class="items-leading">
+		<?php
+		// most az elején a "dummy vonal" van, ezt át teszem a végére....
+		$dummy = $this->lead_items[0];
+		array_splice($this->lead_items,0,1);
+		$this->lead_items[] = $dummy;
+
+		?>
+
+		<?php foreach ($this->lead_items as &$item) : ?>
+			<article class="leading-<?php echo $leadingcount; ?><?php echo $item->state == 0 ? 'system-unpublished' : null; ?>">
+				<?php
+					$this->item = &$item;
+					echo $this->loadTemplate('item');
+				?>
+			</article>
+			<?php $leadingcount++; ?>
+		<?php endforeach; ?>
 	</div>
-<?php endif; ?>
-
-<?php if (empty($this->lead_items) && empty($this->link_items) && empty($this->intro_items)) : ?>
-	<?php if ($this->params->get('show_no_articles', 1)) : ?>
-		<p><?php echo JText::_('COM_CONTENT_NO_ARTICLES'); ?></p>
 	<?php endif; ?>
-<?php endif; ?>
+	<?php
+		$introcount = (count($this->intro_items));
+		$counter = 0;
+	?>
+	<?php if (!empty($this->intro_items)) : ?>
 
-<?php $leadingcount = 0; ?>
-<?php if (!empty($this->lead_items)) : ?>
-<div class="items-leading">
-	<?php foreach ($this->lead_items as &$item) : ?>
-		<article class="leading-<?php echo $leadingcount; ?><?php echo $item->state == 0 ? 'system-unpublished' : null; ?>">
+		<?php foreach ($this->intro_items as $key => &$item) : ?>
+			<?php $rowcount = ((int) $key % (int) $this->columns) + 1; ?>
+			<?php if ($rowcount == 1) : ?>
+				<?php $row = $counter / $this->columns; ?>
+				<div class="items-row cols-<?php echo (int) $this->columns;?> <?php echo 'row-'.$row; ?>">
+			<?php endif; ?>
+			<article class="item column-<?php echo $rowcount;?><?php echo $item->state == 0 ? ' system-unpublished' : null; ?>">
 			<?php
 				$this->item = &$item;
 				echo $this->loadTemplate('item');
 			?>
-		</article>
-		<?php $leadingcount++; ?>
-	<?php endforeach; ?>
-</div>
-<?php endif; ?>
-<?php
-	$introcount = (count($this->intro_items));
-	$counter = 0;
-?>
-<?php if (!empty($this->intro_items)) : ?>
+			</article>
+			<?php $counter++; ?>
+			<?php if (($rowcount == $this->columns) or ($counter == $introcount)) : ?>
+				<span class="row-separator"></span>
+				</div>
+			<?php endif; ?>
+		<?php endforeach; ?>
 
-	<?php foreach ($this->intro_items as $key => &$item) : ?>
-		<?php $rowcount = ((int) $key % (int) $this->columns) + 1; ?>
-		<?php if ($rowcount == 1) : ?>
-			<?php $row = $counter / $this->columns; ?>
-			<div class="items-row cols-<?php echo (int) $this->columns;?> <?php echo 'row-'.$row; ?>">
-		<?php endif; ?>
-		<article class="item column-<?php echo $rowcount;?><?php echo $item->state == 0 ? ' system-unpublished' : null; ?>">
-		<?php
-			$this->item = &$item;
-			echo $this->loadTemplate('item');
-		?>
-		</article>
-		<?php $counter++; ?>
-		<?php if (($rowcount == $this->columns) or ($counter == $introcount)) : ?>
-			<span class="row-separator"></span>
-			</div>
-		<?php endif; ?>
-	<?php endforeach; ?>
-
-<?php endif; ?>
-
-<?php if (!empty($this->link_items)) : ?>
-	<?php echo $this->loadTemplate('links'); ?>
-<?php endif; ?>
-
-<?php if (is_array($this->children[$this->category->id]) && count($this->children[$this->category->id]) > 0 && $this->params->get('maxLevel') != 0) : ?>
-	<div class="cat-children">
-
-	<?php if ($this->params->get('show_category_heading_title_text', 1) == 1) : ?>
-		<h3>
-			<?php echo JText::_('JGLOBAL_SUBCATEGORIES'); ?>
-		</h3>
 	<?php endif; ?>
-	<?php echo $this->loadTemplate('children'); ?>
-	</div>
-<?php endif; ?>
 
-<?php if (($this->params->def('show_pagination', 1) == 1  || ($this->params->get('show_pagination') == 2)) && ($this->pagination->pagesTotal > 1)) : ?>
-	<div class="pagination">
-	<?php if ($this->params->def('show_pagination_results', 1)) : ?>
-		<p class="counter">
-		<?php echo $this->pagination->getPagesCounter(); ?>
-		</p>
+	<?php if (!empty($this->link_items)) : ?>
+		<?php echo $this->loadTemplate('links'); ?>
 	<?php endif; ?>
-	<?php echo $this->pagination->getPagesLinks(); ?>
-	</div>
-<?php endif; ?>
-<?php if (isset($user->groups[8]) or isset($user->groups[10])) : ?>
-<a href="index.php?option=com_content&view=form&layout=edit&task=article.add" class="btn btn-primary">Új jelölt felvitele</a>
+
+	<?php if (is_array($this->children[$this->category->id]) && count($this->children[$this->category->id]) > 0 && $this->params->get('maxLevel') != 0) : ?>
+		<div class="cat-children">
+
+		<?php if ($this->params->get('show_category_heading_title_text', 1) == 1) : ?>
+			<h3>
+				<?php echo JText::_('JGLOBAL_SUBCATEGORIES'); ?>
+			</h3>
+		<?php endif; ?>
+		<?php echo $this->loadTemplate('children'); ?>
+		</div>
+	<?php endif; ?>
+
+	<?php if (($this->params->def('show_pagination', 1) == 1  || ($this->params->get('show_pagination') == 2)) && ($this->pagination->pagesTotal > 1)) : ?>
+		<div class="pagination">
+		<?php if ($this->params->def('show_pagination_results', 1)) : ?>
+			<p class="counter">
+			<?php echo $this->pagination->getPagesCounter(); ?>
+			</p>
+		<?php endif; ?>
+		<?php echo $this->pagination->getPagesLinks(); ?>
+		</div>
+	<?php endif; ?>
+	<?php if (isset($user->groups[8]) or isset($user->groups[10])) : ?>
+	<a href="index.php?option=com_content&view=form&layout=edit&task=article.add" class="btn btn-primary">Új jelölt felvitele</a>
+	<?php endif; ?>
 <?php endif; ?>
 </section>

@@ -39,7 +39,7 @@ if (count($this->items[$this->parent->id]) > 0 && $this->maxLevelcat != 0) :
 				<?php // echo JText::_('COM_CONTENT_NUM_ITEMS'); 
 				echo 'jelöltek száma:';
 				?></dt>
-				<dd><?php echo $item->numitems; ?></dd>
+				<dd><?php echo (-1 + $item->numitems); ?></dd>
 			</dl>
 		<?php endif; ?>
 

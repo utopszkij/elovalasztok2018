@@ -15,15 +15,15 @@
   if (!isset($evConfig->fordulo)) $evConfig->fordulo = 0;
   if ($evConfig->fordulo == '') $evConfig->fordulo = 0;
   
-  /**
-    * engedélyezett/nem egedélyezett az akció?
-	* @param integer oevk 
-	* @param Juser bejelentkezett user
-	* @param string $akcio 'jeloltAdd','jeloltEdit','jeloltDelete','szavazas','szavazatEdit','szavazatDelete','eredmeny'
-	* @param string $msg output parameter: tiltás oka pl: 'config'
-	* @return boolean
-  */
-  function teheti($szavazas_id, $user, $akcio, &$msg) {
+/**
+* engedélyezett/nem egedélyezett az akció?
+* @param integer oevk 
+* @param Juser bejelentkezett user
+* @param string $akcio 'jeloltAdd','jeloltEdit','jeloltDelete','szavazas','szavazatEdit','szavazatDelete','eredmeny'
+* @param string $msg output parameter: tiltás oka pl: 'config'
+* @return boolean
+*/
+function teheti($szavazas_id, $user, $akcio, &$msg) {
 	global $evConfig;
 	$result = false;
 	$msg = '';
@@ -117,9 +117,12 @@
 		   $msg='config';
 	   }
 	} else if ($akcio == 'szavazas') {
-	   // oevk szavazásokban megengedett a szavazat felülirás (újra szavazás) máshol nem
+	   // oevkm m.elnök és országos lista  szavazásokban megengedett a szavazat felülirás (újra szavazás) máshol nem
 	   if ($evConfig->szavazas) {
-		  if (szavazottMar($szavazas_id, $user, $fordulo) & (!isOevkSzavazas($szavazas_id))) {
+		  if (szavazottMar($szavazas_id, $user, $fordulo) & 
+				  !isOevkSzavazas($szavazas_id) & 
+					!isMiniszterElnokSzavazas($szavazas_id) & 
+					!isOrszagosListaSzavazas($szavazas_id)) {
 			  $result = false;
 			  $msg = 'Ön már szavazott';
 		  }  else {
@@ -163,6 +166,6 @@
 	   }
 	}
 	return $result;
-  }
+}
  
 ?>

@@ -20,9 +20,10 @@ defined('_JEXEC') or die;
 * A Schulze method implementation
 */
 class Condorcet {
+		public $szavazatTable = '#__szavazatok'; // assurance szürésnél nem a táblát hanem ennek egy szükitett view-jét kell használni.
     private $organization = null; // temakor_id
     private $poll = null;  // szavazas_id
-    private $candidates = null;
+    private $candidates = null; // key: jelolt.id, value:jelölt neve
     private $condorcetGyoztes = array();  // van condorcet gyöztes?
     private $dMatrix = null;
     private $pMatrix = null;
@@ -40,15 +41,64 @@ class Condorcet {
     public $c10 = 0;
     public $vote_count = 0;
 
-      // FT 2015.02.13  az egyes alternativákat (key=alternativa.id) hányan rangsorolták
-      //                a lehetőségek első felébe
-      private $accpted = null;
+    // FT 2015.02.13  az egyes alternativákat (key=alternativa.id) hányan rangsorolták
+    //                a lehetőségek első felébe
+    private $accpted = null;
 
-      // FT 2017.01.25. hányn sorolták első helyre?
-	  private $inFirst = null;
-      private $db = null;
-      private $shortlist = null;
+    // FT 2017.01.25. hányn sorolták első helyre?
+	private $inFirst = null;
+    private $db = null;
+    private $shortlist = null;
 
+	protected function testGenerate() {
+		$db = JFactory::getDBO();
+		/* test szavazatok generálása, ha a id=9 szavazást kérdezzükle akkor generál 100 db szavazatot 
+		if ($this->poll == 9) {
+			$db->setQuery('select max(szavazo_id) as cc from #__szavazatok');
+			$res = $db->loadObject();
+			$szavazo_id = 1 + $res->cc;
+			for ($i = 1; $i < 100; $i++) {
+				for ($alternativa_id = 21; $alternativa_id <= 23; $alternativa_id++) {
+					$db->setQuery('insert into #__szavazatok values(
+					0,8,9,'.$szavazo_id.','.$szavazo_id.','.$alternativa_id.','.rand(1,4).',0,0,0,0,0,123456)');
+					$db->query();
+				}
+				$db->setQuery('insert into #__szavazatok values(
+				0,8,9,'.$szavazo_id.','.$szavazo_id.',58,'.rand(1,4).',0,0,0,0,0,123456)');
+				$db->query();
+				$szavazo_id = $szavazo_id + 1;
+			}
+		}
+		*/
+
+		// test user rekordok generálása 
+		if ($this->poll == 9) {
+			for ($i = 1; $i < 1000; $i++) {
+				$db->setQuery('insert into #__users values (
+					0,
+					"testuser'.$i.date('dmhis').'",
+					"testuser'.$i.date('dmhis').'",
+					"testemail'.$i.date('dmhis').'@test.hu",
+					"123456",
+					0,
+					0,
+					"'.date('Y-m-d').'",
+					"1900-01-01",
+					"",
+					"{}",
+					"1900-01-01",
+					0,
+					"",
+					"",	
+					0)');
+				$db->query();
+			}
+		}
+		$db->setQuery('select count(id) as cc from #__users');
+		$res = $db->loadObject();
+		echo '<p>count of users='.$res->cc.'</p>';
+
+	}
 
 	  /**
 	  * @param JDatabase
@@ -63,10 +113,47 @@ class Condorcet {
           $this->poll = $szavazas_id;
 		  $this->filter = $filter;
 		  $this->fordulo = $fordulo;
-          $this->getCandidates();
-          $this->loadDiffMatrix();
-          $this->floydWarshall();
-          $this->shortlist = $this->findWinner();
+		  if ($this->poll == 9)	$this->testGenerate();
+					
+					// ha nincsenek meg a view -wk akkor hozzuk létre
+					try {
+						$this->db->setQuery('select count(*) as cc from #__szavazatok_email');
+						$res = $this->db->loadObject();
+					} catch (Exception $e) {
+						$res = false;
+					} 
+					if ($res == false) {
+						$this->db->setQuery('DROP VIEW IF EXISTS #__szavazatok_email;'); 
+						$this->db->query(); 
+						$this->db->setQuery('CREATE  VIEW #__szavazatok_email AS (
+							SELECT sz.*
+							FROM #__szavazatok sz
+							INNER JOIN #__user_usergroup_map um ON um.user_id = sz.szavazo_id
+							INNER JOIN #__usergroups ug ON ug.id = um.group_id
+							WHERE ug.title = "email"
+						);'); 
+						$this->db->query();
+						$this->db->setQuery('DROP VIEW IF EXISTS #__szavazatok_magyar;'); 
+						$this->db->query();
+						$this->db->setQuery('CREATE VIEW #__szavazatok_magyar AS (
+						SELECT DISTINCT sz.*
+						FROM #__szavazatok sz
+						INNER JOIN #__user_usergroup_map um	ON um.user_id = sz.szavazo_id
+						INNER JOIN #__usergroups ug	ON ug.id = um.group_id
+						WHERE ug.title = "magyar" OR ug.title = "emagyar"
+						);'); 
+						$this->db->query();
+						$this->db->setQuery('DROP VIEW IF EXISTS #__szavazatok_hashgiven;'); 
+						$this->db->query(); 
+						$this->db->setQuery('CREATE  VIEW #__szavazatok_hashgiven AS (
+							SELECT sz.*
+							FROM #__szavazatok sz
+							INNER JOIN #__user_usergroup_map um ON um.user_id = sz.szavazo_id
+							INNER JOIN #__usergroups ug ON ug.id = um.group_id
+							WHERE ug.title = "hashgiven"
+						);'); 
+						$this->db->query();
+					}
       }
 
       /**
@@ -74,11 +161,13 @@ class Condorcet {
       *
       */
       public function report() {
-		  
-        $result = '<h2>Szavazás eredménye</h2>';
+         $this->getCandidates();
+         $this->loadDiffMatrix();
+         $this->floydWarshall();
+         $this->shortlist = $this->findWinner();
 		$result .= '<p>A szavazás kiértékelése a <a href="https://en.wikipedia.org/wiki/Schulze_method" target="_new">Condorcet / Schulze módszer</a> 
-		szerint történt"</p>'.$this->showResult($this->shortlist);
-        $result .= '<div id="eredmenyInfo" style="display:none">
+		szerint történt.</p>'.$this->showResult($this->shortlist);
+        $result .= '<p></p><div id="eredmenyInfo" style="display:none">
 		  <h4>Az eredmény részletei<h4>
           <p>Az alábbi táblázat sorai és oszlopai is egy-egy jelöltnek
           felelnek meg. A táblázat celláiban az látható, hogy a sorban szereplő
@@ -102,7 +191,8 @@ class Condorcet {
 		összehasonlítása</h4>';
         $result .= $this->showlist($this->shortlist);
         $result .= '</div></div>';
-		$result.= '<div class="condorcetInfo3">Azokat a szavazatokat, amelyeket a végleges jelöltlista felállása előtt adtak le, azoknak a jelölteknek a tekintetében vesszük figyelembe, amelyek a szavazatban és a végleges jelöltlistában is szerepelnek. Amennyiben egy jelölő szervezet kicseréli a jelöltjét, a régit töröljük, és új jelöltet inditunk.</div>';
+		/*$result.= '<div class="condorcetInfo3">Azokat a szavazatokat, amelyeket a végleges jelöltlista felállása előtt adtak le, azoknak a jelölteknek a tekintetében vesszük figyelembe, amelyek a szavazatban és a végleges jelöltlistában is szerepelnek. Amennyiben egy jelölő szervezet kicseréli a jelöltjét, a régit töröljük, és új jelöltet inditunk.</div>';
+*/
         return $result;
       }
 
@@ -117,7 +207,7 @@ class Condorcet {
           $db = $this->db;
           $db->setQuery($candidates_sql);
           $this->candidates=array();
-	      $this->condorcetGyoztes = array();
+		      $this->condorcetGyoztes = array();
           foreach($db->loadObjectList() as $row) {
               $this->candidates[$row->id] = $row->megnevezes;
           }
@@ -216,20 +306,20 @@ class Condorcet {
           }
       }
 
-      /**
-      * A feldolgozási eljárás egyik lépése
-      * $this->dmatrix képzése az adatbázisból
-      * @output $this->dmatrix
-      * @return $dMatrix
-      */
-      private function loadDiffMatrix() {
+    /**
+    * A feldolgozási eljárás egyik lépése
+    * $this->dmatrix képzése az adatbázisból
+    * @output $this->dmatrix
+    * @return $dMatrix
+    */
+    private function loadDiffMatrix() {
 		  if ($this->filter == '')
 			  $filterWhere = '';
 		  else
 			  $filterWhere = ' and ('.$this->filter.' and '.str_replace('a.','b.',$this->filter).')';
           $diff_sql = "select c1.id as id1, c2.id as id2, count(a.id) as d
-                       from #__szavazatok a,
-                            #__szavazatok b,
+                       from ".$this->szavazatTable." a,
+                            ".$this->szavazatTable." b,
                             #__content c1,
                             #__content c2
                        where  a.szavazas_id=".$this->poll." and
@@ -245,7 +335,8 @@ class Condorcet {
                        group by c1.id, c2.id";
           $this->db->setQuery($diff_sql);
           $this->dMatrix=array();
-          foreach($this->db->loadObjectList() as $row ) {
+					$rows = $this->db->loadObjectList();
+          foreach($rows as $row ) {
               $id1 = $row->id1;
               $id2 = $row->id2;
               $d = $row->d;
@@ -274,7 +365,7 @@ class Condorcet {
 		  else
 			  $filterWhere = ' and ('.$this->filter.')';
           $this->db->setQuery('select a.alternativa_id, count(a.szavazo_id) cc
-          from #__szavazatok a
+          from '.$this->szavazatTable.' a
           where a.szavazas_id = '.$this->db->quote($this->poll).' and
                 a.pozicio <= '.(count($this->candidates)*2/3).' and a.fordulo = '.$this->db->quote($this->fordulo).' '.$filterWhere.'
           group by a.alternativa_id
@@ -291,7 +382,7 @@ class Condorcet {
 		  else
 	  $filterWhere = ' and ('.$this->filter.')';
           $this->db->setQuery('select a.alternativa_id, count(a.szavazo_id) cc
-          from #__szavazatok a
+          from '.$this->szavazatTable.' a
           where a.szavazas_id = '.$this->db->quote($this->poll).' and
                 a.pozicio = 1 and a.fordulo = '.$this->db->quote($this->fordulo).' '.$filterWhere.'
           group by a.alternativa_id
@@ -311,7 +402,7 @@ class Condorcet {
             $result = $this->accepted[$id2] - $this->accepted[$id1];
           }
           return $result;
-      }
+    }
 
       /**
       * eredmény értékek számolása
@@ -341,7 +432,7 @@ class Condorcet {
           $szavazas_id = $this->poll;
           $db = JFactory::getDBO();
           $db->setQuery('select c.title AS megnevezes, avg(a.pozicio) pozicio
-          from #__szavazatok a, #__content c
+          from '.$this->szavazatTable.' a, #__content c
           where a.alternativa_id = c.id and
 		        a.szavazas_id='.$db->quote($szavazas_id).' and a.fordulo='.$this->fordulo.' '.$filterWhere.'
           group by c.title
@@ -407,29 +498,71 @@ class Condorcet {
             $lastValue = $values[$shortlist[$i]];
           }
 
+			//FT 2017.12.01 Hányan tették az egyes jelölteket a vonal fölé? bemenő adatok: $this->poll
+			$vonalFelett = array(); //index = candidates index
+			foreach ($this->candidates as $i => $j) {
+				$vonalFelett[$i] = 0;
+			}
 
-		  //+ 2017.02.24 most a végeredménynek megfelelően át kell
-		  //  rendezni a $this->candidates táblázatokat
+			$db->setQuery('
+				select sz.szavazas_id, sz.alternativa_id candidates_id, sum(if(sz.pozicio < w.vonalpozicio,+1,0)) cc
+					from '.$this->szavazatTable.' sz
+					inner join (
+						select sz2.szavazas_id, sz2.szavazo_id, sz2.pozicio as vonalpozicio
+						from '.$this->szavazatTable.' sz2
+						inner join j_content a on a.id = sz2.alternativa_id
+						where sz2.szavazas_id = '.$this->poll.' and substr(a.title,1,2) = "--"
+					) w on w.szavazas_id = sz.szavazas_id and w.szavazo_id=sz.szavazo_id
+					where sz.szavazas_id = '.$this->poll.'
+					group by szavazas_id, alternativa_id
+				');
+			$res = $db->loadObjectList();
+			foreach ($res as $res1) {
+				$vonalFelett[$res1->candidates_id] = $res1->cc;
+			}
+
+		  //+ 2017.02.24, 2017.12.01  most a végeredménynek megfelelően át kell
+		  //  rendezni a $this->candidates és a $vonalFelett táblázatokat
 		  //  sorrend: shortlist[0], shortlist[1]... ezek az értékek a candidates
 		  //  tábla indexei
 		  $w = array();
+			$w1 = array();
 		  foreach ($shortlist as $i) {
-			$w[$i] = $this->candidates[$i];
+				$w[$i] = $this->candidates[$i];
+				$w1[$i] = $vonalFelett[$i];
 		  }
 		  $this->candidates = $w;
+			$vonalFelett = $w1;
 
 		  // az első helyzett condorcet gyöztes?
 		  $i = $this->shortlist[0]; // első helyezett canidates->id
 		  $this->condorcetGyoztes1 = true;
 		  foreach  ($this->candidates as $j => $name) {
-			if ($this->dMatrix[$i][$j] < $this->dMatrix[$j][$i]) $this->condorcetGyoztes1 = false;
+				if ($this->dMatrix[$i][$j] < $this->dMatrix[$j][$i]) $this->condorcetGyoztes1 = false;
 		  }
 
-          $result .=  '<table class="pollResult" border="1" width="100%">
-                     <tr><th>Helyezés</th><th>Név</th></tr>'."\n";
+			// szavazat szám lekérdezése
+   	  $db->setQuery('select count(DISTINCT a.szavazo_id) cc
+ 		  	from '.$this->szavazatTable.' a
+				left outer join #__content c2 on c2.id = a.alternativa_id
+    		where c2.state = 1 and a.szavazas_id = '.$db->quote($this->poll));		
+		  $res = $db->loadObject();
+   	  $this->vote_count = $res->cc;
+			if ($this->vote_count == 0) {
+				// echo '<p>Nincs egyetlen szavazat sem.</p>';
+				return;
+			}
+
+      $result .=  '<table class="pollResult" border="1" width="100%">
+                     <tr><th>Condorcet<br />helyezés</th><th>Név</th><th>Első helyen szerepel</th><th>Vonal felett szerepel</th></tr>'."\n";
 		  $helyezes = 0;
 		  $trClass = 'eredmenySor';	
-          foreach($shortlist as $j => $i) {
+      foreach($shortlist as $j => $i) {
+					 if (($this->inFirst[$i] == '') | 
+							 (!isset($this->inFirst[$i])) | 
+							 ($this->inFirst[$i] == null) |
+							 ($this->inFirst[$i] < 0)
+							) $this->inFirst[$i] = 0;
 					 // $cimkek (jelölő szervezet logok képzése 
 					 $cimkek = '';
 					 $db->setQuery('select * 
@@ -463,19 +596,14 @@ class Condorcet {
 			         <td class="nev">
 						 '.$this->candidates[$i].$cimkek.' '.$info.'
 					 </td>
+					 <td width="100">&nbsp;'.$this->inFirst[$i].'&nbsp;&nbsp;&nbsp;'.Round($this->inFirst[$i] * 100 / $this->vote_count).'%</td>
+					 <td width="100">&nbsp;'.$vonalFelett[$i].'&nbsp;&nbsp;&nbsp;'.Round($vonalFelett[$i] * 100 / $this->vote_count).'%</td>	
 					</tr>
 					';
           }
           $result .= "</table>\n";
-    	  $db->setQuery('select count(DISTINCT a.szavazo_id) cc
-    		  	from #__szavazatok a
-				left outer join #__content c2 on c2.id = a.alternativa_id
-	    		where c2.state = 1 and a.szavazas_id = '.$db->quote($this->poll));		
-		  $res = $db->loadObject();
-    	  $result .= '<p class="szavazatokSzama">Szavazatok száma:<var>'.$res->cc.'</var></p>
+    	  	$result .= '<p class="szavazatokSzama">Szavazatok száma:<var>'.$this->vote_count.'</var></p>
     		  	';
-    	  $this->vote_count = $res->cc;
-
       return $result;
       }
 

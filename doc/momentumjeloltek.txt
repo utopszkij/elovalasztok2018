@@ -1,0 +1,229 @@
+1. Bács-Kiskun 01. OEVK.  – Bodrozsán Alexandra
+
+2. Bács-Kiskun 02. OEVK  – Csontos Gábor
+
+3. Bács-Kiskun 03. OEVK  –  Környei Balázs
+
+4. Bács-Kiskun 04. OEVK – Hegedűs Barnabás
+
+5. Bács-Kiskun 05. OEVK – Takács Zoltán
+
+6. Bács-Kiskun 06. OEVK – Béni Kornél
+
+7. Baranya 01. OEVK – Nemes Balázs
+
+8. Baranya 02. OEVK – Körömi Attila
+
+9. Baranya 03. OEVK – Pokorádi Gábor
+
+10. Baranya 04. OEVK – Gergely Attila
+
+11. Békés 01. OEVK – Almási István
+
+12. Békés 02. OEVK – Szatmári Péter
+
+13. Békés 03. OEVK – Nagy Zoltán
+
+14. Békés 04. OEVK – Sebők Éva
+
+15. Borsod-Abaúj-Zemplén 01. OEVK – Szopkó Tibor
+
+16. Borsod-Abaúj-Zemplén 02. OEVK – Prokaj Tamás
+
+17. Borsod-Abaúj-Zemplén 03. OEVK – Kovács József
+
+18. Borsod-Abaúj-Zemplén 04. – Győri Gyula
+
+19. Borsod-Abaúj-Zemplén 05. – Pencz András
+
+20. Borsod-Abaúj-Zemplén 06. – Budai János
+
+21. Borsod-Abaúj-Zemplén 07. – Lengyel Ádám
+
+22. Budapest 01. OEVK – Fekete-Győr András
+
+23. Budapest 02. OEVK – Bedő Dávid
+
+24. Budapest 03. OEVK – Kádár Barnabás
+
+25. Budapest 04. OEVK – Benedek Márton
+
+26. Budapest 05. OEVK – Soproni Tamás
+
+27. Budapest 06. OEVK – Cseh Katalin
+
+28. Budapest 07. OEVK – Hajnal Miklós
+
+29. Budapest 08. OEVK – Szücs Attila
+
+30. Budapest 09. OEVK – Tölcsér Borbála
+
+31. Budapest 10. OEVK – Donáth Anna
+
+32. Budapest 11. OEVK – Molnár Tibor
+
+33. Budapest 12. OEVK – Krisztics Bianka
+
+34. Budapest 13. OEVK – Hollai Gábor
+
+35. Budapest 14. OEVK – Tompos Márton
+
+36. Budapest 15. OEVK – Szalóky Réka
+
+37. Budapest 16. OEVK – Teveli Dalma
+
+38. Budapest 17. OEVK – Dukán András Ferenc
+
+39. Budapest 18. OEVK – Orosz Anna
+
+40. Csongrád 01. OEVK – Mihálik Edvin
+
+41. Csongrád 02. OEVK – Boros-Gyevi Gergely
+
+42. Csongrád 03. OEVK – Csányi Balázs
+
+43. Csongrád 04. OEVK – Jakab Tamás
+
+44. Fejér 01. OEVK – Pintér András Gábor
+
+45. Fejér 02. OEVK – Tóth Péter
+
+46. Fejér 03. OEVK – Molnár Tamás
+
+47. Fejér 04. OEVK – Kaszó Róbert
+
+48. Fejér 05. OEVK – Bálint Zoltán
+
+49. Győr-Moson-Sopron 01. OEVK – Molnár József
+
+50. Győr-Moson-Sopron 02. OEVK – Liszi Norbert
+
+51. Győr-Moson-Sopron 03. OEVK – Havasi Ádám
+
+52. Győr-Moson-Sopron 04. OEVK – Supka-Kovácsné Holzhofer Tünde
+
+53. Győr-Moson-Sopron 05. OEVK – Maróti Csanád
+
+54. Hajdú-Bihar 01. OEVK – Horváth Zoltán
+
+55. Hajdú-Bihar 02. OEVK – Mándi László
+
+56. Hajdú-Bihar 03. OEVK – Lakatos Árpád
+
+57. Hajdú-Bihar 04. OEVK – Buzinkay György
+
+58. Hajdú-Bihar 05. OEVK – Gyuris Dóra
+
+59. Hajdú-Bihar 06. OEVK – Kovács Roland
+
+60. Heves 01. OEVK – Tóth Zoltán
+
+61. Heves 02. OEVK – Bakó Béla
+
+62. Heves 03. OEVK – Déri Tibor
+
+63. Jász-Nagykun-Szolnok 01. OEVK – Szekeres Éva
+
+64. Jász-Nagykun-Szolnok 02. OEVK – Pálffy István
+
+65. Jász-Nagykun-Szolnok 03. OEVK – Szincsák Gergő Bendegúz
+
+66. Jász-Nagykun-Szolnok 04. OEVK – Papp Gergő
+
+67. Komárom-Esztergom 01. OEVK – Novák László
+
+68. Komárom-Esztergom 02. OEVK – Cserép János
+
+69. Komárom-Esztergom 03. OEVK – Lakatos Béla
+
+70. Nógrád 01. OEVK – Barta László
+
+71. Nógrád 02. OEVK – Benkó Tamás
+
+72. Pest 01. OEVK – Gál Alex
+
+73. Pest 02. OEVK – Szemző Áron
+
+74. Pest 03. OEVK – Vásárhelyi Judit
+
+75. Pest 04. OEVK – Juhász Béla
+
+76. Pest 05. OEVK – Kohut Ákos
+
+77. Pest 06 OEVK – Rehó Sándor
+
+78. Pest 07. OEVK – Kalasovszky Bernadett
+
+79. Pest 08. OEVK – Tótok József
+
+80. Pest 09. OEVK – Kiss Zoltán
+
+81. Pest 10. OEVK – Janzsó Miklós
+
+82. Pest 11. OEVK – Galgóczi Péter
+
+83. Pest 12. OEVK – Mucsinyi Levente
+
+84. Somogy 01. OEVK – Berg Dániel
+
+85. Somogy 02. OEVK – Rózsa András
+
+86. Somogy 03. OEVK – Fábián László
+
+87. Somogy 04. OEVK – Tóth Péter
+
+88. Szabolcs-Szatmár-Bereg 01. OEVK – Babosi György
+
+89. Szabolcs-Szatmár-Bereg 02. OEVK – Szántó Gábor
+
+90. Szabolcs-Szatmár-Bereg 03. OEVK – Papp Csaba
+
+91. Szabolcs-Szatmár-Bereg 04. OEVK – Áncsán Márton
+
+92. Szabolcs-Szatmár-Bereg 05. OEVK – Magyar Péter
+
+93. Szabolcs-Szatmár-Bereg 06. OEVK – Bankus Tibor János
+
+94. Tolna 01. OEVK – Rácz Norbert
+
+95. Tolna 02. OEVK – Zaránd Péter
+
+96. Tolna 03. OEVK – Dobosi Norbert
+
+97. Vas 01. OEVK – Taoufik Roland
+
+98. Vas 02. OEVK – Kovács Attila
+
+99. Vas 03. OEVK – Gerencsér Mária
+
+100. Veszprém 01. OEVK – Dr. Meződi János
+
+101. Veszprém 02. OEVK – Baán Barnabás
+
+102. Veszprém 03. OEVK – Csernák Éva
+
+103. Veszprém 04. OEVK – Benedek Szilveszter
+
+104. Zala 01. OEVK – Sencz András
+
+105. Zala 02. OEVK – Elekes István
+
+106. Zala 03. OEVK – Dr. Polónyi Tamás
+
+Hírlevél
+
+e-mail cím
+
+FELIRATKOZOM
+
+Csatlakozz
+Csatlakozz a Momentumhoz, tegyünk közösen az ország fejlődéséért!
+
+JELENTKEZÉS
+
+Kapcsolat
+Kérdéseid vagy javaslataid vannak?
+
+KAPCSOLAT
+
+Momentum Mozgalom © 2017. Minden jog fenntartvaAdatvédelmi tájékoztatóclear Az oldal sütiket használ. Bővebb információt az adatvédelmi tájékoztatóban találsz. Elfogadom

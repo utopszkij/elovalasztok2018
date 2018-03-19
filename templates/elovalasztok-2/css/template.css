@@ -1,36 +1,52 @@
 body#shadow {  background-color: gray; }
-#all {font-family: 'Arial'; font-size:14px; line-height:19px; letter-spacing: 0em}	   
-
+#all {font-family: 'Open Sans'; font-size:16px; line-height:22px; letter-spacing: 0em}	   
 section{
 		  max-width: 800px;
 		  margin: 0px;
 }
 p, div {
-		  font-size:14px; 
+		  font-size:16px; 
 		  margin:0px;
 		  color:white;	
 }
 h1{
 		  font-size: 50px; 
 		  color: white;
-		  line-height:70px;	
 		  margin: 0px;
 }
 h2{
 		  font-size: 30px; 
 		  color: white;
-		  line-height:40px;	
+		  margin-left: 5%;
+}
+h3{
+		  font-size: 26px; 
+		  color: white;
+		  margin-left: 5%;
+}
+h2{
+		  font-size: 20px; 
+		  color: white;
 		  margin-left: 5%;
 }
 h4{
 		  color: white;
 		  margin-left: 0px;
 }
+big {font-size:150%; color:red}
+small {font-size:80%}
+img { border: 0 none; }
+a {color:white; text-decoration:underline}
+a:visited {color:white}
+a:active {font-weight:bold}
 button label {cursor:pointer;}
-button,
-.btn {padding:6px; border-style:none; border-radius:5px; cursor:pointer}
+button, .btn {padding:6px; border-style:none; border-radius:5px; cursor:pointer; font-family:'Open Sans Condensed'; text-transform:uppercase}
+button a {text-decoration: none}
+.btn a {text-decoration: none}
+.gomb a {text-decoration: none}
 .btn-ok {background-color:#9aeab1; color:black}
 .btn-cancel {background-color:red; color:white}
+.btn-back {margin-bottom:10px;}
 
 #buttons{
 	  display: flex; justify-content: center; 
@@ -52,14 +68,6 @@ table td {color:white; border-style:solid; border-color:black; border-width:0px 
 }
 
 .jeloltekinfo {	margin:3% 3% 3% 5%;}
-big {font-size:150%; color:red}
-small {font-size:80%}
-img { border: 0 none; }
-a {color:white; text-decoration:none}
-a:visited {color:white}
-a:hover {color:white; text-decoration:underline}
-a:active {font-weight:bold}
-a.btn-primary, a.btn-primary:visited, a.btn-primary:hover {text-decoration:underline}
 /* .szavazottMar {display:none} */
 
 body.contentpane {
@@ -69,7 +77,7 @@ body.contentpane {
 	background-color:transparent; background-image:none;
 }
 #contentarea {
-	font-size:12px;
+	font-size:16px;
 	font-weight:normal;
 	color: #0E2326;
     background-color:transparent; height:auto; margin:0px 0px 0px 0px}
@@ -89,7 +97,7 @@ body.contentpane {
 
 
 .logoheader {height:auto; width:auto; padding:0px; margin:20px 0px 0px 0px; text-align:left}
-.logoheader #logo img {width:90%; margin-left:5%}
+.logoheader #logo img {width:100%; margin:0px}
 
 .userInfo {font-size:1.2em; margin-top:10px;}
 .userInfo label {display: inline-block}
@@ -98,15 +106,15 @@ body.contentpane {
 /* rendszer üzenetek */
 #system-message ul {width:80%; margin:0px; font-size:130%}
 #system-message li {list-style:none;}
-dt.info {display:none}
-dd.info {display:block; background-color:#c0efc0; margin:5px; padding:10px;
-  border-style:none; border-radius:6px;}
+#system-message dd.info {display:block; background-color:#c0efc0; margin:5px; padding:10px;
+  border-style:none; border-radius:6px; color:black}
+.activebar-container p {color:black;}
 
 .itp-socialbuttons-mod h4 {display:none}
 
 /* felső gombok és üzenetek */
 .elovalasztok-gombok {padding:20px 0px 0px 0px; 
-     border-style:solid; border-color:white; border-width:3px 0px 0px 0px}
+     border-style:solid; border-color:white; border-width:3px 0px 0px 0px; font-family:'Open Sans Condensed'; text-transform: uppercase;}
 .elovalasztok-gombok button {background-image:none; background-color:transparent; border-style:none;
    height:auto; padding:0px; margin:0px; font-size:100%}
 .elovalasztok-gombok br {display:none}   
@@ -115,23 +123,26 @@ dd.info {display:block; background-color:#c0efc0; margin:5px; padding:10px;
 .elovalasztok-gombok button label {margin:0px;}
 .elovalasztok-gombok button:hover label {text-decoration:underline}
 .elovalasztok-gombok button  {background-color:white; color:rgb(51,51,51); 
-       font-size:14px; font-weight:400;
+       font-family:'Open Sans Condensed'; font-size:16px; font-weight:400; text-transform: uppercase;
        padding:6px 12px 6px 12px; border-radius:4px; margin:7px; width:auto; height:auto}
-.elovalasztok-gombok #loginBtn {background-color:rgb(217, 83, 79); color:white; font-size:12px;
-       font-size:14px; font-weight:400;
+.elovalasztok-gombok #loginBtn {background-color:rgb(217, 83, 79); color:white; font-size:16px;
+       font-size:16px; font-weight:400;
        padding:6px 12px 6px 12px; border-radius:4px; margin:7px; width:auto; height:auto}
-.elovalasztok-gombok #logoutBtn {background-color:rgb(217, 83, 79); color:white; font-size:12px;
-       font-size:14px; font-weight:400;
+.elovalasztok-gombok #logoutBtn {background-color:rgb(217, 83, 79); color:white; font-size:16px;
+       font-size:16px; font-weight:400;
        padding:6px 12px 6px 12px; border-radius:4px; margin:7px; width:auto; height:auto}
-.elovalasztok-gombok #szavazokBtn {background-color:#c0eec0; color:black; font-size:12px;
-       font-size:14px; font-weight:400;
+.elovalasztok-gombok #szavazokBtn {background-color:#c0eec0; color:black; font-size:16px;
+       font-size:16px; font-weight:400;
        padding:6px 12px 6px 12px; border-radius:4px; margin:7px; width:auto; height:auto}
 .elovalasztok-gombok button[disabled=disabled] {background-color:#e0e0e0}
-#elovalasztok-gombok .nemszavazhat {display:inline-block; background-color:transparent; color:white; font-size:12px;
+#elovalasztok-gombok .nemszavazhat {display:inline-block; background-color:transparent; color:white; font-size:16px;
   border-style:solid; border-width:1px; border-radius:4px;
   padding:4px 12px 4px 12px; margin:10px 0px 0px 0px; cursor:default}
 #elovalasztok-gombok .nemszavazhat label {padding:0px; margin:0px; cursor:default}  
 #szavazott_info {background-color:#d0d0d0; color:black; text-align:left; padding-left:10px; margin-bottom:5px;}
+#szavazott_info a {color:black;}
+#szavazott_info p {color:black;}
+#oevksearchbtn {display:inline-block; width:auto; background-color:#c0e2ae; color:black; padding:6px; border-radius:5px; text-decoration:none}
 
 /* Lábléc */
 #lablec a {display:inline-block; width:auto; height:auto;}	  
@@ -140,7 +151,7 @@ dd.info {display:block; background-color:#c0efc0; margin:5px; padding:10px;
 .alsoGombok .elovalasztok-gombok button {width:auto; margin-right:20px;}
 .alsoGombok .elovalasztok-gombok button  i {background-color:transparent}
 .alsoGombok .elovalasztok-gombok button label {display:none;}
-.alsoGombok a {font-size:14px; font-weight:400;}
+.alsoGombok a {font-size:16px; font-weight:400;}
 a.impresszumLink {background-color:white; color:black;
   padding: 0px 12px 0px 12px; border-radius:4px;}
 a.impresszumLink:visited {color:black}
@@ -167,11 +178,18 @@ a.impresszumLink:hover {color:black; text-decoration:underline}
 
 
 /* kategória lista */
-.blogvk h2 {margin-left:0px;}
+.blog h2 {font-size:22px;}
+.blog h2 a {font-size:30px}
 .blog .cat-children h3 {display:none}
 .blog  li {list-style:none; font-size:120%; margin-bottom:20px;}
 .blog .jeloltekinfo label {display:inline-block; width:auto}
 .blog .jeloltekinfo var {font-size:100%}
+.blog .category-desc {display:none}
+.blog #terkep > ul {display:none}
+.blogvk .category-desc {display:block}
+.blogvk h2 {margin-left:0px;}
+
+
 .pull-left {margin: 5px 5px 5px 0px}
 #alternativak .icons {display:none}
 #alternativak .javaslat {background-color:#d0d0d0}
@@ -181,6 +199,13 @@ a.impresszumLink:hover {color:black; text-decoration:underline}
 .items-leading img {max-width:25%; margin:5px; float:left}
 .item-title {font-size:150%}
 .jcomments-links {display:none}
+#terkep {margin:10px 10px 10px 40px}
+#terkep h2 {margin:0px; font-size:30px;}
+#terkep #terkepimg {background-color:#e0e0e0; padding:10px; width:500px}
+#terkep li {margin: 3px 3px 3px 3px}
+#terkep li div {display:inline-block; width:auto; margin:0px;}
+#terkep li a {font-size: 20px;}
+
 
 /* jelölt oldal */
 .category-desc {color:white;}
@@ -207,17 +232,48 @@ a.impresszumLink:hover {color:black; text-decoration:underline}
 #preftable tr.marked td {background-color:cyan}
 
 .ui-sortable var {color:black; margin-left:5px;}
-@media (min-width: 800px) and (max-width: 1199px) {
+@media (min-width: 800px) and (max-width: 2199px) {
 	#prefList label {width:500px}
+	#helpmenu {display:block; position:fixed; right:0px; width:auto; background-color:white; padding:10px; border-radius:20px 0px 0px 20px; }
+	#helpmenu a {color:blue;}
+	/* aktuális üzenetek */
+	.boxes {text-align:center; height:50px; margin:0px 0px 5px 0px}
+	.box11 {float:left; margin:0px; padding:10px; width:30%; height:100%; background-color:#266cc1; border-radius:4px 20px 4px 20px}
+	.box10 {float:right; margin:0px; padding:10px; width:30%; height:100%; background-color:#da0a74; border-radius:20px 4px 20px 4px}
 }
 @media (min-width: 600px) and (max-width: 799px) {
 	#prefList label {width:300px}
+	.blog #terkep > ul {display:block}
+	#helpmenu {padding:2px;}
+	#helpmenu br {display:none}
+	#helpmenu a {padding:1px 10px 1px 10px; color:white;}
+	/* aktuális üzenetek */
+	.boxes {text-align:center; height:50px; margin:0px 0px 5px 0px}
+	.box11 {float:left; margin:0px; padding:10px; width:30%; height:100%; background-color:#266cc1; border-radius:4px 20px 4px 20px}
+	.box10 {float:right; margin:0px; padding:10px; width:30%; height:100%; background-color:#da0a74; border-radius:20px 4px 20px 4px}
+
 }
 @media (min-width: 400px) and (max-width: 599px) {
 	#prefList label {width:100px}
+	.blog #terkep > ul {display:block}
+	#helpmenu {padding:2px;}
+	#helpmenu br {display:none}
+	#helpmenu a {padding:1px 10px 1px 10px; color:white;}
+	/* aktuális üzenetek */
+	.boxes {text-align:center; margin:0px 0px 5px 0px}
+	.box11 {margin:0px; padding:10px; background-color:#266cc1; border-radius:4px 20px 4px 20px}
+	.box10 {margin:0px; padding:10px; background-color:#da0a74; border-radius:20px 4px 20px 4px}
 }
 @media (min-width: 100px) and (max-width: 399px) {
 	#prefList label {width:90px}
+	.blog #terkep > ul {display:block}
+	#helpmenu {padding:2px;}
+	#helpmenu br {display:none}
+	#helpmenu a {padding:1px 10px 1px 10px; color:white;}
+	/* aktuális üzenetek */
+	.boxes {text-align:center; margin:0px 0px 5px 0px}
+	.box11 {margin:0px; padding:10px; background-color:#266cc1; border-radius:4px 20px 4px 20px}
+	.box10 {margin:0px; padding:10px; background-color:#da0a74; border-radius:20px 4px 20px 4px}
 }
 
 /* szervezet logok */
@@ -231,16 +287,14 @@ ul.inline>li.tag-3 {background-image:url('../images/logo/lmp_logo.png'); backgro
     height:32px; padding: 8px 5px 5px 38px;}
 ul.inline>li.tag-4 {background-image:url('../images/logo/parbeszed_logo.png'); background-color:transparent; background-repeat:no-repeat;
     height:32px; padding: 8px 5px 5px 38px;}
-ul.inline>li.tag-5 {background-image:url('../images/logo/egyutt_logo.png'); background-color:transparent; background-repeat:no-repeat;
-    height:32px; padding: 8px 5px 5px 38px;}
+ul.inline>li.tag-5 {background-image:url('../images/logo/egyutt_logo.png'); background-color:transparent; background-repeat:no-repeat;   height:32px; padding: 8px 5px 5px 66px;}
 ul.inline>li.tag-6 {background-image:url('../images/logo/fidesz_logo.png'); background-color:transparent; background-repeat:no-repeat;
     height:32px; padding: 8px 5px 5px 38px;}
 ul.inline>li.tag-7 {background-image:url('../images/logo/kdnp_logo.png'); background-color:transparent; background-repeat:no-repeat;
     height:32px; padding: 8px 5px 5px 38px;}
 ul.inline>li.tag-8 {background-image:url('../images/logo/jobbik_logo.png'); background-color:transparent; background-repeat:no-repeat;
     height:32px; padding: 8px 5px 5px 38px;}
-ul.inline>li.tag-9 {background-image:url('../images/logo/dk_logo.png'); background-color:transparent; background-repeat:no-repeat;
-    height:32px; padding: 8px 5px 5px 38px;}
+ul.inline>li.tag-9 {background-image:url('../images/logo/dk_logo.png'); background-color:transparent; background-repeat:no-repeat;  height:32px; padding: 8px 5px 5px 66px;}
 ul.inline>li.tag-10 {background-image:url('../images/logo/liberalisok_logo.png'); background-color:transparent; background-repeat:no-repeat;
     height:32px; padding: 8px 5px 5px 38px;}
 ul.inline>li.tag-11 {background-image:url('../images/logo/moma_logo.png'); background-color:transparent; background-repeat:no-repeat;
@@ -256,13 +310,16 @@ ul.inline>li.tag-15 {background-image:url('../images/logo/mszdp_logo.png'); back
 ul.inline>li.tag-16 {background-image:url('../images/logo/balpart_logo.png'); background-color:transparent; background-repeat:no-repeat;
     height:32px; padding: 8px 5px 5px 80px; background-position:0px 4px}
 ul.inline>li.tag-17 {background-image:url('../images/logo/mkp_logo.png'); background-color:transparent; background-repeat:no-repeat;
-    height:32px; padding: 8px 5px 5px 38px;}
+    height:32px; padding: 8px 5px 5px 70px;}
 ul.inline>li.tag-18 {background-image:url('../images/logo/eubalpart_logo.png'); background-color:transparent; background-repeat:no-repeat;
     height:32px; padding: 8px 5px 5px 38px;}
 ul.inline>li.tag-19 {background-image:url('../images/logo/ketfarku_logo.png'); background-color:transparent; background-repeat:no-repeat;
     height:32px; padding: 8px 5px 5px 46px;}
 ul.inline>li.tag-20 {background-image:url('../images/logo/kalozpart_logo.png'); background-color:transparent; background-repeat:no-repeat;
     height:32px; padding: 8px 5px 5px 38px;}
+ul.inline>li.tag-21 {background-image:url('../images/logo/ep_logo.png'); background-color:transparent; background-repeat:no-repeat;
+    height:32px; padding: 8px 5px 5px 38px;}
+
 
 /* eredmeny */
 .pollResult {width:100%}
@@ -290,7 +347,7 @@ ul.inline>li.tag-20 {background-image:url('../images/logo/kalozpart_logo.png'); 
    #contentarea {width:100%}
    #contentarea2 {padding:10px 20px 10px 20px;}
    #wrapper {width:100%;}
-   #main {padding-right:10px;}
+   #main {padding-right:0px;}
    #content {min-height:400px;}
    #prefList label {width:550px}
 }
@@ -301,9 +358,9 @@ ul.inline>li.tag-20 {background-image:url('../images/logo/kalozpart_logo.png'); 
    #contentarea {width:100%;}
    #contentarea2 {padding:5px 5px 5px 5px;}
    #wrapper {width:100%;}
-   #main {padding-right:5px;}
+   #main {padding-right:0px;}
    .itp-sb-left {margin-left:20px;}
-   .share h3 {font-size:10px;}
+   .share h3 {font-size:12px;}
 }
 /* egy oszlopos elrendezés csak menu popup */
 @media (max-width: 559px) {
@@ -311,7 +368,7 @@ ul.inline>li.tag-20 {background-image:url('../images/logo/kalozpart_logo.png'); 
    #contentarea {width:100%;}
    #contentarea2 {padding:5px 5px 5px 5px;}
    #wrapper {width:100%;}
-   #main {padding-right:5px;}
+   #main {padding-right:0px;}
 }
 
 /* Több... Kevesebb.. Checkbox Hack */
@@ -322,12 +379,17 @@ ul.inline>li.tag-20 {background-image:url('../images/logo/kalozpart_logo.png'); 
 .additional-content {
    display: none;
 }
-.hider { display:block; cursor:pointer; text-align:right; margin-right:10px;}
-.shower {display:none; cursor:pointer; text-align:right; margin-right:10px;}
+.hider { display:block; color: blue; cursor:pointer; text-align:right; margin-right:10px;}
+.shower {display:none; color:blue; cursor:pointer; text-align:right; margin-right:10px;}
 /* Toggled State */
 .toggle:checked ~ .additional-content {
    display:block;
 }
 .toggle:checked ~ .shower {   display:block;}
 .toggle:checked ~ .hider {   display:none;}
+
+/* címlap */
+.gomb {float:right; width:auto; padding:6px; background-color:#C0E2AE; color:black;
+       border-style:none; border-radius:5px; cursor:pointer; font-family:'Open Sans Condensed'; text-transform:uppercase}
+.gomb a {color:black}
 

@@ -28,7 +28,9 @@ $db = JFactory::getDBO();
 <hgroup>
 <?php endif; ?>
 <h1>
-	<?php echo $this->escape($this->params->get('page_heading')); ?>
+	<?php //echo $this->escape($this->params->get('page_heading')); 
+		if ($this->item->title != 'Ismertető') echo $this->item->title;
+	?>
 </h1>
 <?php endif; ?>
 <?php
@@ -181,7 +183,19 @@ endif;
 	<?php 
 		$this->item->text = str_replace('width=','_width=',$this->item->text);
 		$this->item->text = str_replace('height=','_height=',$this->item->text);
-	  echo $this->item->text; 
+		$this->item->introtext = str_replace('width=','_width=',$this->item->introtext);
+		$this->item->fulltext = str_replace('height=','_height=',$this->item->fulltext);
+	  	//echo $this->item->text; 
+		echo $this->item->introtext;
+		if ($this->item->fulltext != '') {
+			echo '<input id="toggle-additional-content" class="toggle" type="checkbox"> 
+			<label class="hider" for="toggle-additional-content">több...</label>
+			<label class="shower" for="toggle-additional-content">kevesebb....</label>
+			<div class="additional-content">
+			'.$this->item->fulltext.'
+			</div>
+			';
+		}
 	?>
 
 	<?php

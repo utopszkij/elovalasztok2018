@@ -30,6 +30,14 @@ function isMiniszterelnokSzavazas($szavazas_id) {
 	global $evConfig;
 	return in_array($szavazas_id, $evConfig->miniszterElnokSzavazasok);
 }
+function MELNOK() {
+	global $evConfig;
+	return $evConfig->miniszterElnokSzavazasok[0];
+} 
+function OLISTA() {
+	global $evConfig;
+	return $evConfig->orszagosListaSzavazasok[0];
+} 
 
 /**
 * oevk kód megállapítása a jelölt.ID -bõl
@@ -80,7 +88,7 @@ function isElovalasztokAdmin($user) {
 } 
 
 /**
-    * adott user, már szavazott?
+   * adott user, már szavazott?
 	* ha nincs bejelentkezve akkor false az eredménye
 	* @param integer $szavazas_id 
 	* @param JUser $user
@@ -92,31 +100,32 @@ function isElovalasztokAdmin($user) {
 	  $db = JFactory::getDBO();
 	  $result = false;
 	  if ($user->id > 0) {
-		if (isOEVKszavazas($szavazas_id)) { 
-		  // meghatározom a szavazás kategoria id-t
-		  $db->setQuery('select * from #__categories where id='.$db->quote($szavazas_id));
-		  $res = $db->loadObject();
-		  if ($res)
-			$catid = $res->parent_id;
-		  else
-			$catid = 0;
- 
-	      $db->setQuery('select * 
-			from #__szavazatok sz, #__categories c
-			where sz.szavazas_id = c.id and 
-			sz.user_id='.$db->quote($user->id).' and 
-			fordulo = '.$db->quote($fordulo).' and 
-			c.parent_id = '.$db->quote($catid));
-	      $res = $db->loadObjectList();
-	      $result = (count($res) >= 1);
-		}
-		if (isBelsoSzavazas($szavazas_id)) {  
-	      $db->setQuery('select * from #__szavazatok where user_id='.$db->quote($user->id).' and szavazas_id = '.$db->quote($szavazas_id));
-	      $res = $db->loadObjectList();
-	      $result = (count($res) >= 1);
-		}
+			if (isOEVKszavazas($szavazas_id)) { 
+				// meghatározom a szavazás kategoria id-t
+				$db->setQuery('select * from #__categories where id='.$db->quote($szavazas_id));
+				$res = $db->loadObject();
+				if ($res)
+					$catid = $res->parent_id;
+				else
+					$catid = 0;
+	 
+			  $db->setQuery('select * 
+				from #__szavazatok sz, #__categories c
+				where sz.szavazas_id = c.id and 
+				sz.user_id='.$db->quote($user->id).' and 
+				fordulo = '.$db->quote($fordulo).' and 
+				c.parent_id = '.$db->quote($catid)
+				);
+			  $res = $db->loadObjectList();
+			  $result = (count($res) >= 1);
+			}
+			if (isBelsoSzavazas($szavazas_id) | isOrszagosListaSzavazas($szavazas_id) | isMiniszterElnokSzavazas($szavazas_id)) {  
+			    $db->setQuery('select * from #__szavazatok where user_id='.$db->quote($user->id).' and szavazas_id = '.$db->quote($szavazas_id));
+			    $res = $db->loadObjectList();
+			    $result = (count($res) >= 1);
+			}
 	  } else {
-		$result = false;  
+			$result = false;  
 	  }	
 	  return $result;
  }
@@ -135,54 +144,41 @@ function isElovalasztokAdmin($user) {
  * @return string html
  */	
  function holSzavazott($szavazas_id, $user, $fordulo=0) {
+	global $evConfig;
  	$result = '';
 	$defCatid = 8; // oevk szavazások
 	if ($szavazas_id == $evConfig->probaSzavazas) return $result;
 	$db = JFactory::getDBO();
 	if ($user->id > 0) {
-		  // meghatározom a szavazás kategoria id-t
-		  $db->setQuery('select * from #__categories where id='.$db->quote($szavazas_id));
-		  $res = $db->loadObject();
-		  if ($res)
-			$catid = $res->parent_id;
-		  else
-			$catid = $defCatid;
-		  if ($catid == 0) $catid = $defCatid;
 
-		  // beolvasom a leadott szavazat rekordjait 
-	      $db->setQuery('select c.title szavazas, sz.pozicio, a.title jelolt 
+			// catid=8 országgyülési választás, 155 o.list, 156 m.elnök
+			 $db->setQuery('select c.id, c.title szavazas, sz.pozicio, a.title jelolt 
 			from #__szavazatok sz, #__categories c, #__content a
 			where sz.szavazas_id = c.id and sz.alternativa_id = a.id and 
 			sz.user_id='.$db->quote($user->id).' and 
 			fordulo = '.$db->quote($fordulo).' and 
-			c.parent_id = '.$db->quote($catid).'
-			order by pozicio');
-	      $res = $db->loadObjectList();
-		  if (count($res) == 0) {
-			// most egyenlőre a catid=8 országgyülési választással foglalkozunk...	
-	      	$db->setQuery('select c.title szavazas, sz.pozicio, a.title jelolt 
-			from #__szavazatok sz, #__categories c, #__content a
-			where sz.szavazas_id = c.id and sz.alternativa_id = a.id and 
-			sz.user_id='.$db->quote($user->id).' and 
-			fordulo = '.$db->quote($fordulo).' and 
-			c.parent_id = 8
-			order by pozicio');
+			(c.parent_id = 8 or c.id = 155 or c.id = 156)
+			order by c.title, sz.pozicio');
 			$res = $db->loadObjectList();
-		  }
-	
 		  if (count($res) > 0) {
-			$result = '
-			Ön már szavazott a <strong>'.$res[0]->szavazas.'</strong> szavazásban&nbsp; 
-		    <input id="szavazott-toggle" class="toggle" type="checkbox" />
-			<label class="hider" for="szavazott-toggle">több...</label>
-			<label class="shower" for="szavazott-toggle">kevesebb...</label>
-			<div class="additional-content" for="szavazott-toggle">';
-			foreach ($res as $res1) {
-			   $result .= '<p>'.$res1->pozicio.'. '.$res1->jelolt.'</p>
-			   ';
-			}
-			$result .= '</div>
-			';
+				$result = '
+				Ön már szavazott  
+				<input id="szavazott-toggle" class="toggle" type="checkbox" />
+				<label class="hider" for="szavazott-toggle">több...</label>
+				<label class="shower" for="szavazott-toggle">kevesebb...</label>
+				<div class="additional-content" for="szavazott-toggle">';
+				$elozo = '';
+				foreach ($res as $res1) {
+					 if ($res1->szavazas != $elozo)
+					 	$result .=	'<h3>
+							<a href="'.JURI::base().'component/content/category?id='.$res1->id.'">
+								<strong>'.$res1->szavazas.'</strong>
+							</a></h3>';
+					 $result .=	'<p>'.$res1->pozicio.'. '.$res1->jelolt.'</p>';
+					 $elozo = $res1->szavazas;
+				}
+				$result .= '</div>
+				';
 		  }
 	}
 	return $result;

@@ -76,8 +76,9 @@ if ($user->id > 0) {
 
 <div id="elovalasztok-gombok" class="elovalasztok-gombok">
   <center>
-	<p class="category-desc">Egy ember csak egy választókerületben és csak egyszer szavazhat. Viszont a szavazat módosítható.
- Modosítás során a korábbitól eltérő választókörzetben is szavazhat, ez esetben a korábbi szavazat törlődik.</p>
+	<!-- p class="category-desc">Egy ember egy egyéni választókerületben, a miniszterelnök szavazáson és a országos pártlista szavazáson,
+ csak egyszer szavazhat. Viszont lehet ismételten szavazni, ezzel korábbi szavazatát felülbírálhatja. 
+ Ilyenkor a korábbitól eltérő választókörzetben is szavazhat.</p -->
   <div class="gombok1">
   <div class="gombok2">
   <?php if ($user->id <= 0) : ?>
@@ -89,44 +90,63 @@ if ($user->id > 0) {
   <?php endif; ?>
     
   <?php if ($user->id > 0) : ?>
-	<var class="username"><?php echo $user->username; ?></var>
+	<var class="username"><?php echo 'user'.$user->id; ?></var>
     <button id="logoutBtn" onclick="location='<?php echo $logoutLink; ?>';" title="Kijelentkezés">
        <i class="icon-logout"> </i><label>Kijelentkezés</label>
     </button><br />
   <?php endif; ?>
   
-  <?php if (isOevkSzavazas($szavazas_id) & ($task != 'szavazasedit') & ($task != 'szavazok')) : ?>
-	  <?php if (teheti($szavazas_id, $user, 'szavazas', $msg) & ($marSzavazott == '')) : ?>
+  <?php if (
+						(isOevkSzavazas($szavazas_id) | isMiniszterElnokSzavazas($szavazas_id) | isOrszagosListaSzavazas($szavazas_id)) & 
+					  ($task != 'szavazasedit') & ($task != 'szavazok')
+					 ) : ?>
+ 
+  <?php	if ((/*isOevkSzavazas($szavazas_id) |*/
+			 isMiniszterElnokSzavazas($szavazas_id) | 
+			 isOrszagosListaSzavazas($szavazas_id)) & 
+			($szavazas_id != 116) ) : ?>
+	<?php if (teheti($szavazas_id, $user, 'szavazas', $msg) & (szavazottMar($szavazas_id, $user, 0) == false)) : ?>
 		  <button id="szavazokBtn" title="Szavazok"
 			type="button" onclick="location='<?php echo JURI::root(); ?>component/jumi?fileid=4&task=szavazok&id=<?php echo $szavazas_id; ?>';">
 			<i class="icon-szavazok"> </i><label>Szavazok</label>
 		  </button><br />
-	  <?php else : ?>
-		 <?php if ($marSzavazott != '') : ?>
-		  <button id="szavazokBtn" title="Szavazok"
+	  <?php elseif (szavazottMar($szavazas_id, $user, 0)) : ?>
+		  <button id="szavazokBtn" title="Újra szavazok"
 			type="button" onclick="location='<?php echo JURI::root(); ?>component/jumi?fileid=4&task=szavazatedit&id=<?php echo $szavazas_id; ?>';">
-			<i class="icon-szavazok"> </i><label>Szavazat módosítása</label>
+			<i class="icon-szavazok"> </i><label>Újra szavazok</label>
 		  </button><br />
 		 <?php else : ?>
 		  <div class="nemszavazhat">
 			<i class="icon-nemszavazhat"> </i>
 			<label><?php echo $msg; ?></label>
 		  </div><br />
-		 <?php endif; ?>
 	  <?php endif; ?>
+	<?php else : ?>
+		<!--span style="border-style:solid; border-width:1px; border-radius:5px; padding:5px;">Jelenleg nem lehet szavazni</span -->
+    <?php endif; ?>
   <?php endif; ?>
+
   
+  <?php	if ((isOevkSzavazas($szavazas_id) | isMiniszterElnokSzavazas($szavazas_id) | isOrszagosListaSzavazas($szavazas_id)) & 
+			($szavazas_id != 116)) : ?>
   <?php if (teheti($szavazas_id, $user, 'eredmeny',$msg)) : ?>
   <button id="eredmenyBtn" <?php echo $d; ?> title="Eredmény"
     type="button" onclick="location='<?php echo JURI::root(); ?>component/jumi?fileid=4&task=eredmeny&id=<?php echo $szavazas_id; ?>';">
     <i class="icon-eredmeny"> </i><label>Eredmény</label>
-  </button><br />
+  </button>
+  <?php endif; ?>
   <?php endif; ?>
      
-  <button id="keruletekBtn" title="választó kerületek" 
+  <button id="keruletekBtn" title="szavazások" 
     type="button" onclick="location='<?php echo JURI::root(); ?>component/content/category?id=8';">
-	<i class="icon-oevk"> </i><label>Választókerületek</label>
-  </button>	
+	<i class="icon-oevk"> </i><label>Szavazások</label>
+  </button>
+	
+  <a title="Melyik OEVK-ba tartozom" id="oevksearchbtn"
+		href="http://www.valasztas.hu/dyn/pv14/map/index_frame_noborder.html" target="new">
+		Melyik OEVK-ba tartozom?
+  </a><br />
+
   </div>
   </div>
   </center>

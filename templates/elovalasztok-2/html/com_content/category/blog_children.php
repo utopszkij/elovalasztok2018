@@ -5,6 +5,8 @@
  *
  * @copyright   Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ *
+ * Az országos lista elemet a listából kiemelve másként kell megjeleníteni!
  */
 
 defined('_JEXEC') or die;
@@ -49,7 +51,7 @@ $class = ' class="first"';
 
                         <?php if ( $this->params->get('show_cat_num_articles', 1)) : ?>
                         <div class="jeloltekinfo">
-                           <label>Jelöltek száma:</label> <var><?php echo $child->getNumItems(true); ?></var>
+                           <label>Jelöltek száma:</label> <var><?php echo (-1 + $child->getNumItems(true)); ?></var>
                         </div>
                         <?php endif; ?>
 

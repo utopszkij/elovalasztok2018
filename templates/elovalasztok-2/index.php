@@ -66,9 +66,13 @@ $input = JFactory::getApplication()->input;
 <!DOCTYPE html>
 <html lang="<?php echo $this->language; ?>" dir="<?php echo $this->direction; ?>">
 	<head>
+		<meta property="og:image" content="https://elovalasztok.edemokraciagep.org/images/ujlogo.jpg" />
+		<meta property="og:title" content="Előválasztás 2018" />
+		<meta property="og:description" content="Internetes segédeszköz a kormánypárttal szembeni esélyes képviselő felderítésére!" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes"/>
 		<meta name="HandheldFriendly" content="true" />
 		<meta name="apple-mobile-web-app-capable" content="YES" />
+
 		<jdoc:include type="head" />
 		<!--[if IE 7]><link href="<?php echo $this->baseurl; ?>/templates/<?php echo $this->template; ?>/css/ie7only.css" rel="stylesheet" /><![endif] -->
 		<!-- [if lt IE 9]><script src="<?php echo JUri::root(true); ?>/media/jui/js/html5.js"></script><![endif] -->
@@ -103,10 +107,26 @@ $input = JFactory::getApplication()->input;
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		Barják Lászól javaslata  stop -->
 
+		<!-- google font -->
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:700|Open+Sans:300,400,400i,700,700i,800,800i|Poppins:300,400,500,600,700|Work+Sans:700,900&subset=latin-ext" rel="stylesheet">
+
 		<link href="<?php echo JURI::root(); ?>templates/elovalasztok-2/css/template.css" rel="stylesheet" />
 		
 	</head>
 	<body id="shadow">
+		<div id="helpmenu">
+			<a href="./component/content/article?id=585"  target="new">
+		Gyakran&nbsp;<br />Ismételt&nbsp;<br />Kérdések&nbsp;</a>
+		<br /><br />
+		<a href="https://www.facebook.com/groups/213414482166281/?ref=ts&fref=ts" target="new">
+			Facebook&nbsp;<br />oldalunk&nbsp;<br />
+		</a><br />
+		<a href="https://elovalasztok.edemokraciagep.org/index.php?option=com_content&view=article&id=463">
+			Jelöltek,&nbsp;<br />Listák&nbsp;<br />beküldése&nbsp;
+		</a><br />
+		</div>
+
+
 		<?php if (($input->get('option') == 'com_adalogin') & ($input->get('task') != 'dologout')) : ?>
 			<jdoc:include type="component" />
 		<?php else : ?>	
@@ -116,8 +136,8 @@ $input = JFactory::getApplication()->input;
 				<header id="header">
 					<a href="index.php">
 					<div class="logoheader">
-						<h1 id="logo">
-						  <img src="images/banners/elovalasztok_head_720x210.png" />
+						<h1 id="logo" style="background-color:#808080">
+						  <img src="https://elovalasztok.edemokraciagep.org/images/ujfejlec.png" width="100%" />
 						</h1>
 					</div><!-- end logoheader -->
 					</a>	
@@ -129,7 +149,11 @@ $input = JFactory::getApplication()->input;
 						<jdoc:include type="modules" name="position-0" />
 					</div> <!-- end line -->
 				</header><!-- end header -->
-				
+				<div class="boxes">
+					<jdoc:include type="modules" name="position-11" style="beezDivision" />
+					<jdoc:include type="modules" name="position-10" style="beezDivision" />
+				</div>
+				<div style="clear:both"></div>			
 				<div id="<?php echo $showRightColumn ? 'contentarea2' : 'contentarea'; ?>">
 					<div id="breadcrumbs">
 						<jdoc:include type="modules" name="position-2" />
@@ -189,7 +213,9 @@ $input = JFactory::getApplication()->input;
 					<div class="wrap"></div>
 				</div> <!-- end contentarea -->
 				<center>
-				  <a href="<?php echo JURI::base(); ?>index.php">Vissza a kezdő lapra</a>
+				  <a href="<?php echo JURI::base(); ?>index.php">Vissza a kezdő lapra</a>&nbsp;&nbsp;
+				  <a href="./component/content/category?id=8">Szavazások</a>&nbsp;&nbsp;
+				  <a href="./component/jumi?fileid=4&task=statisztika">Statisztika</a>
 				</center>
 			</div><!-- back -->
 			<div id="lablec">
@@ -202,8 +228,6 @@ $input = JFactory::getApplication()->input;
 
 					<div id="bottom">
 						<div class="box box1"> <jdoc:include type="modules" name="position-9" style="beezDivision" headerlevel="3" /></div>
-						<div class="box box2"> <jdoc:include type="modules" name="position-10" style="beezDivision" headerlevel="3" /></div>
-						<div class="box box3"> <jdoc:include type="modules" name="position-11" style="beezDivision" headerlevel="3" /></div>
 					</div>
 
 				</div>
