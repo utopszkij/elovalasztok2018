@@ -1,9 +1,6 @@
 # elovalasztok2018
-Ez a 2018 -as előválasztásra készülő Joomla 3 alapú szoftver
+Ez a 2018 -as főpolgármester előválasztásra készülő Joomla 3 alapú szoftver
 Telepitett teszt változat: https://elovalasztok.edemokraciagep.org
-
-
-A php fájlok joomla JUMI modulok vagy componensek
 
 
 A projekt jelenleg nem többnyelvű, a magyar szövegkonstansok fixen be vannak írva a kódokba
@@ -11,72 +8,54 @@ A projekt jelenleg nem többnyelvű, a magyar szövegkonstansok fixen be vannak 
 Telepités:
 Normál Joomla 3 telepités
 
-. JUMI, bfstop, eprivacy, jcomments, jhackguards, akaebabackup kiegészitések telepitése a jooma extension könyvtárból, ezek konfigurálása
+bfstop, securitycheck kiegészitések telepitése a jooma extension könyvtárból, ezek konfigurálása
 
-. com_adalogin kiegészitő telepitése (github repoból) és konfigurálása
+- com_adalogin kiegészitő telepitése (github repoból) és konfigurálása
+- A jelen repo component könyvtárban szerepló com_elovalasztok joomla komponens telepitése (joomla telepités könyvtárból funkció segitségével)
+- joomla kategoria kialakitása a szavazásnak, ebbe cikkeknek felvinni a jelölteket
+- a com_elovalasztok/config.php értelem szerű modosítása
+- Dizájn kialakitása - joomla template, css, images,
+- Joomla konfigurálás, menüpontok kialakitása stb
+- File jogosultságok beállítása
 
-. A jelen repoban szerepló alkönyvtárak és fájlok feltöltése joomla_root/elovalasztok könyvtárba (lásd git2www.sh)
+A com_adalogin funkciók hívása:
 
-. Joomla JUMI modulok és JUMI komponens hivások kialakitása a joomla admin felületen. cimkefelho JUMI modul, gombok JUMI modul, szavazok JUMI component
+szavazás beküldése:
 
-. Dizájn kialakitása - joomla template, css, images stb
+component/elovalasztok?task=szavazok
+
+eredmény lekérés:
+
+component/elovalasztok?task=eredmeny
+
 
 Biztonsági megjegyzések
 -----------------------
 
 1. A joomla rendszer NE ROOT jogú mysql loginnal müködjön, a joomla által használt mysql loginnak NE LEGYEN JOGA triggert felvinni, törölni, létrehozni!
-2. A szerver rendszergazdának más eszközzel (linux konzol + mysql parancssor) kell a biztonsági triggereket telepítenie
-3. A rendszer adminisztrátorok erős jelszavakat használjanak, azt gyakran modosítsák és biztonságosan kezeljék
-4. A szerveren a php fájlok irását, modosítását, törlését a rendszer telepítése után az appache user számára le kell tiltani
-5. A joomla jogosultsági rendszert gondosan konfigurálni kell (csak a joomla adminok vihetnek fel, modosithatnak, törölhetnek cikk-kategoriákat és cikkeket)
-6. A joomla által használt mysql jelszót időszakonként módosítani kell.
-7. a mysql szerver ne legyen külső URL -ről elérhető
-8. A joomla_root/administrator/index.php üzemszerüen ne legyen az appache user által elérhető (olvasásra sem)
+2. A mysql root login, a program által használt mysql login és a joomla admin login és sziguruan bizalmassan kezelendő!
+3. A szerver rendszergazdának más eszközzel (linux konzol + mysql parancssor) kell a biztonsági triggereket telepítenie jelen repoból
+4. A rendszer adminisztrátorok és a joomla adminisztrátorok erős jelszavakat használjanak, azt gyakran modosítsák és biztonságosan kezeljék!
+5. A szerveren a php fájlok irását, modosítását, törlését a rendszer telepítése után az appache user számára le kell tiltani.
+6. A joomla jogosultsági rendszert gondosan konfigurálni kell (csak a joomla adminok vihetnek fel, modosithatnak, törölhetnek cikk-kategoriákat és cikkeket, a szavazás megindulása után még ők sem).
+7. A joomla által használt mysql jelszót időszakonként módosítani kell.
+8. a mysql szerver ne legyen külső URL -ről elérhető!
+9. A joomla_root/administrator/index.php üzemszerüen ne legyen az appache által elérhető (olvasásra sem)!
 
 
 
 Biztonsági megoldások a programban.
 -----------------------------------
 
-Szavazás inditása, lezárása
-	Joomla admin login szükséges hozzá. 
-	Joomla beépített CSR védelem aktív, 
-	Joomla bfoorce védelem aktív,
-	Esetenként linux root user és linux konzol belépés szükséges (config.php file modositás)
-	
-Jelölt felvitele, jelölt adatok modosítása
-	ADA login és joomla login jogosultság kell hozzá,
-	Joomla login szükséges hozzá. 
-	Joomla bfoorce védelem aktív,
-	Joomla beépített CSR védelem és hozzáférés szabályozás aktív 
-
 Szavazat beküldése
-	ADA login, területi tanusitvány, és joomla login jogosultság kell hozzá,
-	Joomla login szükséges hozzá, (automatikusan létrejön, de admin letilhatja), 
-	Joomla beépített CSR védelem aktív,
-	Joomla bfoorce védelem aktív,
-    Egyedi mysql-trigger -ben megvalósított CSR védelem, ami biztosítja, hogy egy user csak egyszer szavazhat	
-	
+	1. ADA login, területi tanusitvány, és joomla login jogosultság kell hozzá,
+	2. Joomla login szükséges hozzá, (automatikusan létrejön, de admin letilhatja),
+	3. Joomla beépített CSR védelem aktív,
+	4. Joomla bfoorce védelem aktív,
+
 Szavazat törlése
-	ADA login, területi tanusitvány, és joomla login jogosultság kell hozzá,
-	Joomla login szükséges hozzá, (automatikusan létrejön, de admin letilhatja), 
-	Joomla beépített CSR védelem aktív,
-	Joomla bfoorce védelem aktív,
-	Egyedi képernyőre kiirt és cookiban tárolt random szavazat specifikus biztonsági kód, ami szükséges aszavazat törléséhez, 
-    Egyedi mysql-trigger -ben megvalósított a fenti random szavazat specifikus biztonsági kód alapú ellenörzés
-
+  1. A programban nincs ilyen funkció,
+	2. mysql trigger megakadályozza.
 Szavazat modosítása
-    A programba ilyen funkció nincs beépítve,
-	Egyedi mysql alapú trigger megakadályozza, hogy esetleg más uton ilyen mysql tranzakció történjen.
-	
-	
-	
-	
-
-
- 
-
-
-
-
-
+	1. A programban nincs ilyen funkció,
+  2. mysql trigger megakályozza

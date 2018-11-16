@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade" version="1.0">
+	<name>elovalasztok</name>
+	<creationDate>2018-11-14</creationDate>
+	<author>Fogler Tibor</author>
+	<authorEmail>tibor.fogler@gmail.com</authorEmail>
+	<authorUrl>https://github.com/utopszkij/elovalasztok</authorUrl>
+	<copyright>Copyright (C) 2018  Open Source Matters. All rights reserved.</copyright>	
+	<license></license>
+	<version>V 1.00</version>
+	<description>
+	Előválasztás
+	</description>
+	<installfile>
+	</installfile>
+	<uninstallfile>
+	</uninstallfile>
+	<install>
+	</install>
+	<uninstall>
+	</uninstall>
+	<files folder="site">
+			<filename>elovalasztok.php</filename>
+			<filename>funkciok.php</filename>
+			<filename>condorcet.php</filename>
+			<filename>accesscontrol.php</filename>
+			<filename>index.html</filename>			
+			<folder>assets</folder>
+			<folder>controllers</folder>
+			<folder>models</folder>
+			<folder>views</folder>
+	</files>	
+	<languages folder="site">
+	</languages>
+	<administration>
+	</administration>
+</extension>
