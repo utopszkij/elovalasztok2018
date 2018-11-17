@@ -13,8 +13,8 @@ bfstop, securitycheck kiegészitések telepitése a jooma extension könyvtárb�
 - com_adalogin kiegészitő telepitése (github repoból) és konfigurálása
 - A jelen repo component könyvtárban szerepló com_elovalasztok joomla komponens telepitése (joomla telepités könyvtárból funkció segitségével)
 - joomla kategoria kialakitása a szavazásnak, ebbe cikkeknek felvinni a jelölteket
-- a com_elovalasztok/config.php értelem szerű modosítása
-- Dizájn kialakitása - joomla template, css, images,
+- a com_elovalasztok/config.php értelemszerű modosítása
+- Dizájn kialakitása - jelen repo templates könyvtára is használható
 - Joomla konfigurálás, menüpontok kialakitása stb
 - File jogosultságok beállítása
 

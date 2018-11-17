@@ -10,11 +10,9 @@
 // 2017.12.06 egyenlőre elég a mindenki és a magyar+emagyar
 
 defined('_JEXEC') or die;
-$db = JFactory::getDBO();
-$db->setQuery('select count(user_id) as cc from '.$szavazatTable.' where szavazas_id = '.$db->quote($oevk));
-$res = $db->loadObject();
-$voksDarab = $res->cc;
-
+echo '<h2>'.$pollRecord->title.'</h2>
+<div class="pollLeiras">'.$pollRecord->description.'</div>
+';
 ?>
   <form action="index.php?option_com_jumi&view=application&fileid=4" method="get">
 	<input type="hidden" name="option" value="com_jumi" />
@@ -29,30 +27,30 @@ $voksDarab = $res->cc;
 		</p>
 	</form>
 
-	<?php if ($voksDarab > 0) : ?>
-		<?php echo $report ?>
-		<?php $url = JURI::root().'component/elovalasztok?task=szavazatok&id='.$oevk.'&szavazattable='.urlencode($szavazatTable); ?>
-		<?php $urlcsv = JURI::root().'component/elovalasztok?task=szavazatokcsv&id='.$oevk.'&szavazattable='.urlencode($szavazatTable); ?>
-		<p><button type="button" onclick="infoClick()" id="infoBtn">+</button>
+	<?php echo $report ?>
+    <div id="condorcetMagyarazat" style="display:none">
+            A <strong>dMatrix</strong> és a <strong>pMatrix</strong> sorai és oszlopai egyaránt egy-egy jelöltnek felelnek meg.<br />
+            A <strong>dMatrix</strong> cellái azt mutatják, hogy a sorban szereplő jelölt hányszor elözi meg az oszlopban lévőt.<br />
+            A <strong>pMatrix</strong> a Shulze methód második lépésének munka táblázata.
+    </div>
+	<?php $url = JURI::root().'component/elovalasztok?task=szavazatok&id='.$oevk; ?>
+	<?php $urlcsv = JURI::root().'component/elovalasztok?task=szavazatokcsv&id='.$oevk; ?>
+	<p><button type="button" onclick="infoClick()" id="infoBtn">+</button>
 			Az eredmény részletei&nbsp;&nbsp;
 			<a href="<?php echo $url; ?>">szavazatok</a>&nbsp;&nbsp;
 			<a href="<?php echo $urlcsv; ?>">szavazatok CSV formában</a>&nbsp;&nbsp;
-		</p>
-	<?php else : ?>
-		<div class="noVoksInfo">Nincsenek szavazatok ebben a szavazásban.</div>	
-	<?php endif; ?>
+	</p>
 	
-	<center><br />
-	<button type="button" onclick="location='<?php echo $backUrl; ?>';" style="height:34px" class="btn btn-primary btn-back">Vissza</button>
-	</center>
 	<script type="text/javascript">
 	  function infoClick() {
 		  var d = document.getElementById("eredmenyInfo");
 		  if (d.style.display=="block") {
 			  d.style.display="none";
+              document.getElementById('condorcetMagyarazat').style.display="none";
 			  document.getElementById("infoBtn").innerHTML="+";
 		  } else {
 			  d.style.display="block";
+              document.getElementById('condorcetMagyarazat').style.display="block";
 			  document.getElementById("infoBtn").innerHTML="-";
 		  }
 	  }

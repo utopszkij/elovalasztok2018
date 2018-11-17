@@ -7,8 +7,7 @@ class EvConfig {
   public $szavazas = true; 
   public $eredmeny = true; 
   public $pollId = 10;     // joomla category id
-  public $canAssurance = 'budapest'; // csak az szavazhat akinál az assurance listában szerepel ez a string
-  public $fordulo = 0; // továbbfejlesztésre, esetleges több fordulós választásokhoz
+  public $canAssurance = 'budapest'; // csak az szavazhat akinél az assurance listában szerepel ez a string
   public $testUzemmod = true;
   function __construct() {
   }
