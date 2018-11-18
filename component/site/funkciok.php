@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 	* @param JUser $user
 	* @param integer $fordulo
  */	
- function szavazottMar($szavazas_id, $user, $fordulo = 0) {
+ function szavazottMar($szavazas_id, $user) {
 	  $db = JFactory::getDBO();
 	  $result = false;
 	  if ($user->id > 0) {
@@ -24,21 +24,21 @@ defined('_JEXEC') or die;
 	  return $result;
  }
 
-function szavazasraJogosult($user, $szavazas_id, $assurance='') {
+function szavazasraJogosult($user, $szavazas_id) {
 	global $evConfig;
     if (($evConfig->canAssurance != '') && (!$evConfig->testUzemmod)) {
        $db = JFactory::getDBO();
        $db->setQuery('select count(id) cc
        from #__users 
        where id='.$db->quote($user->id).' and params like "%'.$evConfig->canAssurance.'%"' );   
-       return $db->loadObject()->cc > 0;
+       return ($db->loadObject()->cc > 0);
     } else {
        return true;
     }
 }
 
 // hány szavazásra jogosult van az adott szavazásban?
-function szavazokSzama($szavazas_id, $assurance='') {
+function szavazokSzama($szavazas_id) {
     global $evConfig;
     $db = JFactory::getDBO();
     if (($evConfig->canAssurance != '') && (!$evConfig->testUzemmod)) {

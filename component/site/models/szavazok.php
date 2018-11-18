@@ -1,7 +1,7 @@
 <?php
  /**
   * szavazok model
-  *   taskok: szavazok, szavazatEdit, szavazatDelete, eredmeny, szavazatSave
+  * taskok: szavazok, eredmeny, szavazatSave
   * Licensz: GNU/GPL
   * Szerzõ: Fogler Tibor   tibor.fogler@gmail.com_addref
   * web: github.com/utopszkij/elovalasztok2018
@@ -10,6 +10,86 @@
   * JRequest: oevk, task
   */
 defined('_JEXEC') or die;
+
+class MyCondorcet extends Condorcet {
+
+      protected function getCandidates() {
+          $db = JFactory::getDBO();
+          $candidates_sql = 'select title AS megnevezes,id
+		      from #__content
+		      where  catid='.$db->quote($this->poll).' and state=1';
+          $db->setQuery($candidates_sql);
+          $this->candidates=array();
+		  $this->condorcetGyoztes = array();
+          foreach($db->loadObjectList() as $row) {
+              $this->candidates[$row->id] = $row->megnevezes;
+          }
+          return $this->candidates;
+      }
+
+      protected function loadDiffMatrix() {
+          $db = JFactory::getDBO();
+          $diff_sql = 'select a.alternativa_id as id1, b.alternativa_id as id2, count(a.id) as d
+                       from #__szavazatok a,
+                            #__szavazatok b
+                       where  a.szavazas_id='.$db->quote($this->poll).' and
+                             b.szavazas_id=a.szavazas_id and
+                             a.szavazo_id=b.szavazo_id and
+                             a.pozicio < b.pozicio 
+                       group by a.alternativa_id, b.alternativa_id';
+          $db->setQuery($diff_sql);
+          $this->dMatrix=array();
+		  $rows = $db->loadObjectList();
+          foreach($rows as $row ) {
+              $id1 = $row->id1;
+              $id2 = $row->id2;
+              $d = $row->d;
+              if(!array_key_exists($id1,$this->dMatrix)) {
+                  $this->dMatrix[$id1] = array();
+              }
+              $this->dMatrix[$id1][$id2] = $d;
+          }
+          foreach($this->candidates as $id1 => $name1) {
+              if(!array_key_exists($id1,$this->dMatrix)) {
+                  $this->dMatrix[$id1] = array();
+              }
+              foreach($this->candidates as $id2 => $name2) {
+                  if(!array_key_exists($id2,$this->dMatrix[$id1])) {
+                      $this->dMatrix[$id1][$id2] = 0;
+                  }
+              }
+          }
+          return $this->dMatrix;
+      }
+
+      protected function loadInFirst() {
+        $db = JFactory::getDBO();
+        foreach($this->candidates as $id1 => $name1) {
+            $this->inFirst[$id1] = 0;        
+        }
+        $db->setQuery('select a.alternativa_id, count(a.szavazo_id) cc
+        from #__szavazatok a
+        where a.szavazas_id = '.$db->quote($this->poll).' and a.pozicio = 1 
+        group by a.alternativa_id
+        ');
+        $res = $db->loadObjectList();
+        foreach ($res as $row) {
+            $this->inFirst[$row->alternativa_id] = $row->cc;
+        }
+        return $this->inFirst;
+      }  
+
+      protected function loadVoteCount() {  
+        $db = JFactory::getDBO();
+   	    $db->setQuery('select count(DISTINCT a.szavazo_id) cc
+ 		from #__szavazatok a
+		left outer join #__content c2 on c2.id = a.alternativa_id
+    	where c2.state = 1 and a.szavazas_id = '.$db->quote($this->poll));		
+		$res = $db->loadObject();
+   	    $this->vote_count = $res->cc;
+        return $this->vote_count;
+      }  
+} // myCondorcet
   
 class szavazokModel {
 	private $errorMsg = '';
@@ -272,5 +352,5 @@ class szavazokModel {
         return $res;
     }
 
-}	
+}	// szavazokModel
 ?>

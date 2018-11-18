@@ -20,40 +20,34 @@
 */
 function teheti($szavazas_id, $user, $akcio, &$msg) {
 	global $evConfig;
-	if ($evConfig->testUzemmod) {
-			return true;
-	}
 	$result = false;
 	$msg = '';
-	$fordulo = $evConfig->fordulo;
 	$db = JFactory::getDBO();
 	$db->setQuery('select * from #__categories where id='.$db->quote($szavazas_id).' and published = 1');
 	$szavazas = $db->loadObject();
 	
 	if ($akcio == 'eredmeny') {
-		   $result = true;
+		   if ($evConfig->eredmeny) {
+                $result = true;
+                $msg = '';
+           } else {
+                $result = false;
+                $msg = 'Jelenleg nem kérhető le az eredmény';
+           }
 	}
 	
-	// lezárt szavazás kezelése
 	if ($akcio == 'szavazas') {
-	   if (strpos($szavazas->title,'(lezárt)')) {	
-		   $result = false;
-		   $msg = 'Lezárt szavazás';	
-		   return $result;
-	   }	   
-	}
-	
-	if ($user->id <= 0) {
-	   $msg = 'Jelentkezzen be!';
-	   return false;
-	}	
-
-	if ($akcio == 'szavazas') {
-	 	  if (szavazottMar($szavazas_id, $user, $fordulo)) {  
+          if ($evConfig->testUzemmod) {
+              $msg = '';  
+              $result = true;  
+          } else if ($user->id <= 0) {
+			  $result = false;
+			  $msg = 'Szavazáshoz be kell jelentkezni!';
+	 	  } else if (szavazottMar($szavazas_id, $user)) {  
 			  $result = false;
 			  $msg = 'Ön már szavazott';
 		  }  else {
-			  if (szavazasraJogosult($user, $szavazas_id, '')) {
+			  if (szavazasraJogosult($user, $szavazas_id)) {
 				$result = true;
 				$msg = '';
 			  } else {

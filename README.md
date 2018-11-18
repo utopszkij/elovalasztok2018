@@ -6,10 +6,8 @@ Telepitett teszt változat: https://elovalasztok.edemokraciagep.org
 A projekt jelenleg nem többnyelvű, a magyar szövegkonstansok fixen be vannak írva a kódokba
 
 Telepités:
-Normál Joomla 3 telepités
-
-bfstop, securitycheck kiegészitések telepitése a jooma extension könyvtárból, ezek konfigurálása
-
+- Normál Joomla 3 telepités
+- bfstop, securitycheck kiegészitések telepitése a jooma extension könyvtárból, ezek konfigurálása
 - com_adalogin kiegészitő telepitése (github repoból) és konfigurálása
 - A jelen repo component könyvtárban szerepló com_elovalasztok joomla komponens telepitése (joomla telepités könyvtárból funkció segitségével)
 - joomla kategoria kialakitása a szavazásnak, ebbe cikkeknek felvinni a jelölteket
@@ -28,6 +26,14 @@ eredmény lekérés:
 
 component/elovalasztok?task=eredmeny
 
+UNIT test
+---------
+
+```
+$ cd test
+$ phpunit .
+```
+
 
 Biztonsági megjegyzések
 -----------------------
@@ -43,19 +49,31 @@ Biztonsági megjegyzések
 9. A joomla_root/administrator/index.php üzemszerüen ne legyen az appache által elérhető (olvasásra sem)!
 
 
-
 Biztonsági megoldások a programban.
 -----------------------------------
 
+Általános Joomla védelem
+
+1. Joomla beépített CSR védelem aktív,
+2. Joomla bfstop védelem aktív,
+3. Joomla securityCheck admin dir védelem és spam védelem aktív
+
+
 Szavazat beküldése
-	1. ADA login, területi tanusitvány, és joomla login jogosultság kell hozzá,
-	2. Joomla login szükséges hozzá, (automatikusan létrejön, de admin letilhatja),
-	3. Joomla beépített CSR védelem aktív,
-	4. Joomla bfoorce védelem aktív,
+
+1. ADA login, területi tanusitvány, és joomla login jogosultság kell hozzá,
+2. Joomla login szükséges hozzá, (első ADA -s bejelentkezésnél automatikusan automatikusan létrejön, de ezután az admin letilhatja),
+3. A program biztositja, hogy csak egyszer lehet szavazni,
+4. A szavazás lezárása után a progam nem emged tovább szavazni, és biztos ami biztos alapon az admin az appache MYSQL usertől elveheti a szavazat tábla írási, modositási jogát
 
 Szavazat törlése
-  1. A programban nincs ilyen funkció,
-	2. mysql trigger megakadályozza.
+
+1. A programban nincs ilyen funkció,
+2. mysql trigger megakadályozza.
+
 Szavazat modosítása
-	1. A programban nincs ilyen funkció,
-  2. mysql trigger megakályozza
+
+1. A programban nincs ilyen funkció,
+2. mysql trigger megakályozza
+
+

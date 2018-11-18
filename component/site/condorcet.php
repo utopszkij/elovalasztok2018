@@ -4,54 +4,78 @@
   Schulze method implementation based on http://en.wikipedia.org/wiki/Schulze_method
   The test cases are from http://wiki.electorama.com/wiki/Schulze_method
   GNU GPL v3 or later
-  (c) Árpád Magosányi 2013
-
-  tábla és mező nevek módositása az elovalsztok2018 adatbázishoz 2016.09.18. Fogler Tibor
-
-
-  FT 2015.02.13  az 123 / 321 szavazatokat a condorcet - schulze módszer döntetlenre hozza
-  ezért az eljárás ki lett bővitve az "elfogadhatóság" kezelésével.
-  "elfogadható" egy alternativa" ha a szavazó a lehetséges poziciók első 2/3 -ba helyezte el.
-  Condorcet döntetlen esetén az az alternativa kerül előre emelyiket többen tartottak
-  "elfogadható"-nak.
+  (c) Árpád Magosányi 2013,  Fogler Tibor 2018
 */
+
 defined('_JEXEC') or die;
+
 /**
 * A Schulze method implementation
 */
 class Condorcet {
-	public $szavazatTable = '#__szavazatok'; // assurance szürésnél nem a táblát hanem ennek egy szükitett view-jét kell használni.
-    private $poll = null;  // szavazas_id
-    private $candidates = array(); // key: jelolt.id, value:jelölt neve    
-    private $condorcetGyoztes = array();  // condorcet gyöztes
-    private $dMatrix = null;
-    private $pMatrix = null;
-    public $vote_count = 0;
-    private $accpted = array();  // key: jelolt.id, value:jelölt neve    
-	private $inFirst = array();  // key: jelolt.id, value:jelölt neve    
-    private $db = null; // database kezelő objektum
-    private $shortlist = null;
+    protected $poll = null;  // poll id
+    protected $candidates = array(); // key: candidate.id, value:candidate.name    
+    protected $condorcetWinner = array();  // key: candidate.id, value: true|false
+    protected $dMatrix = null;
+    protected $pMatrix = null;
+    public  $vote_count = 0;
+	protected $inFirst = array();   // key: candidate.id, value:number    
+    protected $shortlist = array(); // value: candidate.id
 
     /**
-	* @param JDatabase
-	* @param integer Témakör ID
 	* @param integer Szavazás ID
-	* @param string SQL nyelven megirt filter
-	* @param integer fordulo
 	*/
     function __construct($szavazas_id=0) {
-          $this->db = JFactory::getDBO();
           $this->poll = $szavazas_id;
     }
 
+    // ======================================
+    // abstract metods
+    // ======================================
+
+     /**
+      * database --> $this->candidates
+      * @output $this->candidates 
+      */
+      protected function getCandidates() {
+          return $this->candidates;
+      }
+
       /**
-      * Teljes feldolgozás, és eredmény html tábla generálás
-      *
+      * database --> $this->dmatrix
+      * @return $dMatrix   dMatrix[i,j]  The 'i' candidate will prematurely precede the "j" candidate
+      * where "i" and "j" candidate.id
+      */
+      protected function loadDiffMatrix() {
+          return $this->dMatrix;
+      }
+
+      /**
+      * database --> $this->inFirst
+      * @return array 
+      */    
+      protected function loadInFirst() {
+        return $this->inFirst;
+      }  
+
+	  /**
+      * database --> $this->vote_count
+      * @return integer
+      */  
+      protected function loadVoteCount() {  
+        return $this->vote_count;
+      }  
+      
+  
+      // ==================================
+      // standart methods
+      // ==================================  
+
+      /**
+      * Full processs
       */
       public function report() {
       	$result = '';
-        
-        // condorcet feldolgozás
         $this->getCandidates();
         $this->loadVoteCount();
         $this->loadInFirst();
@@ -59,8 +83,7 @@ class Condorcet {
         $this->floydWarshall();
         $this->shortlist = $this->findWinner();
 
-        // eredmény html létrehozása
-        $result = '<div class="condorcetResult">'."\n";
+        $result .= '<div class="condorcetResult">'."\n";
 		$result .= '<div class="condorcetWiner">'.$this->showResult($this->shortlist).'</div>'."\n";
         $result .= '<div class="condorcetDetails" id="eredmenyInfo" style="display:none">'."\n";
         $result .= '<div class="dMatrix"><h3>dMatrix</h3>'.$this->printMatrix($this->dMatrix).'</div>'."\n";
@@ -68,33 +91,14 @@ class Condorcet {
         $result .= '</div></div>'."\n";
         return $result;
       }
-
+ 
       /**
-      * Jelölt lista beolvasása az adatbázisból
-      * @output $this->candidates
-      */
-      private function getCandidates() {
-          $candidates_sql = "select title AS megnevezes,id
-		      from #__content
-		      where  catid=".$this->poll.' and state=1';
-          $db = $this->db;
-          $db->setQuery($candidates_sql);
-          $this->candidates=array();
-		      $this->condorcetGyoztes = array();
-          foreach($db->loadObjectList() as $row) {
-              $this->candidates[$row->id] = $row->megnevezes;
-          }
-          return $this->candidates;
-      }
-
-      /**
-      * a paraméterben kapott mátrix kiirása html kodként
-      * a kiirás sorrendjét a $this->candidates sorrendje vezérli
-      * beállítja a $this->condorcetGyoztes[$i] értékét is
+      * matrix --> html short by $this->candidates 
+      * and set $this->condorcetWinner[$i]
       * @param matrix
-      * @return string html kód
+      * @return string 
       */
-      private function printMatrix($matrix) {
+      protected function printMatrix($matrix) {
           $result= '
           <table border="1" cellpadding="4" class="pollResult" width="100%">
           <tr><th>&nbsp;</th><th>&nbsp;</th>
@@ -117,7 +121,7 @@ class Condorcet {
                           $class = 'green';
                        else if ($matrix[$id1][$id2] < $matrix[$id2][$id1]) {
                           $class = 'red';
-						  $this->condorcetGyoztes[$id1] = false;
+						  $this->condorcetWinner[$id1] = false;
                        } else
                           $class = 'white';
                        $result .= '<td align="center" class="'.$class.'">'.$matrix[$id1][$id2].'</td>';
@@ -135,12 +139,12 @@ class Condorcet {
       }
 
       /**
-      * a feldolgozási Shulze method
+      * Shulze method
       * $this->dMatrix -> $this->pMatrix
       * @return $this->pMatrix
       * use $this->candidates, $this->dMatrix
       */
-      private function floydWarshall() {
+      protected function floydWarshall() {
           $this->pMatrix = array();
           foreach($this->candidates as $i => $name1) {
               $this->pMatrix[$i] = array();
@@ -154,15 +158,6 @@ class Condorcet {
                   }
               }
           }
-
-          /*
-            Minden "i","j" párhoz a lehetséges "j" előzi "i"-t, "i" előzi "k"-t
-            lehetséges hármas sorrendek közül
-            kiválasztja a legnagyobb támogatottságut ezt irja be a [j][k] -ba
-
-            "j" előzi "i"-t, "i" előzi "k" -t lehetséges hármasok közül
-            a leginkább támogatott kerül [j][k] -ba
-          */
           foreach($this->candidates as $i => $name1) {
               foreach($this->candidates as $j => $name2) {
                   if($i != $j) {
@@ -176,95 +171,27 @@ class Condorcet {
           }
       }
 
-    /**
-    * A feldolgozási eljárás első lépése
-    * $this->dmatrix képzése az adatbázisból
-    * @return $dMatrix   dMatrix[i,j]  'i' jelölt ennyiszer elözi "j" jelöltet
-    */
-    private function loadDiffMatrix() {
-          $diff_sql = "select a.alternativa_id as id1, b.alternativa_id as id2, count(a.id) as d
-                       from ".$this->szavazatTable." a,
-                            ".$this->szavazatTable." b
-                       where  a.szavazas_id=".$this->poll." and
-                             b.szavazas_id=a.szavazas_id and
-                             a.szavazo_id=b.szavazo_id and
-                             a.pozicio < b.pozicio 
-                       group by a.alternativa_id, b.alternativa_id";
-          $this->db->setQuery($diff_sql);
-          $this->dMatrix=array();
-		  $rows = $this->db->loadObjectList();
-          foreach($rows as $row ) {
-              $id1 = $row->id1;
-              $id2 = $row->id2;
-              $d = $row->d;
-              if(!array_key_exists($id1,$this->dMatrix)) {
-                  $this->dMatrix[$id1] = array();
-              }
-              $this->dMatrix[$id1][$id2] = $d;
-          }
-          foreach($this->candidates as $id1 => $name1) {
-              if(!array_key_exists($id1,$this->dMatrix)) {
-                  $this->dMatrix[$id1] = array();
-              }
-              foreach($this->candidates as $id2 => $name2) {
-                  if(!array_key_exists($id2,$this->dMatrix[$id1])) {
-                      $this->dMatrix[$id1][$id2] = 0;
-                  }
-              }
-          }
-          return $this->dMatrix;
-      }
-
-      /**
-      * kigyüjti az adatbázisból, hogy az egyes jelölteket hányan sorolták első helyre
-      * @return array //key: jelölt ID, value: true|false
-      */    
-      private function loadInFirst() {
-        foreach($this->candidates as $id1 => $name1) {
-            $this->inFirst[$id1] = 0;        
-        }
-        $this->db->setQuery('select a.alternativa_id, count(a.szavazo_id) cc
-        from #__szavazatok a
-        where a.szavazas_id = '.$this->db->quote($this->poll).' and a.pozicio = 1 
-        group by a.alternativa_id
-        ');
-        $res = $this->db->loadObjectList();
-        foreach ($res as $row) {
-            $this->inFirst[$row->alternativa_id] = $row->cc;
-        }
-        return $this->inFirst;
-      }  
-
-	  /**
-      * szavazat szám lekérdezése
-      * @return integer
-      */  
-      private function loadVoteCount() {  
-   	    $this->db->setQuery('select count(DISTINCT a.szavazo_id) cc
- 		from #__szavazatok a
-		left outer join #__content c2 on c2.id = a.alternativa_id
-    	where c2.state = 1 and a.szavazas_id = '.$this->db->quote($this->poll));		
-		$res = $this->db->loadObject();
-   	    $this->vote_count = $res->cc;
-        return $this->vote_count;
-      }  
-
-      // rendezéshez compare rutin
-      private function beatsP($id1,$id2) {
+      // support function for sort
+      protected function beatsP($id1,$id2) {
           $result = $this->pMatrix[$id2][$id1] - $this->pMatrix[$id1][$id2];
           return $result;
       }
 
 	  /**
-	  *@param array a candidates.id -ket tartalmazza az eredménynek megfelelő sorrendben
-      * @return string HTML string
+      * create condorcet result html  
+	  *@param array value: candidate.id
+      *@return string HTML string
 	  */ 
-      private function showResult($shortlist) {
-          $db = JFactory::getDBO();
-          $szavazas_id = $this->poll;
-			 $result = '';
-
-          // eredmény értékek számolása
+      protected function showResult($shortlist) {
+		  if ($this->vote_count == 0) {
+				$result = '<p class="nincsSzavazat">Nincs egyetlen szavazat sem.</p>';
+				return $result;
+		  }
+		  $result = '';
+          if (count($shortlist) == 0) {
+                return '';
+          }  
+          // compute result values
           $values = array();
           $i = 0;
           $id1 = 0;
@@ -279,41 +206,34 @@ class Condorcet {
             $lastValue = $values[$shortlist[$i]];
           }
 
-          // melyik a"többit ellenzem" lehetőség?
-          $vonal = 0;  
+          // find "notAccepted" candidate
+          $notAccept = 0;  
           foreach ($this->candidates as $i => $name) {
-            if (substr($name,0,2) == '--') $vonal = $i;
+            if (substr($name,0,2) == '--') $notAccept = $i;
           }  
-          // az egyes jelölteket hányan sorolták a "vonal" fölé?
+          // compute accepted numbers
+          $accepted = array();  
           foreach ($this->candidates as $i => $name) {
-            $vonalFelett[$i] = $this->dMatrix[$i][$vonal];
+            $accepted[$i] = $this->dMatrix[$i][$notAccept];
           }            
 
-		  //+ 2017.02.24, 2017.12.01  most a végeredménynek megfelelően át kell
-		  //  rendezni a $this->candidates és a $vonalFelett táblázatokat
-		  //  sorrend: shortlist[0], shortlist[1]... ezek az értékek a candidates
-		  //  tábla indexei
+		  //  resort $this->candidates and $this->vonalFelett by $shortlist
 		  $w = array();
 		  $w1 = array();
 		  foreach ($shortlist as $i) {
 				$w[$i] = $this->candidates[$i];
-				$w1[$i] = $vonalFelett[$i];
+				$w1[$i] = $accepted[$i];
 		  }
 		  $this->candidates = $w;
-			$vonalFelett = $w1;
+		  $accepted = $w1;
 
-		  // az első helyzett condorcet gyöztes?
-		  $i = $this->shortlist[0]; // első helyezett canidates->id
-		  $this->condorcetGyoztes1 = true;
+		  // check first is condorcet winner?
+		  $i = $this->shortlist[0]; 
+		  $this->condorcetWinner1 = true;
 		  foreach  ($this->candidates as $j => $name) {
-				if ($this->dMatrix[$i][$j] < $this->dMatrix[$j][$i]) $this->condorcetGyoztes1 = false;
+				if ($this->dMatrix[$i][$j] < $this->dMatrix[$j][$i]) $this->condorcetWinner1 = false;
 		  }
-
-		  if ($this->vote_count == 0) {
-				// echo '<p>Nincs egyetlen szavazat sem.</p>';
-				return;
-		  }
-
+            
           $result .=  '<table class="pollResult" border="1" width="100%">
                      <tr><th>Condorcet<br />helyezés</th><th>Név</th><th>Első helyen szerepel</th><th>Elfogadható</th></tr>'."\n";
 		  $helyezes = 0;
@@ -325,13 +245,12 @@ class Condorcet {
 							  ($this->inFirst[$i] < 0)
 							 ) $this->inFirst[$i] = 0;
 					 }	 
-					 // condorcet gyöztes?
 			         if ($j == 0)
-				           $helyezes = 1;
+				           $pozition = 1;
 			         else if (($values[$i] < $values[$shortlist[$j-1]]) && (substr($this->candidates[$i],0,2) != '--'))
-				           $helyezes++;
+				           $pozition++;
 			         $info = '';
-			         if (($this->condorcetGyoztes1) & ($j==0)) {
+			         if (($this->condorcetWinner1) & ($j==0)) {
 				          $info .= '&nbsp;-&nbsp;<strong style="color:orange">Condorcet gyöztes</strong>';
 			         }
 			         if ($j > 0) {
@@ -342,27 +261,27 @@ class Condorcet {
 						$trClass = 'eredmenySorEllenzett';
                         $result .= '<tr class="'.$trClass.'"><td colspan="4"><var class="noAccept">'.$this->candidates[$i].'</var></td></tr>';
 					 } else {
-                        $result .= '<tr class="'.$trClass.'"><td class="pozicio">'.$helyezes.'</td>
+                        $result .= '<tr class="'.$trClass.'"><td class="pozicio">'.$pozition.'</td>
 			            <td class="nev">
 						     '.$this->candidates[$i].' '.$info.'
 					    </td>
 					    <td width="100">&nbsp;'.$this->inFirst[$i].'&nbsp;&nbsp;&nbsp;'.Round($this->inFirst[$i] * 100 / $this->vote_count).'%</td>
-					    <td width="100">&nbsp;'.$vonalFelett[$i].'&nbsp;&nbsp;&nbsp;'.Round($vonalFelett[$i] * 100 / $this->vote_count).'%</td>	
+					    <td width="100">&nbsp;'.$accepted[$i].'&nbsp;&nbsp;&nbsp;'.Round($accepted[$i] * 100 / $this->vote_count).'%</td>	
 					    </tr>
 					    ';
                     }
           }
           $result .= "</table>\n";
     	  $result .= '<p class="szavazatokSzama">Szavazatok száma:<var>'.$this->vote_count.'</var></p>
-    		  	';
-      return $result;
+          ';  
+          return $result;
       }
 
       /**
-      * condorces sorrend képzése
-      * @return array // jelölt ID -k
+      * calculate condorcet sort
+      * @return array // condorcet ID -k
       */    
-      private function findWinner() {
+      protected function findWinner() {
           $shortlist = array_keys($this->candidates);
           $newlist = usort($shortlist,array('Condorcet','beatsP'));
           return $shortlist;
