@@ -1,9 +1,6 @@
 # elovalasztok2018
 Ez a 2018 -as főpolgármester előválasztásra készülő Joomla 3 alapú szoftver
-Telepitett teszt változat: https://elovalasztok.edemokraciagep.org
 
-
-A projekt jelenleg nem többnyelvű, a magyar szövegkonstansok fixen be vannak írva a kódokba
 
 Telepités:
 - Normál Joomla 3 telepités
@@ -26,8 +23,22 @@ eredmény lekérés:
 
 component/elovalasztok?task=eredmeny
 
+
+A müködés áttekintése
+---------------------
+
+- Egy joomla kategoria képviseli a szavazást,
+- Az ebben lévő cikkek képviselik az egyes jelölteket,
+- A szavazáshoz ADA login és "budapest" tanusitás szükséges,
+- A szavazat beküldése után a képernyőn megjelenik a szavazat gépileg képzett egyedi azonsító száma,
+- A program egy ADA logintól csak egy szavazatot fogad el,
+- Az eredmény lekérdezése funkcióban lekérhető a konkrét szavazatok listája is. Ezen a listán a szavazatok egyedi azonosítói is szerepelnek, a szavazó ellenőrizheti, hogy az Ő szavazata szerepel-e az adatbázisban? (Ezekből az azonoítókból nem lehet kideriteni a szavazó személyét),
+- Az adatbázisban tárolt szavazatok CSV formában is lementhetőek, Ennek segitségével külső, független személyek, szervezetek is ellenörizhetik a condorcet kiértékelés eredményét. Illetve a szavazás folyamán idöszakonkénti mentések és a lezárás utáni mentés összevetésével ellenörizhető, hogy menet közben nem történ módosítás a korábban leadott szavazatokban, történt-e iugró irreális mennyiségű szavazat leadás egy-egy időszakban.
+ 
+
 UNIT test
 ---------
+
 
 ```
 $ cd test
@@ -46,7 +57,7 @@ Biztonsági megjegyzések
 6. A joomla jogosultsági rendszert gondosan konfigurálni kell (csak a joomla adminok vihetnek fel, modosithatnak, törölhetnek cikk-kategoriákat és cikkeket, a szavazás megindulása után még ők sem).
 7. A joomla által használt mysql jelszót időszakonként módosítani kell.
 8. a mysql szerver ne legyen külső URL -ről elérhető!
-9. A joomla_root/administrator/index.php üzemszerüen ne legyen az appache által elérhető (olvasásra sem)!
+9. A joomla_root/administrator/index.php üzemszerüen ne legyen az appache által elérhető (olvasásra sem!)
 
 
 Biztonsági megoldások a programban.
@@ -61,10 +72,10 @@ Biztonsági megoldások a programban.
 
 Szavazat beküldése
 
-1. ADA login, területi tanusitvány, és joomla login jogosultság kell hozzá,
-2. Joomla login szükséges hozzá, (első ADA -s bejelentkezésnél automatikusan automatikusan létrejön, de ezután az admin letilhatja),
+1. ADA login, "budapest" területi tanusitvány, és joomla login  kell hozzá,
+2. Joomla login szükséges hozzá, (első ADA -ból érkező bejelentkezésnél automatikusan létrejön, de ezután az admin letilhatja),
 3. A program biztositja, hogy csak egyszer lehet szavazni,
-4. A szavazás lezárása után a progam nem emged tovább szavazni, és biztos ami biztos alapon az admin az appache MYSQL usertől elveheti a szavazat tábla írási, modositási jogát
+4. A szavazás lezárása után a progam nem enged tovább szavazni, További biztonság növelésként az admin az appache MYSQL usertől elveheti a szavazat tábla írási, modositási jogot
 
 Szavazat törlése
 
