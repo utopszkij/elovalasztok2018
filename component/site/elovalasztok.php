@@ -42,7 +42,7 @@
 			if ($evConfig->testUzemmod) {
 				echo '<div class="testInfo"><strong>Teszt üzemód. Bárki szavazhat, többször is lehet szavazni.</strong></div>';			
 		        $item = $model->getItem($oevk);	
-       		    include_once dirname(__FILE__).'/views/szavazoform.php';
+       		    include dirname(__FILE__).'/views/szavazoform.php';
 				return;
 			}
 
@@ -60,7 +60,7 @@
 					if (count($item->alternativak) <= 0) {
 							echo '<div class="nincsJelolt infoMsg">Nincs jelölt!</div>';
 					} else {
-						  include_once dirname(__FILE__).'/views/szavazoform.php';
+						  include dirname(__FILE__).'/views/szavazoform.php';
 					}  
 				  } else {
 					echo '<div class="nemSzavazhat infoMsg">'.$msg.'</div>';
@@ -107,7 +107,7 @@
 				// ha van akkor a cahcelt reportot jelenitjuük meg
 				$report = $cache->report; 
 			}
-		    include_once dirname(__FILE__).'/views/eredmeny.php';
+		    include dirname(__FILE__).'/views/eredmeny.php';
 		} // eredmeny function
 
 		/**
@@ -139,7 +139,7 @@
                         $msg .=' Az eredmény menüpontban a "szavazatok" linkre kattintva láthatja a letárolt szavazatokat.</small>';
 						$msgClass = 'infoMsg';
 					} else {
-						$msg = 'Hiba a szavazat tárolása közben. A szavazat nem lett tárolva';
+						$msg = 'Hiba a szavazat tárolása közben. A szavazat nem lett tárolva '.$model->getErrorMsg();
 						$msgClass = 'errorMsg';
 					}	
 				} else {

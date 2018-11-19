@@ -26,15 +26,14 @@ defined('_JEXEC') or die;
 
 function szavazasraJogosult($user, $szavazas_id) {
 	global $evConfig;
-    if (($evConfig->canAssurance != '') && (!$evConfig->testUzemmod)) {
-       $db = JFactory::getDBO();
-       $db->setQuery('select count(id) cc
-       from #__users 
-       where id='.$db->quote($user->id).' and params like "%'.$evConfig->canAssurance.'%"' );   
-       return ($db->loadObject()->cc > 0);
+    if ($evConfig->testUzemmod) {
+        $result = true;
+    } else if (($evConfig->canAssurance != '') && (!$evConfig->testUzemmod)) {
+        $result = (strpos($user->params,$evConfig->canAssurance) > 0);
     } else {
-       return true;
+        $result = true;
     }
+    return $result;
 }
 
 // hány szavazásra jogosult van az adott szavazásban?

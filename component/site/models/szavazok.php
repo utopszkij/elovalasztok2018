@@ -219,11 +219,17 @@ class szavazokModel {
         $szavazoId = (rand(100,999).$user->id)*2;
 		$msg = '';
 
+        if ($evConfig->szavazas == false) {
+			  $this->errorMsg .= 'Most nem lehet szavazni.';
+			  return 0;	
+        }
+
 		// jogosultság ellenörzés
 		if (teheti($szavazas_id, $user, 'szavazas', $msg) == false) {
 			  $this->errorMsg .= $msg;
 			  return 0;	
 		}
+
 
 		$db = JFactory::getDBO();
 		$db->setQuery('START TRANSACTION');

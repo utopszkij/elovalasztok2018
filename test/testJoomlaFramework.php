@@ -10,6 +10,18 @@ define('JPATH_ROOT', '');
 define('JPATH_ADMINISTRATOR', '');
 define('_UNITTEST', '1');
 
+global $_SERVER;
+global $testData;
+global $componentName;
+global $viewName;
+global $testApplication;
+global $testDocument;
+global $testController;
+global $testModel;
+global $testView;
+global $testDatabase;
+global $testUser;
+
 class testDataClass {
 
 	/**
@@ -28,6 +40,7 @@ class testDataClass {
 	protected $dbErrorNum;
 	protected $dbErrorMsg;
 	protected $dbIndex;
+    protected $db; // JDatabase;
 
     public $gotArgs = array();
 	public $mock_data = array();
@@ -38,7 +51,7 @@ class testDataClass {
 	protected $remoteIndex;
 		
 	function __construct() {
-		global $testUser;
+		global $testUser, $testDatabase;
 		$testUser = new JUser();
 		$this->clear();
 	}
@@ -73,7 +86,7 @@ class testDataClass {
 		if ($this->dbIndex < count($this->dbResults))
 		   $result = $this->dbResults[$this->dbIndex];
 	    else
-		   $result = '';	
+		   $result = '_none_';	
 		$this->dbIndex = $this->dbIndex + 1;
 		return $result;
 	}
@@ -94,18 +107,6 @@ class testDataClass {
 	}
 }
 
-global $_SERVER;
-global $testData;
-global $componentName;
-global $viewName;
-
-global $testApplication;
-global $testDocument;
-global $testController;
-global $testModel;
-global $testView;
-global $testDatabase;
-global $testUser;
 
 /**
 * set component name for test (without 'com_')
@@ -135,7 +136,9 @@ class JFactory {
 	}
 	public static  function getDBO() {
 		global $testDatabase;
-		if (!isset($testDatabase)) $testDatabase = new JDatabase();
+		if (!isset($testDatabase)) {
+            $testDatabase = new JDatabase();
+        }
 		return $testDatabase;
 	}
 	public static function getSession() {
@@ -145,6 +148,7 @@ class JFactory {
 		return JSON_decode('{"secret":"abcdefg"}');
 	}
 }
+
 class JApplication {
 	public $input;
 	    function __construct() {
@@ -170,11 +174,13 @@ class JApplication {
 		$testUser->name = '';
 	}
 }
+
 class JDocument {
 	public function getType() {
 		return 'html';
 	}
 }
+
 class JInput {
 	public function get($name, $default='') {
 		global $testData;
@@ -185,6 +191,7 @@ class JInput {
 		$testData->setInput($name,$value);
 	}
 }
+
 class JRequest {
 	public  static function getVar($name, $default='', $dataType='') {
 		global $testData;
@@ -201,6 +208,7 @@ class JRequest {
 		$testData->setInput($name,$value);
 	}
 }
+
 class JURI {
 	public  static function base() {
 		return 'http://localhost/';
@@ -209,6 +217,7 @@ class JURI {
 		return 'http://localhost/';
 	}
 }
+
 class JText {
 	public  static function _($token) {
 		return $token;
@@ -219,35 +228,117 @@ class JHTML {
 		return '<span class="html.token">'.$token.'</span>';
 	}
 }
+
 class JDatabase {
+    protected $mysqli;
+    protected $sql;
+    protected $errorMsg;
+    protected $errorNum;
+    function __construct() {
+        $this->mysqli = new mysqli("localhost", TESTDBUSER, TESTDBPSW, TESTDB);
+    }
 	public function setQuery($sql) {
-		
+		$this->sql = str_replace('#__',TESTDBPRE,$sql);
 	}
 	public function getQuery() {
-		return new JDatabaseQuery();
+		return $this->sql;
 	}
 	public function loadObjectList() {
 		global $testData;
-		return $testData->getDbResult();	
+        $this->errorMsg = '';
+        $this->errorNum = 0;
+		$result = $testData->getDbResult();	
+        if ($result == '_none_') {
+            $result = [];
+            try {
+                $cursor = $this->mysqli->query($this->sql);
+            } catch (Exception $e) {
+                try {
+                    $this->mysqli = new mysqli("localhost", TESTDBUSER, TESTDBPSW, TESTDB);
+                    try {
+                        $cursor = $this->mysqli->query($this->sql);
+                    } catch(Exception $e) {
+                        $cursor = false;
+                        $this->errorMsg = 'error_in_query '.$e->getMessage().' sql='.$this->sql;
+                        $this->errorNum = 1000;
+                    }
+                } catch(Exception $e) {
+                        $cursor = false;
+                        $this->errorMsg = 'error_in_reconnect '.$e->getMessage();
+                        $this->errorNum = 1000;
+                }
+            }
+            if ($cursor) {
+                $w = $cursor->fetch_object();
+                while ($w != null) {
+                    $i = count($result);
+                    $result[$i] = $w;
+                    $w = $cursor->fetch_object();
+                }
+                $cursor->close();
+                $this->errorMsg = 'error_in_fetch '.$this->mysqli->error;
+                //$this->errorNum = $this->mysqli->errno;
+            }
+        }
+        return $result;
 	}
 	public function loadObject() {
-		return $this->loadObjectList();
+		global $testData;
+		$result = $testData->getDbResult();	
+        if ($result == '_none_') {
+            $res = $this->loadObjectList();
+            if (count($res) > 0) {
+                $result = $res[0];
+            } else {
+                $result = false;
+            }
+        }
+        return $result;
 	}
 	public function query() {
-		return true;
+		global $testData;
+		$result = $testData->getDbResult();	
+        if ($result == '_none_') {
+            if (!isset($this->sql)) $this->sql = '';
+            try {
+                $result = $this->mysqli->query($this->sql);
+                $this->errorMsg = 'error_in_query '.$this->msqli->error.' sql='.$this->sql;
+                $this->errorNum = $this->mysqli->errno;
+            } catch (Exception $e) {
+                try {
+                    $this->mysqli = new mysqli("localhost", TESTDBUSER, TESTDBPSW, TESTDB);
+                    try {
+                        $result = $this->mysqli->query($this->sql);
+                        $this->errorMsg = 'error_in_query '.$this->msqli->error.' sql='.$this->sql;
+                        $this->errorNum = $this->mysqli->errno;
+                    } catch(Exception $e) {
+                        $result = false;
+                        $this->errorMsg = 'error_in_query '.$e->getMessage().' sql='.$this->sql;
+                        $this->errorNum = 1000;
+                    }
+                } catch(Exception $e) {
+                    $return = false;
+                    $this->errorMsg = 'error_in_reconnect '.$e->getMessage().' sql='.$this->sql;
+                    $this->errorNum = 1000;
+                }
+
+            }
+        }
+        return $result;
 	}
 	public function getErrorNum() {
-		return 0;
+		return $this->errorNum;
 	}
 	public function getErrorMsg() {
-		return '';
+		return $this->errorMsg;
 	}
 	public function quote($str) {
-		if (is_numeric($str))
-			return $str;
-		else
-			return '"'.$str.'"';
+        return '"'.$str.'"';
 	}
+    public function exec($sqlStr) {
+        $this->setQuery($sqlStr);
+        $this->query();
+    }
 }
 
 class JDatabaseQuery {
@@ -367,10 +458,8 @@ class JControllerLegacy {
 	}
 }
 class JModelLegacy {
-	public $_db;
 	protected $errorMsg;
 	function __construct($config='') {
-		$this->_db = new JDatabase();
 	}
 	public function set($name,$value) {
 		$this->$name = $value;

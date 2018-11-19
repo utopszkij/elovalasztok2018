@@ -261,13 +261,11 @@ class Condorcet {
 						$trClass = 'eredmenySorEllenzett';
                         $result .= '<tr class="'.$trClass.'"><td colspan="4"><var class="noAccept">'.$this->candidates[$i].'</var></td></tr>';
 					 } else {
-                        $result .= '<tr class="'.$trClass.'"><td class="pozicio">'.$pozition.'</td>
-			            <td class="nev">
-						     '.$this->candidates[$i].' '.$info.'
-					    </td>
-					    <td width="100">&nbsp;'.$this->inFirst[$i].'&nbsp;&nbsp;&nbsp;'.Round($this->inFirst[$i] * 100 / $this->vote_count).'%</td>
-					    <td width="100">&nbsp;'.$accepted[$i].'&nbsp;&nbsp;&nbsp;'.Round($accepted[$i] * 100 / $this->vote_count).'%</td>	
-					    </tr>
+                        $result .= '<tr class="'.$trClass.'">'.
+                        '<td class="pozicio">'.$pozition.'</td>'.
+			            '<td class="nev">'.$this->candidates[$i].' '.$info.'</td>'.
+					    '<td width="100">&nbsp;'.$this->inFirst[$i].'&nbsp;&nbsp;&nbsp;'.Round($this->inFirst[$i] * 100 / $this->vote_count).'%</td>'.
+					    '<td width="100">&nbsp;'.$accepted[$i].'&nbsp;&nbsp;&nbsp;'.Round($accepted[$i] * 100 / $this->vote_count).'%</td></tr>	
 					    ';
                     }
           }
