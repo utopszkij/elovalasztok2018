@@ -56,8 +56,8 @@
 					echo '<div class="marSzavazaott infoMsg">Ön már szavazott!</div>';
 			  } else {
 				  if (teheti($pollId, $user, 'szavazas', $msg)) {
-				    $item = $model->getItem($pollId);	
-					if (count($item->alternativak) <= 0) {
+				   $item = $model->getItem($pollId);	
+					if (count($item->pollOptions) <= 0) {
 							echo '<div class="nincsJelolt infoMsg">Nincs jelölt!</div>';
 					} else {
 						  include dirname(__FILE__).'/views/szavazoform.php';
@@ -81,7 +81,7 @@
 				echo '<div class="testInfo"><strong>Teszt üzemód. Bárki szavazhat, többször is lehet szavazni.</strong></div>';			
 			}
             $msg = '';
-			if (teheti($pollId, $user, 'eredmeny', $msg) == false) {
+			if (!teheti($pollId, $user, 'eredmeny', $msg)) {
     			echo '<div class="errorMsg">'.$msg.'</div>';
                 return;
 			}
@@ -92,7 +92,7 @@
             $cache = $model->getFromCache($pollId);
 
 			// ha nincs meg a cache rekord akkor hozzuk most létre, üres tartalommal
-			if ($cache == false) {
+			if (!$cache) {
                 $model->initCache($pollId);
 				$cache = new stdClass();
 				$cache->pollid = $pollId;
@@ -102,12 +102,12 @@
 				// ha nincs; most  kell condorcet/Shulze feldolgozás feldolgozás
 				$schulze = new MyCondorcet($pollId);
 				$report = $schulze->report();
-                $model->saveToCache($pollId, $schulze->vote_count, $report);
+            $model->saveToCache($pollId, $schulze->vote_count, $report);
 			} else {  
 				// ha van akkor a cahcelt reportot jelenitjuük meg
 				$report = $cache->report; 
 			}
-		    include dirname(__FILE__).'/views/eredmeny.php';
+		   include dirname(__FILE__).'/views/eredmeny.php';
 		} // eredmeny function
 
 		/**

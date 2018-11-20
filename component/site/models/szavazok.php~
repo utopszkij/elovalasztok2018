@@ -144,7 +144,7 @@ class szavazokModel {
 	/**
 	  * egy adott poll jelöltjeinek beolvasása
 	  * @param integer pollId
-	  * @return {"oevkId":szám, "oevkNev":string, "alternativak":[{"id":szám,"nev":string},....]}
+	  * @return {"pollId":szám, "pollName":string, "pollOptions":[{"id":szám,"name":string},....]}
 	*/  
 	public function getItem($pollId) {
 		$db = JFactory::getDBO();
@@ -156,7 +156,7 @@ class szavazokModel {
 		try {
 		  $res = $db->loadObject(); 
 		} catch (Exception $e) {
-		  ;	
+		  $res = false;	
 		}  
 		if ($res) {
 			$result->pollName = $res->title;
@@ -169,7 +169,7 @@ class szavazokModel {
 			try {
 				$res = $db->loadObjectList();
 			} catch (Exception $e) {
-			  ;	
+			   $res = [];	
 			}  
 			foreach ($res as $res1) {
 				$w = new stdClass();
@@ -198,13 +198,13 @@ class szavazokModel {
         $szavazoId = (rand(100,999).$user->id)*2;
 		$msg = '';
 
-        if ($evConfig->pollDefs[$pollId]->votingEnable == false) {
+        if (!$evConfig->pollDefs[$pollId]->votingEnable) {
 			  $this->errorMsg .= 'Most nem lehet szavazni.';
 			  return 0;	
         }
 
 		// jogosultság ellenörzés
-		if (teheti($pollId, $user, 'szavazas', $msg) == false) {
+		if (!teheti($pollId, $user, 'szavazas', $msg)) {
 			  $this->errorMsg .= $msg;
 			  return 0;	
 		}
@@ -254,15 +254,11 @@ class szavazokModel {
 			}
 		}
 
-		// delete cached report
+		// save report to cache
 		$db->setQuery('UPDATE #__eredmeny 
 		SET report="" 
 		WHERE pollid='.$db->quote($pollId));
-		try {
-		  $db->query();
-		} catch (Exception $e) {
-		  ;
-		}	
+	   $db->query();
 
 		if ($szavazoId > 0) 
 			$db->setQuery('COMMIT');

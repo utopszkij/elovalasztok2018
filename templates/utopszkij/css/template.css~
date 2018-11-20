@@ -1,4 +1,4 @@
-body {font-family: 'Grant Hotel, Roman, Times'}
+body {font-family: 'Grant Hotel, Roman, Times', serif}
 
 /* common */
 #main {margin:0px; padding:0px; text-align:left}
@@ -24,6 +24,7 @@ body {font-family: 'Grant Hotel, Roman, Times'}
 #system-message ul {list-style:none}
 .infoMsg {background-color:#b3e2b8; text-align:center; padding:20px; margin:5px 30px 5px 20px}
 .errorMsg, .notLogin {background-color:#f4b2ab; text-align:center; padding:20px; margin:5px 30px 5px 20px}
+.testInfo {color:red; font-weight:bold; margin:5px; text-align:right}
 
 /* topmenu */
 #topMenuContainer {background-color:#d0d0d0; color:black; padding:5px; 
@@ -50,8 +51,7 @@ body {font-family: 'Grant Hotel, Roman, Times'}
 .nav-child > li:hover {background-color:#b0b0b0}
 
 #userInfo {display:inline-block; float:right;  
-	width:40px; height: 35x; margin:0px 10px 0px 0px; padding:0px}
-#userInfo img {height: 35px;}
+	width:auto; height: 35px; margin:10px 10px 0px 0px; padding:0px}
 
 /** home page */
 .carousel-caption {bottom:40%}
@@ -70,9 +70,12 @@ body {font-family: 'Grant Hotel, Roman, Times'}
 #recent-works .recent-work-wrap:hover img {display:none;}
 #recent-works .recent-work-wrap:hover .overlay {display:block;}
 
-.tema-wrap {padding:10px;}
+.tema-wrap {padding:10px; height:200px; border-radius:5px; text-align:center}
+.tema-wrap h2 {font-size:14pt; margin-top:15px}
+.tema-wrap h3 {font-size:12pt}
 .tema-wrap i {font-size:32px; padding:6px;
 	background-color:#00808B; color:white; width: 46px; height:46px; border-radius:23px;}
+.tema-wrap i.disabled {background-color:#d0d0d0}
 .tema-wrap i.fa-child {padding: 6px 6px 6px 12px}	
 .tema-wrap i.fa-calendar {padding: 6px 6px 6px 8px}	
 .tema-wrap i.fa-folder-open-o {padding: 6px 6px 6px 8px}	
@@ -130,13 +133,13 @@ ul.inline>li.tag-21 {background-image:url('../images/logo/ep_logo.png'); backgro
 #preftable th {background-color:#B6C6C5; color:black; padding-left:5px; border-color:black;}
 #preftable td {background-color:white; color:black; padding-left:5px; border-color:black;}
 #preftable select {background-color:white; color:black; }
-#voksHelp {color:white;}
+#voksHelp {color:black}
 #preftable tr.marked td {background-color:cyan}
 
 /* eredmeny */
 .pollResult {width:100%}
 .pollResult th {background-color:#B6C6C5; padding:2px 5px 2px 5px;}
-.pollResult .pozicio {color:white; border-color:black;}
+.pollResult .pozicio {border-color:black;}
 .pollResult .pozicio {text-align:center; width:50px;}
 .pollResult .nev {padding:2px 2px 2px 15px}
 .pollResult .info {text-align:center; width:180px;}	
@@ -144,13 +147,15 @@ ul.inline>li.tag-21 {background-image:url('../images/logo/ep_logo.png'); backgro
 .pollResult ul.inline {margin:0px; padding:0px;}
 .pollResult ul.inline li {padding-bottom:0px}
 #eredmenyInfo .right {padding:2px 5px 2px 5px; text-align:center}
-#eredmenyInfo .red {background-color:#E0c0c0; color:black;}
-#eredmenyInfo .green {background-color:#c0e0c0; color:black;}
-#eredmenyInfo .white {background-color:#ffffff; color:black;}
+.pollResult .red {background-color:#E0c0c0; color:black;}
+.pollResult .green {background-color:#c0e0c0; color:black;}
+.pollResult .white {background-color:#ffffff; color:black;}
 .eredmenySor {}
 .eredmenySorEllenzett, 
 .eredmenySorEllenzett .pozicio {background-color:#e84b45; color:white}
 
+/* jelöltek */
+.readmore {border-style:solid; border-width:0px 0px 2px 0px; border-color: black}
 
 /* GDPR question */
 #gdpr {position:fixed; z-index:999; left:0px; bottom:0px; width:auto; height:auto; 

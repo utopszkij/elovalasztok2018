@@ -45,6 +45,10 @@ $ cd test
 $ phpunit .
 ```
 
+Sonar code check
+----------------
+
+https://sonarcloud.io/dashboard?id=utopszkij-github
 
 Biztonsági megjegyzések
 -----------------------

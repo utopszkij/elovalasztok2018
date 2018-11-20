@@ -1,4 +1,4 @@
-body {font-family: 'Grant Hotel, Roman, Times'}
+body {font-family: 'Grant Hotel, Roman, Times', serif}
 
 /* common */
 #main {margin:0px; padding:0px; text-align:left}
@@ -51,7 +51,7 @@ body {font-family: 'Grant Hotel, Roman, Times'}
 .nav-child > li:hover {background-color:#b0b0b0}
 
 #userInfo {display:inline-block; float:right;  
-	width:auto; height: 35x; margin:10px 10px 0px 0px; padding:0px}
+	width:auto; height: 35px; margin:10px 10px 0px 0px; padding:0px}
 
 /** home page */
 .carousel-caption {bottom:40%}
@@ -70,15 +70,15 @@ body {font-family: 'Grant Hotel, Roman, Times'}
 #recent-works .recent-work-wrap:hover img {display:none;}
 #recent-works .recent-work-wrap:hover .overlay {display:block;}
 
-.tema-wrap {padding:10px; height:200px; border-radius:5px;}
+.tema-wrap {padding:10px; height:200px; border-radius:5px; text-align:center}
 .tema-wrap h2 {font-size:14pt; margin-top:15px}
 .tema-wrap h3 {font-size:12pt}
-.tema-wrap i {font-size:32px; padding:6px;
+.tema-wrap em {font-size:32px; padding:6px;
 	background-color:#00808B; color:white; width: 46px; height:46px; border-radius:23px;}
-.tema-wrap i.disabled {background-color:#d0d0d0}
-.tema-wrap i.fa-child {padding: 6px 6px 6px 12px}	
-.tema-wrap i.fa-calendar {padding: 6px 6px 6px 8px}	
-.tema-wrap i.fa-folder-open-o {padding: 6px 6px 6px 8px}	
+.tema-wrap em.disabled {background-color:#d0d0d0}
+.tema-wrap em.fa-child {padding: 6px 6px 6px 12px}	
+.tema-wrap em.fa-calendar {padding: 6px 6px 6px 8px}	
+.tema-wrap em.fa-folder-open-o {padding: 6px 6px 6px 8px}	
 .tema-wrap:hover {background-color:#B3CFD1}
 
 

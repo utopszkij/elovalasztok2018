@@ -27,7 +27,6 @@ var num_at_rank = new Array;
 // j=num_choices then the element is put at the end.
 function move_elem_to(a, i, j) {
     if (i == j) return;
-    //alert("moving " + i + " to " + j);
     var src = a[i];
     if (i < j) {
         // move elems from i+1 to j-1 up one
@@ -49,11 +48,9 @@ function resort_row(i) {
         j++;
     }
     if (i == j || i == j - 1) { // XXX is i==j test needed?
-        //alert("no move needed for " + i);
         return false;
     }
 
-    //alert("moving " + i + " to " + j);
     // fix UI
     if (j == num_7choices) {
         prefsection.appendChild(rows[i]);
@@ -73,7 +70,6 @@ function resort_row(i) {
 // stably sort rows by their rank
 function sort_rows() {
     read_rows();  // into rank and rows globals
-    //alert("sorting the rows of " + preftable);
 	var s = '';
 	var p = 0;
     var permut = new Array;
@@ -186,7 +182,6 @@ function selector(r) {
 
 // return true if it had to be moved
 function set_rank(i, r) {
-    //alert("Setting rank of " + i + " to " + r);
     if (rank[i] == r) return false;
     rank[i] = r;
     selector(rows[i]).selectedIndex = r - 1;
@@ -197,7 +192,7 @@ function set_rank(i, r) {
 function do_make_tie() {
     var min_rank = min_selected_rank();
     if (num_selected < 2) {
-        alert("Not enough choices were selected. "+
+        popupAlert("Not enough choices were selected. "+
               "Shift-click to select two or more choices");
         return;
     }
@@ -212,7 +207,7 @@ function do_make_tie() {
 function do_move_up () {
     var min_rank = min_selected_rank();
     if (num_selected < 1) {
-        alert("No choices were selected. "+
+        popupAlert("No choices were selected. "+
               "Click (or shift-click) to select choices");
         return;
     }
@@ -231,7 +226,6 @@ function do_move_up () {
         // don't have a place to put it. Try shifting
         // others up first.
         var j = new_rank;
-        //alert("trying to shift up");
         while (j >= 1 && num_at_rank[j]) j--;
         if (j >= 1) { // nothing at j: can shift up
             for (var i = 0; i < num_choices; i++) {
@@ -241,7 +235,6 @@ function do_move_up () {
         } else { // must shift down
             new_rank++;
             var j = new_rank;
-            //alert("shifting down");
             while (j <= num_choices && num_at_rank[j]) j++;
                 // note: don't shift choices down to "no opinion"
             if (j <= num_choices) { // nothing at j: can shift down
@@ -252,7 +245,6 @@ function do_move_up () {
             }
         }
     }
-    //alert("updating ranks");
     for (var i = 0; i < num_choices; i++) {
         if (selected[i]) {
             if (set_rank(i, new_rank)) i--;
@@ -268,18 +260,17 @@ function do_move_up () {
 function do_move_down () {
     var max_rank = max_selected_rank();
     if (num_selected < 1) {
-        alert("No choices were selected. "+
+        popupAlert("No choices were selected. "+
               "Click (or shift-click) to select choices");
         return;
     }
     if (max_rank == num_choices + 1) {
-        alert("Use pulldown to change the rank from \"No opinion\"");
+        popupAlert("Use pulldown to change the rank from \"No opinion\"");
         return;
     }
     var new_rank = max_rank + 1;
     if (new_rank == num_choices + 1) {
         new_rank = max_rank;
-        //alert("moving bottom-ranked item down " + new_rank);
     }
     scan_ranks();
     var nr = num_sel_by_rank(max_rank);
@@ -292,7 +283,6 @@ function do_move_down () {
         // don't have a place to put it. Try shifting
         // others down first.
         var j = new_rank;
-        //alert("trying to shift down");
         while (j <= num_choices && num_at_rank[j]) j++;
         if (j <= num_choices) { // nothing at j: can shift down
             // note: won't shift choices down to "no opinion"
@@ -304,11 +294,9 @@ function do_move_down () {
             if (new_rank != max_rank) new_rank--;
             var j = new_rank;
             while (j >= 1 && num_at_rank[j]) j--;
-            //alert("shifting up to " + j);
             if (j >= 1) { // nothing at j: can shift up
                 for (var i = 0; i < num_choices; i++) {
                     if (rank[i] <= new_rank && rank[i] > j) {
-            //alert("moving " + i + " from " + rank[i] + " to " + (rank[i]-1));
                         set_rank(i, rank[i] - 1); // should not change posn
                     }
                 }
@@ -317,7 +305,6 @@ function do_move_down () {
     }
     for (var i = 0; i < num_choices; i++) {
         if (selected[i]) {
-            //alert("now moving " + i + " from " + rank[i] + " to " + new_rank);
             if (set_rank(i, new_rank)) i--;
         } else if (!split && rank[i] == new_rank && new_rank > 1) {
             if (set_rank(i, rank[i] - 1)) i--;
@@ -330,7 +317,7 @@ function do_move_down () {
 function do_move_top() {
     var min_rank = min_selected_rank();
     if (num_selected < 1) {
-        alert("No choices were selected. "+
+        popupAlert("No choices were selected. "+
               "Click (or shift-click) to select choices");
         return;
     }
@@ -355,7 +342,7 @@ function do_move_top() {
 function do_move_bottom() {
     var max_rank = max_selected_rank();
     if (num_selected < 1) {
-        alert("No choices were selected. "+
+        popupAlert("No choices were selected. "+
               "Click (or shift-click) to select choices");
         return;
     }
@@ -394,7 +381,6 @@ function tx(t) {
 }
 // Recompute the arrays "rows" and "rank" from the rows of the table.
 function read_rows() {
-    //alert("reading the rows, length = " + (preftable.rows.length - 1));
     for (var i = 0; i < num_choices; i++) {
         var row = rows[i] = preftable.rows[i+1];
         var s = row.getElementsByTagName("select")[0];
@@ -577,7 +563,7 @@ jQuery(function() {
 		if (errorMsg == '') {
 			document.forms.szavazatForm.submit();
 		} else {
-			alert(errorMsg);
+			popupAlert(errorMsg);
 		}
 		return;
 	});
