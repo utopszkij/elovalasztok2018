@@ -7,7 +7,7 @@
   * web: github.com/utopszkij/elovalasztok2018
   * Verzió: V1.00  2016.09.14.
   *
-  * JRequest: oevk, task
+  * JRequest: pollId, task
   */
   defined('_JEXEC') or die;
   global $evConfig;
@@ -20,11 +20,11 @@
   $user = JFactory::getUser();
   $msg = '';
   $input = JFactory::getApplication()->input;  
-  $oevk = $input->get('oevk',$evConfig->pollId);   // szavazás ID (category ID)
+  $pollId = $input->get('pollId',$evConfig->pollId);   // szavazás ID (category ID)
   $task = $input->get('task','szavazok');
   
-  if ($oevk == 0) {
-	  $oevk = $input->get('id',0);
+  if ($pollId == 0) {
+	  $pollId = $input->get('id',0);
   }
 
   // ================ controller ==============================
@@ -35,13 +35,13 @@
 	* @param integer szavazás azonosító
     * @param JUser user 
     */ 	
-    public function szavazok($oevk, $user) {
+    public function szavazok($pollId, $user) {
 			global $evConfig;
 			$model = new szavazokModel();
 		
-			if ($evConfig->testUzemmod) {
+			if ($evConfig->pollDefs[$pollId]->testMode) {
 				echo '<div class="testInfo"><strong>Teszt üzemód. Bárki szavazhat, többször is lehet szavazni.</strong></div>';			
-		        $item = $model->getItem($oevk);	
+		        $item = $model->getItem($pollId);	
        		    include dirname(__FILE__).'/views/szavazoform.php';
 				return;
 			}
@@ -49,14 +49,14 @@
 			$msg = '';
 			if ($user->id == 0) {
 					echo '<div class="notLogin">Szavazáshoz be kell jelentkezni!</div>';
-			} else if (!$evConfig->szavazas) {
+			} else if (!$evConfig->pollDefs[$pollId]->votingEnable) {
 					echo '<div class="notLogin">Jelenleg nem lehet szavazni.</div>';
 			} else  {
-			  if (szavazottMar($oevk, $user)) {
+			  if (szavazottMar($pollId, $user)) {
 					echo '<div class="marSzavazaott infoMsg">Ön már szavazott!</div>';
 			  } else {
-				  if (teheti($oevk, $user, 'szavazas', $msg)) {
-				    $item = $model->getItem($oevk);	
+				  if (teheti($pollId, $user, 'szavazas', $msg)) {
+				    $item = $model->getItem($pollId);	
 					if (count($item->alternativak) <= 0) {
 							echo '<div class="nincsJelolt infoMsg">Nincs jelölt!</div>';
 					} else {
@@ -75,34 +75,34 @@
 	* @param integer szavazás azonosító
     * @param JUser user 
     */ 	
-    public function eredmeny($oevk, $user) {
+    public function eredmeny($pollId, $user) {
 			global $evConfig;
-			if ($evConfig->testUzemmod) {
+			if ($evConfig->pollDefs[$pollId]->testMode) {
 				echo '<div class="testInfo"><strong>Teszt üzemód. Bárki szavazhat, többször is lehet szavazni.</strong></div>';			
 			}
             $msg = '';
-			if (teheti($oevk, $user, 'eredmeny', $msg) == false) {
+			if (teheti($pollId, $user, 'eredmeny', $msg) == false) {
     			echo '<div class="errorMsg">'.$msg.'</div>';
                 return;
 			}
 			$model = new szavazokModel();
 			$backUrl = JURI::root().'/leiras';
-            $pollRecord = $model->getPollRecord($oevk);
+            $pollRecord = $model->getPollRecord($pollId);
 			// nézzük van-e cachelt report?
-            $cache = $model->getFromCache($oevk);
+            $cache = $model->getFromCache($pollId);
 
 			// ha nincs meg a cache rekord akkor hozzuk most létre, üres tartalommal
 			if ($cache == false) {
-                $model->initCache($oevk);
+                $model->initCache($pollId);
 				$cache = new stdClass();
-				$cache->pollid = $oevk;
+				$cache->pollid = $pollId;
 				$cache->report = "";
 			}
 			if ($cache->report == "") {
 				// ha nincs; most  kell condorcet/Shulze feldolgozás feldolgozás
-				$schulze = new MyCondorcet($oevk);
+				$schulze = new MyCondorcet($pollId);
 				$report = $schulze->report();
-                $model->saveToCache($oevk, $schulze->vote_count, $report);
+                $model->saveToCache($pollId, $schulze->vote_count, $report);
 			} else {  
 				// ha van akkor a cahcelt reportot jelenitjuük meg
 				$report = $cache->report; 
@@ -112,12 +112,12 @@
 
 		/**
 		* sazavazás képernyő adat tárolása
-		* JRequest: token, oevk, szavazat jelölt_id=pozicio, ......
+		* JRequest: token, pollId, szavazat jelölt_id=pozicio, ......
 		*/
-		public function szavazatSave($oevk, $user) {
+		public function szavazatSave($pollId, $user) {
 			global $evConfig;
 			Jsession::checkToken() or die('invalid CSRF protect token');
-			if ($evConfig->testUzemmod) {
+			if ($evConfig->pollDefs[$pollId]->testMode) {
 				$user->id = rand(100001,999999);
 			}
 			if ($user->id <= 0) {
@@ -129,10 +129,10 @@
 			$szavazat = $input->get('szavazat','','STRING');
 			$msg = '';
 			$msgClass = '';
-			if ($oevk > 0) {
-				if (teheti($oevk, $user, 'szavazas', $msg)) {
+			if ($pollId > 0) {
+				if (teheti($pollId, $user, 'szavazas', $msg)) {
 					$model = new szavazokModel();
-                    $szavazoId = $model->save($oevk, $szavazat, $user);
+                    $szavazoId = $model->save($pollId, $szavazat, $user);
 					if ($szavazoId > 0) {
 						$msg = 'Köszönjük szavazatát. Az ön szavazatának azonosítója az adatbázisban: <strong>'.$szavazoId.'</strong><br />'; 	
                         $msg .= '<small>Ennek az azonositónak a segitségével Ön ellenörizheti a letárolt szavazatát.';
@@ -158,9 +158,9 @@
 		* @param JUser
 		* @param string
 		*/
-		public function szavazatok($oevk, $user=null) {
+		public function szavazatok($pollId, $user=null) {
 			$model = new szavazokModel();
-            $res = $model->getSzavazatok($oevk);
+            $res = $model->getSzavazatok($pollId);
 			if (count($res) > 0) {
 				echo '<div class="szavazatok">
 				<h2>'.$res[0]->szTitle.'</h2>
@@ -196,13 +196,13 @@
 		* @param JUser
 		* @param string
 		*/
-		public function szavazatokcsv($oevk, $user=null) {
+		public function szavazatokcsv($pollId, $user=null) {
             header('Content-type: text/csv');
             header('Pragma: no-cache');
             header('Expires:0');
             header('Content-Disposition: attachment: szavazatok.csv');
 			$model = new szavazokModel();
-            $res = $model->getSzavazatok($oevk);
+            $res = $model->getSzavazatok($pollId);
 			if (count($res) > 0) {
 				echo 'szavazas_id;szavazo_id;pozicio;jelolt'."\n";
 				foreach ($res as $res1) {
@@ -216,5 +216,5 @@
 		
   // ================= main program ===========================
   $controller = new SzavazoController();
-  $controller->$task ($oevk, $user);
+  $controller->$task ($pollId, $user);
 ?>

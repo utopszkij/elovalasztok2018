@@ -70,9 +70,12 @@ body {font-family: 'Grant Hotel, Roman, Times'}
 #recent-works .recent-work-wrap:hover img {display:none;}
 #recent-works .recent-work-wrap:hover .overlay {display:block;}
 
-.tema-wrap {padding:10px;}
+.tema-wrap {padding:10px; height:200px; border-radius:5px;}
+.tema-wrap h2 {font-size:14pt; margin-top:15px}
+.tema-wrap h3 {font-size:12pt}
 .tema-wrap i {font-size:32px; padding:6px;
 	background-color:#00808B; color:white; width: 46px; height:46px; border-radius:23px;}
+.tema-wrap i.disabled {background-color:#d0d0d0}
 .tema-wrap i.fa-child {padding: 6px 6px 6px 12px}	
 .tema-wrap i.fa-calendar {padding: 6px 6px 6px 8px}	
 .tema-wrap i.fa-folder-open-o {padding: 6px 6px 6px 8px}	
@@ -151,6 +154,8 @@ ul.inline>li.tag-21 {background-image:url('../images/logo/ep_logo.png'); backgro
 .eredmenySorEllenzett, 
 .eredmenySorEllenzett .pozicio {background-color:#e84b45; color:white}
 
+/* jelöltek */
+.readmore {border-style:solid; border-width:0px 0px 2px 0px; border-color: black}
 
 /* GDPR question */
 #gdpr {position:fixed; z-index:999; left:0px; bottom:0px; width:auto; height:auto; 

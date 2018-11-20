@@ -91,8 +91,7 @@ if ($input->get('cookieenable','3') == 0) {
 			</div>
 			<div id="logo">
 				<a href="index.php">
-					<img src="templates/utopszkij/images/logo.jpg">
-					<var style="color:white; font-size:10pt; margin:3px;">Fejlesztés alatt, ßteszt készültség:1%</var>
+					<var style="color:white; font-size:10pt; margin:3px;"><strong>Főpolgármester előválasztás 2018</strong></var>
 				</a>
 			</div>
 			<?php 
@@ -151,6 +150,7 @@ if ($input->get('cookieenable','3') == 0) {
 				  </div>
 				</div>
 			  </div>
+              <!--  
 			  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
 				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
 				<span class="sr-only">&lt;&lt;&lt;</span>
@@ -159,6 +159,7 @@ if ($input->get('cookieenable','3') == 0) {
 				<span class="carousel-control-next-icon" aria-hidden="true"></span>
 				<span class="sr-only">&gt;&gt;&gt;</span>
 			  </a>
+              -->  
 			</div>			
 			
 			
@@ -240,7 +241,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="login">
-												<i class="fa fa-sign-in"></i>
+												<i class="fa fa-sign-in <?php if ($user->id > 0) echo ' disabled'; ?>"></i>
 												<h2>Bejelentkezek</h2>
 											  </a>	
 											</div>
@@ -248,7 +249,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="https://adatom.hu/fiokom.html?section=register">
-												<i class="fa fa-key"></i>
+												<i class="fa fa-key  <?php if ($user->id > 0) echo ' disabled'; ?>"></i>
 												<h2>Regisztrálok</h2>
 											  </a>	
 											</div>
@@ -256,7 +257,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="logout">
-												<i class="fa fa-sign-out"></i>
+												<i class="fa fa-sign-out <?php if ($user->id <= 0) echo ' disabled'; ?>"></i>
 												<h2>Kijelentkezek</h2>
 											  </a>	
 											</div>
@@ -264,7 +265,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="component/elovalasztok">
-												<i class="fa fa-envelope"></i>
+												<i class="fa fa-envelope  <?php if ($user->id <= 0) echo ' disabled'; ?>"></i>
 												<h2>Szavazok</h2>
 											  </a>	
 											</div>
@@ -371,7 +372,7 @@ if ($input->get('cookieenable','3') == 0) {
 											<div class="overlay">
 												<div class="recent-work-inner">
 													<h3><a href="#">Internet filozófia</a></h3>
-													<p>A 'blogoló' a tulajdonképpeni, a teljes jogú, a teljes fegyverzetében előttünk álló hálópolgár, a kiberkultúra eminens létrehozója.</p>
+													<p></p>
 													<a href="http://internetfilozofia.blog.hu/"><i class="fa fa-eye"></i>Megnézem</a>
 												</div> 
 											</div>
@@ -422,8 +423,8 @@ if ($input->get('cookieenable','3') == 0) {
 												<div class="recent-work-inner">
 													<h3><a href="#">Vénusz projekt</a></h3>
 													<p>Egy átfogó jövő kép...</p>
-													<a href="https://www.youtube.com/watch?v=Uh9VxaO12zY&list=PL255C39DA73A5F10B&index=149"><i class="fa fa-eye"></i>Röviditett magyar szinkronos video</a><br>
-													<a href="https://www.youtube.com/watch?v=JcbMW5Y5HxY"><i class="fa fa-eye"></i>Teljes magyar feliratos video</a>
+													<a href="https://www.youtube.com/watch?v=Uh9VxaO12zY&list=PL255C39DA73A5F10B&index=149"><i class="fa fa-eye"></i>Röviditett video</a><br>
+													<a href="https://www.youtube.com/watch?v=JcbMW5Y5HxY"><i class="fa fa-eye"></i>Teljes video</a>
 												</div> 
 											</div>
 											<img src="templates/utopszkij/images/portfolio/recent/item7.png" alt="">
@@ -442,7 +443,7 @@ if ($input->get('cookieenable','3') == 0) {
 											<div class="overlay">
 												<div class="recent-work-inner">
 													<h3><a href="#">Alternatív gazdaság</a></h3>
-													<p>Nem a (kapitalista) piacgazdaság az egyetlen elképzelhető technológia a társadalmi munkamegosztás megszervezésére.</p>
+													<p>Nem a piacgazdaság az egyetlen elképzelhető mód a társadalmi munkamegosztás megszervezésére.</p>
 													<a href="http://hu.alternativgazdasag.wikia.com/wiki/Alternat%C3%ADv_Gazdas%C3%A1g_lexikon"><i class="fa fa-eye"></i>Megnézem</a>
 												</div> 
 											</div>

@@ -18,16 +18,16 @@
 * @param string $msg output parameter: tiltás oka pl: 'config'
 * @return boolean
 */
-function teheti($szavazas_id, $user, $akcio, &$msg) {
+function teheti($pollId, $user, $akcio, &$msg) {
 	global $evConfig;
 	$result = false;
 	$msg = '';
 	$db = JFactory::getDBO();
-	$db->setQuery('select * from #__categories where id='.$db->quote($szavazas_id).' and published = 1');
+	$db->setQuery('select * from #__categories where id='.$db->quote($pollId).' and published = 1');
 	$szavazas = $db->loadObject();
 	
 	if ($akcio == 'eredmeny') {
-		   if ($evConfig->eredmeny) {
+		   if ($evConfig->pollDefs[$pollId]->resultEnable) {
                 $result = true;
                 $msg = '';
            } else {
@@ -37,17 +37,17 @@ function teheti($szavazas_id, $user, $akcio, &$msg) {
 	}
 	
 	if ($akcio == 'szavazas') {
-          if ($evConfig->testUzemmod) {
+          if ($evConfig->pollDefs[$pollId]->testMode) {
               $msg = '';  
               $result = true;  
           } else if ($user->id <= 0) {
 			  $result = false;
 			  $msg = 'Szavazáshoz be kell jelentkezni!';
-	 	  } else if (szavazottMar($szavazas_id, $user)) {  
+	 	  } else if (szavazottMar($pollId, $user)) {  
 			  $result = false;
 			  $msg = 'Ön már szavazott';
 		  }  else {
-			  if (szavazasraJogosult($user, $szavazas_id)) {
+			  if (szavazasraJogosult($user, $pollId)) {
 				$result = true;
 				$msg = '';
 			  } else {

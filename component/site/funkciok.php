@@ -26,10 +26,10 @@ defined('_JEXEC') or die;
 
 function szavazasraJogosult($user, $szavazas_id) {
 	global $evConfig;
-    if ($evConfig->testUzemmod) {
+    if ($evConfig->pollDefs[$szavazas_id]->testUzemmod) {
         $result = true;
-    } else if (($evConfig->canAssurance != '') && (!$evConfig->testUzemmod)) {
-        $result = (strpos($user->params,$evConfig->canAssurance) > 0);
+    } else if (($evConfig->pollDefs[$szavazas_id]->canAssurance != '') && (!$evConfig->pollDefs[$szavazas_id]->testUzemmod)) {
+        $result = (strpos($user->params,$evConfig->pollDefs[$szavazas_id]->canAssurance) > 0);
     } else {
         $result = true;
     }
@@ -40,10 +40,10 @@ function szavazasraJogosult($user, $szavazas_id) {
 function szavazokSzama($szavazas_id) {
     global $evConfig;
     $db = JFactory::getDBO();
-    if (($evConfig->canAssurance != '') && (!$evConfig->testUzemmod)) {
+    if (($evConfig->pollDefs[$szavazas_id]->canAssurance != '') && (!$evConfig->pollDefs[$szavazas_id]->testUzemmod)) {
         $db->setQuery('select count(id) cc
         from #__users
-        where params like "%'.$evConfig->canAssurance.'%" 
+        where params like "%'.$evConfig->pollDefs[$szavazas_id]->canAssurance.'%" 
         ');
     } else {
         $db->setQuery('select count(id) cc

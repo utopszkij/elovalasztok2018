@@ -25,8 +25,8 @@ class Condorcet {
     /**
 	* @param integer Szavazás ID
 	*/
-    function __construct($szavazas_id=0) {
-          $this->poll = $szavazas_id;
+    function __construct($pollId=0) {
+          $this->poll = $pollId;
     }
 
     // ======================================

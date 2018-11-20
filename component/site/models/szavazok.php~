@@ -144,7 +144,7 @@ class szavazokModel {
 	/**
 	  * egy adott poll jelöltjeinek beolvasása
 	  * @param integer pollId
-	  * @return {"pollId":szám, "pollName":string, "pollOptions":[{"id":szám,"name":string},....]}
+	  * @return {"oevkId":szám, "oevkNev":string, "alternativak":[{"id":szám,"nev":string},....]}
 	*/  
 	public function getItem($pollId) {
 		$db = JFactory::getDBO();
