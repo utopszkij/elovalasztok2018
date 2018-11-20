@@ -198,10 +198,10 @@ class JRequest {
 		return $testData->getInput($name, $default);
 	}
 	public  static function getWord($name, $default='', $dataType='') {
-		return $this->getVar($name, $default, $dataType);
+		return JRequest::getVar($name, $default, $dataType);
 	}
 	public  static function getCmd($name, $default='', $dataType='') {
-		return $this->getVar($name, $default, $dataType);
+		return JRequest::getVar($name, $default, $dataType);
 	}
 	public  static function setVar($name,$value,$dataType='') {
 		global $testData;
@@ -527,7 +527,7 @@ class JModelLegacy {
 }
 class JModelList extends JModelLegacy {	
 	public function getQuery() {
-		return new $JQuery();
+		return '';
 	}
 	public function getTotal() {
 		return 0;	

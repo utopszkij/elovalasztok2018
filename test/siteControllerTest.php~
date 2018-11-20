@@ -75,7 +75,7 @@ class elovalasztokControllerTest extends PHPUnit_Framework_TestCase {
 		global $evConfig,$testData,$componentName,$testUser;
 		$this->setupConfig();
         $testUser->id = 1;
-        $testUser->params = 'ADA:magyar,budapest';
+        $testUser->params = 'ADA:magyar,budapest /'.$evConfig->canAssurance;
         $evConfig->pollId = 1;
         $evConfig->pollDefs[1]->testMode = false;
         $db = JFactory::getDBO();
@@ -187,7 +187,7 @@ class elovalasztokControllerTest extends PHPUnit_Framework_TestCase {
 		global $evConfig,$testData,$componentName,$testUser;
 		$this->setupConfig();
         $evConfig->pollDefs[1]->testMode = false;
-        $evConfig->pollDefs[1]->votingEnable = false;
+        $evConfig->szavazas = false;
         $testUser->id = 1;
         $testUser->params = 'ADA:magyar,budapest';
         $db = JFactory::getDBO();
