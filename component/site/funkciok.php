@@ -3,6 +3,25 @@ defined('_JEXEC') or die;
 
 // elõválasztok rendszer globális funkciók, objektumok
 
+/**
+* echo html tag
+* @param string htm tag name example: 'div', 'td'
+* @param string body HTML string
+* @param string className
+* @param string id
+* @return string HTML code
+*/
+function echoHtmlTag($tagName, $body='', $class='', $id='') {
+	$result = '<'.$tagName;
+	if ($id != '') {
+		$result .= ' id="'.$id.'"';	
+	}
+	if ($class != '') {
+		$result .= ' class="'.$class.'"';	
+	}
+	$result .= '>'.$body;
+	return $result.'</'.$tagName.'>'; 
+}
 
 /**
    * adott user, már szavazott?
