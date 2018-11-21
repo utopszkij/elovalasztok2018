@@ -75,7 +75,6 @@ class Condorcet {
       * Full processs
       */
       public function report() {
-      	$result = '';
         $this->getCandidates();
         $this->loadVoteCount();
         $this->loadInFirst();
@@ -132,8 +131,7 @@ class Condorcet {
               $result .= "</tr>\n";
               $r++;
           }
-          $result .= '</table>'."\n";
-          return $result;
+          return $result.'</table>'."\n";
       }
 
       /**
@@ -239,14 +237,13 @@ class Condorcet {
 		  $pozition = 0;
 		  $trClass = 'eredmenySor';	
           foreach($shortlist as $j => $i) {
-					 if ($i < count($this->inFirst)) { 					 
-						 if (($this->inFirst[$i] == '')  |
-							  ($this->inFirst[$i] == null) |
-							  ($this->inFirst[$i] < 0)
-							 ) { 
-							 	$this->inFirst[$i] = 0;
-							 }	
-					 }	 
+					 if (($i < count($this->inFirst)) &&  					 
+						  (($this->inFirst[$i] == '')  |
+							($this->inFirst[$i] == null) |
+							($this->inFirst[$i] < 0)
+						  )) { 
+					 	$this->inFirst[$i] = 0;
+					 }	
 			       if ($j == 0) {
 				           $pozition = 1;
 			       } else if (($values[$i] < $values[$shortlist[$j-1]]) && (substr($this->candidates[$i],0,2) != '--')) {
@@ -256,11 +253,9 @@ class Condorcet {
 			       if (($this->condorcetWinner1) & ($j==0)) {
 				          $info .= '&nbsp;-&nbsp;<strong style="color:orange">Condorcet gyöztes</strong>';
 			       }
-			       if ($j > 0) {
-				        if ($values[$i] === $values[$shortlist[$j-1]]) {
+			       if (($j > 0) && ($values[$i] === $values[$shortlist[$j-1]])) {
 					        $info .= 'döntetlen';
-					     }   
-			       }
+			       }   
 					 if (substr($this->candidates[$i],0,2) == '--') {
 						$trClass = 'eredmenySorEllenzett';
                         $result .= '<tr class="'.$trClass.'"><td colspan="4"><var class="noAccept">'.$this->candidates[$i].'</var></td></tr>';
@@ -274,8 +269,7 @@ class Condorcet {
                 }
           }
           $result .= "</table>\n";
-    	    $result .= '<p class="szavazatokSzama">Szavazatok száma:<var>'.$this->vote_count.'</var></p>'."\n";
-          return $result;
+    	    return $result.'<p class="szavazatokSzama">Szavazatok száma:<var>'.$this->vote_count.'</var></p>'."\n";
       }
 
       /**

@@ -28,7 +28,7 @@
   }
 
   // ================ controller ==============================
-  class szavazoController extends JcontrollerLegacy {
+  class SzavazoController extends JcontrollerLegacy {
 	  
 	/**
     * szavazó képernyő megjelenitése  - új szavazat beküldése
@@ -37,7 +37,7 @@
     */ 	
     public function szavazok($pollId, $user) {
 			global $evConfig;
-			$model = new szavazokModel();
+			$model = new SzavazokModel();
 		
 			if ($evConfig->pollDefs[$pollId]->testMode) {
 				echo '<div class="testInfo"><strong>Teszt üzemód. Bárki szavazhat, többször is lehet szavazni.</strong></div>';			
@@ -85,7 +85,7 @@
     			echo '<div class="errorMsg">'.$msg.'</div>';
                 return;
 			}
-			$model = new szavazokModel();
+			$model = new SzavazokModel();
 			$backUrl = JURI::root().'/leiras';
             $pollRecord = $model->getPollRecord($pollId);
 			// nézzük van-e cachelt report?

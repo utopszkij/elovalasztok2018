@@ -28,7 +28,7 @@
   }
 
   // ================ controller ==============================
-  class szavazoController extends JcontrollerLegacy {
+  class SzavazoController extends JcontrollerLegacy {
 	  
 	/**
     * szavazó képernyő megjelenitése  - új szavazat beküldése
@@ -85,7 +85,7 @@
     			echo '<div class="errorMsg">'.$msg.'</div>';
                 return;
 			}
-			$model = new szavazokModel();
+			//$model = new szavazokModel();
 			$backUrl = JURI::root().'/leiras';
             $pollRecord = $model->getPollRecord($pollId);
 			// nézzük van-e cachelt report?
@@ -102,7 +102,7 @@
 				// ha nincs; most  kell condorcet/Shulze feldolgozás feldolgozás
 				$schulze = new MyCondorcet($pollId);
 				$report = $schulze->report();
-                $model->saveToCache($pollId, $schulze->vote_count, $report);
+            $model->saveToCache($pollId, $schulze->vote_count, $report);
 			} else {  
 				// ha van akkor a cahcelt reportot jelenitjuük meg
 				$report = $cache->report; 

@@ -38,17 +38,17 @@ body {font-family: 'Grant Hotel, Roman, Times', serif}
 #topMenuContainer #menuContainer {height: 30px; 
   float:left; display:inline-block; width:auto}
 #topMenuContainer #topMenu {display:inline-block; width:auto}
-.menu {width:auto; padding:1px; z-index:10;}
-.menu > li {display:inline-block; margin: 2px 5px 2px 5px; font-size:16px; font-weight:bolder}
-.menu a {color:black;}
-.menu span {display:inline-block; padding:6px 0px 5px 0px}
-.menu li:hover .nav-child {display:block;}
-.nav-child {display:none; z-index:11; position:fixed; 
+#topMenuContainer .menu {width:auto; padding:1px; z-index:10;}
+#topMenuContainer .menu > li {display:inline-block; margin: 2px 5px 2px 5px; font-size:16px; font-weight:bolder}
+#topMenuContainer .menu a {color:black;}
+#topMenuContainer .menu span {display:inline-block; padding:6px 0px 5px 0px}
+#topMenuContainer .menu li:hover .nav-child {display:block;}
+#topMenuContainer .nav-child {display:none; z-index:11; position:fixed; 
     background-color:#e0e0e0; 
 	border-style:solid; border-width:1px; border-radius:5px; padding: 10px 2px 2px 2px}
-.nav-child > li {display:block; padding:3px;}
-.nav-child a {text-decoration:none}
-.nav-child > li:hover {background-color:#b0b0b0}
+#topMenuContainer .nav-child > li {display:block; padding:3px;}
+#topMenuContainer .nav-child a {text-decoration:none}
+#topMenuContainer .nav-child > li:hover {background-color:#b0b0b0}
 
 #userInfo {display:inline-block; float:right;  
 	width:auto; height: 35px; margin:10px 10px 0px 0px; padding:0px}
@@ -139,8 +139,7 @@ ul.inline>li.tag-21 {background-image:url('../images/logo/ep_logo.png'); backgro
 /* eredmeny */
 .pollResult {width:100%}
 .pollResult th {background-color:#B6C6C5; padding:2px 5px 2px 5px;}
-.pollResult .pozicio {border-color:black;}
-.pollResult .pozicio {text-align:center; width:50px;}
+.pollResult .pozicio {border-color:black; text-align:center; width:50px;}
 .pollResult .nev {padding:2px 2px 2px 15px}
 .pollResult .info {text-align:center; width:180px;}	
 .pollLeiras {margin-left:50px; text-decoration:italic}
@@ -150,7 +149,6 @@ ul.inline>li.tag-21 {background-image:url('../images/logo/ep_logo.png'); backgro
 .pollResult .red {background-color:#E0c0c0; color:black;}
 .pollResult .green {background-color:#c0e0c0; color:black;}
 .pollResult .white {background-color:#ffffff; color:black;}
-.eredmenySor {}
 .eredmenySorEllenzett, 
 .eredmenySorEllenzett .pozicio {background-color:#e84b45; color:white}
 
@@ -170,11 +168,11 @@ ul.inline>li.tag-21 {background-image:url('../images/logo/ep_logo.png'); backgro
 	#topMenuContainer #topMenu {display:none; margin:3px; padding:1px; background-color:#d0d0d0; z-index:10}
 	#topMenuContainer #topMenu li {display:block; margin:3px; padding:1px;}
 	#topMenuContainer .nav {display:block;}
-	.nav > li > a {margin:3px; padding:1px;}
-	.menu span {padding:1px;}
-	.nav-child {display:block; position:relative; z-index:10; border-style:none; 
+	#topMenuContainer .nav > li > a {margin:3px; padding:1px;}
+	#topMenuContainer .menu span {padding:1px;}
+	#topMenuContainer .nav-child {display:block; position:relative; z-index:10; border-style:none; 
 		margin:3px 3px 3px 20px; padding:1px;}
-	.nav-child li {display:block; margin:3px; padding:1px;}
+	#topMenuContainer .nav-child li {display:block; margin:3px; padding:1px;}
 	#myCarousel h2 {position:fixed; top:200px; left:150px; z-index:10;
 		color:#C0C2C1; font-weight:bolder;}	
 }
@@ -183,11 +181,11 @@ ul.inline>li.tag-21 {background-image:url('../images/logo/ep_logo.png'); backgro
 	#topMenuContainer #topMenu {display:none; margin:3px; padding:1px; background-color:#d0d0d0; z-index:10}
 	#topMenuContainer #topMenu li {display:block; margin:3px; padding:1px;}
 	#topMenuContainer .nav {display:block;}
-	.nav > li > a {margin:3px; padding:1px;}
-	.menu span {padding:1px;}
-	.nav-child {display:block; position:relative; z-index:10; border-style:none; 
+	#topMenuContainer .nav > li > a {margin:3px; padding:1px;}
+	#topMenuContainer .menu span {padding:1px;}
+	#topMenuContainer .nav-child {display:block; position:relative; z-index:10; border-style:none; 
 		margin:3px 3px 3px 20px; padding:1px;}
-	.nav-child li {display:block; margin:3px; padding:1px;}
+	#topMenuContainer .nav-child li {display:block; margin:3px; padding:1px;}
 	#myCarousel h2 {position:fixed; top:100px; left:50px; z-index:10;
 		color:#C0C2C1; font-weight:bolder;}	
 }
@@ -196,11 +194,11 @@ ul.inline>li.tag-21 {background-image:url('../images/logo/ep_logo.png'); backgro
 	#topMenuContainer #topMenu {display:none; margin:3px; padding:1px; background-color:#d0d0d0; z-index:10}
 	#topMenuContainer #topMenu li {display:block; margin:3px; padding:1px;}
 	#topMenuContainer .nav {display:block;}
-	.nav > li > a {margin:3px; padding:1px;}
-	.menu span {padding:1px;}
-	.nav-child {display:block; position:relative; z-index:10; border-style:none; 
+	#topMenuContainer .nav > li > a {margin:3px; padding:1px;}
+	#topMenuContainer .menu span {padding:1px;}
+	#topMenuContainer .nav-child {display:block; position:relative; z-index:10; border-style:none; 
 		margin:3px 3px 3px 20px; padding:1px;}
-	.nav-child li {display:block; margin:3px; padding:1px;}
+	#topMenuContainer .nav-child li {display:block; margin:3px; padding:1px;}
 	#myCarousel h2 {position:fixed; top:50px; left:20px; z-index:10;
 		color:#C0C2C1; font-weight:bolder;}	
 }

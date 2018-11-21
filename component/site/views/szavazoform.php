@@ -47,20 +47,22 @@ echo '
 // fontos, hogy ul-ben és a tr elemekben ne legyenek #text elemek!
 $i = 0;
 foreach ($item->pollOptions as $res1) {
-  if (substr($res1->name,0,2) == '--')
+  if (substr($res1->name,0,2) == '--') {
 	$tdstyle = "background-color:red; color:white";
-  else
+  } else {
 	$tdstyle="background-color:white; color:black";
+  }	
   echo '<tr>';
   echo '<td style="width:30px; text-align:center"><button type="button" class="up">&uarr;</button></td>';	
   echo '<td id="jelolt'.$res1->id.'" style="'.$tdstyle.'; cursor:pointer"><var>'.$res1->name.'</var></td>';
   echo '<td style="width:30px; text-align:center"><button type="button" class="down">&darr;</button>';
   echo '</td><td style="width:65px;"><select style="width:60px;" onchange="resort_row('.$i.')">';
   for ($j=1; $j<=count($item->pollOptions); $j++) {
-	  if ($j == 1)	
+	  if ($j == 1)	{
 		echo '<option value="'.$j.'" selected="selected">'.$j.'</option>';
-	  else	
+	  } else {	
 	  	echo '<option value="'.$j.'">'.$j.'</option>';
+	  }	
   }
   echo '</select></td></tr>';
   $i++;		

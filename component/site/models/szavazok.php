@@ -91,7 +91,7 @@ class MyCondorcet extends Condorcet {
       }  
 } // myCondorcet
   
-class szavazokModel {
+class SzavazokModel {
 	private $errorMsg = '';
 	function __construct() {
 		$db = JFactory::getDBO();
@@ -112,7 +112,7 @@ class szavazokModel {
 		try {
 			$db->query();
 		} catch (Exception $e) {
-			;
+			return;
 		}	
 		
 		$db->setQuery('CREATE TABLE IF NOT EXISTS #__eredmeny (
@@ -125,7 +125,7 @@ class szavazokModel {
 		try {
 			$db->query();	
 		} catch (Exception $e) {
-			;
+			return;
 		}	
 	}
 
@@ -135,10 +135,9 @@ class szavazokModel {
     * @return object
     */
     public function getPollRecord($pollId) {
-        $db = JFactory::getDBO();
+      $db = JFactory::getDBO();
 		$db->setQuery('select * from #__categories where id='.$db->quote($pollId));
-		$poll = $db->loadObject();
-        return $poll;
+		return $db->loadObject();
     }
 	
 	/**

@@ -3,5 +3,5 @@ projectKey=utopszkij_elovalasztok2018
 serverUrl=https://sonarcloud.io
 serverVersion=7.5.0.19485
 dashboardUrl=https://sonarcloud.io/dashboard?id=utopszkij_elovalasztok2018
-ceTaskId=AWcw3bNVjpbiwX4zjLkz
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AWcw3bNVjpbiwX4zjLkz
+ceTaskId=AWcyPwFQqv0kndwypc4z
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AWcyPwFQqv0kndwypc4z
