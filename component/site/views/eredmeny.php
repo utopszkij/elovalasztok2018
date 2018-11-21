@@ -13,7 +13,13 @@ echo '<h2>'.$pollRecord->title.'</h2>
 	<input type="hidden" name="fileid" value="4" />
 	<input type="hidden" name="pollId" value="<?php echo $pollId; ?>" />
 	<input type="hidden" name="task" value="eredmeny" />
-	   <h3><?php if ($evConfig->pollDefs[$pollId]->szavazas) echo 'Pillanatnyi Részeredmény'; else echo 'Eredmény' ?></h3>
+	   <h3><?php if ($evConfig->pollDefs[$pollId]->szavazas) { 
+	   				echo 'Pillanatnyi Részeredmény'; 
+	   			 } else {
+	   			 	echo 'Eredmény';
+	   			 } 
+	   	 ?>
+	   </h3>
 	   <p>	
 	   <span id="eredmenyidopont"><?php echo date('Y.m.d H:i'); ?> -ig leadott szavazatokat 
 		figyelembe véve </span>

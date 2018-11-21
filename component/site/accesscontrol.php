@@ -22,9 +22,6 @@ function teheti($pollId, $user, $akcio, &$msg) {
 	global $evConfig;
 	$result = false;
 	$msg = '';
-	$db = JFactory::getDBO();
-	$db->setQuery('select * from #__categories where id='.$db->quote($pollId).' and published = 1');
-	$szavazas = $db->loadObject();
 	
 	if ($akcio == 'eredmeny') {
 		   if ($evConfig->pollDefs[$pollId]->resultEnable) {

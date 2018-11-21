@@ -82,12 +82,12 @@ if ($input->get('cookieenable','3') == 0) {
         </noscript>	
 
 		<div id="popup" style="position:absolute; left:80px; top:80px; width:400px; height:650px; z-index:1000; padding:10px; border-style:solid; border-width:2px; background-color:#E0E0F0; display:none">
-			<iframe width="100%" height="630" id="popupIfrm"></iframe>
+			<iframe width="100%" height="630" id="popupIfrm" title=""></iframe>
 		</div>	
 	
 		<div class="menuContainer" id="topMenuContainer">
 			<div id="topMenuIcon">
-				<i class="fa fa-bars" onclick="$('#topMenu').toggle()" style="cursor:pointer"></i>
+				<em class="fa fa-bars" onclick="$('#topMenu').toggle()" style="cursor:pointer"></em>
 			</div>
 			<div id="logo">
 				<a href="index.php">
@@ -99,7 +99,7 @@ if ($input->get('cookieenable','3') == 0) {
 				$user = JFactory::getUser();
 				if ($user) {
 					if ($user->id > 0)
-						echo '<div id="userInfo"><i class="fa fa-key"></i></div>';
+						echo '<div id="userInfo"><em class="fa fa-key"></em></div>';
 				}			
 			?>
 			<div id="topMenu">
@@ -169,7 +169,6 @@ if ($input->get('cookieenable','3') == 0) {
 
 			<!-- main page -->
 			<div id="main" style="z-index:9; background-color:white">
-				<center>
 				<div class="tim-container">
 						<div class="row">
 							<div class="col-md-12 col-sd-12">
@@ -235,13 +234,12 @@ if ($input->get('cookieenable','3') == 0) {
 						</div> <!-- row -->
 						
 						<section id="temak">
-							<center>
     							<div class="container">
                                     <div class="row">
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="login">
-												<i class="fa fa-sign-in <?php if ($user->id > 0) echo ' disabled'; ?>"></i>
+												<em class="fa fa-sign-in <?php if ($user->id > 0) echo ' disabled'; ?>"></em>
 												<h2>Bejelentkezek</h2>
 											  </a>	
 											</div>
@@ -249,7 +247,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="https://adatom.hu/fiokom.html?section=register">
-												<i class="fa fa-key  <?php if ($user->id > 0) echo ' disabled'; ?>"></i>
+												<em class="fa fa-key  <?php if ($user->id > 0) echo ' disabled'; ?>"></em>
 												<h2>Regisztrálok</h2>
 											  </a>	
 											</div>
@@ -257,7 +255,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="logout">
-												<i class="fa fa-sign-out <?php if ($user->id <= 0) echo ' disabled'; ?>"></i>
+												<em class="fa fa-sign-out <?php if ($user->id <= 0) echo ' disabled'; ?>"></em>
 												<h2>Kijelentkezek</h2>
 											  </a>	
 											</div>
@@ -265,7 +263,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="component/elovalasztok">
-												<i class="fa fa-envelope  <?php if ($user->id <= 0) echo ' disabled'; ?>"></i>
+												<em class="fa fa-envelope  <?php if ($user->id <= 0) echo ' disabled'; ?>"></em>
 												<h2>Szavazok</h2>
 											  </a>	
 											</div>
@@ -276,7 +274,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="jelöltek">
-												<i class="fa fa-users"></i>
+												<em class="fa fa-users"></em>
 												<h2>Jelöltek</h2>
 											  </a>	
 											</div>
@@ -285,7 +283,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="component/elovalasztok?task=eredmeny">
-												<i class="fa fa-signal"></i>
+												<em class="fa fa-signal"></em>
 												<h2>Eredmény</h2>
 											  </a>	
 											</div>
@@ -294,7 +292,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="leiras">
-												<i class="fa fa-info"></i>
+												<em class="fa fa-info"></em>
 												<h2>Leírás</h2>
 												<h3>Az előválasztás célja, müködése</h3>
 											  </a>	
@@ -304,7 +302,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="adatkezeles">
-												<i class="fa fa-lock"></i>
+												<em class="fa fa-lock"></em>
 												<h2>Adatkezelési leírás</h2>
 											  </a>	
 											</div>
@@ -314,7 +312,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="http://www.gnu.org/licenses/quick-guide-gplv3.html">
-												<i class="fa fa-copyright"></i>
+												<em class="fa fa-copyright"></em>
 												<h2>Licensz</h2>
 												<h3>GNU/GPL</h3>
 												<a href="http://gnu.hu/gplv3.html">Magyar fordítás</a>
@@ -324,7 +322,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="impresszum">
-												<i class="fa fa-id-card"></i>
+												<em class="fa fa-id-card"></em>
 												<h2>Impresszum</h2>
 											  </a>	
 											</div>
@@ -332,7 +330,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
 											  <a href="https://github.com/utopszkij/elovalasztok2018">
-												<i class="fa fa-code"></i>
+												<em class="fa fa-code"></em>
 												<h2>Forrás programm</h2>
 											  </a>	
 											</div>
@@ -340,7 +338,7 @@ if ($input->get('cookieenable','3') == 0) {
 										<div class="col-md-3 col-sm-6">
 											<div class="tema-wrap">
                                                 <a href="http://adatom.hu">
-                                                    <img src="https://adatom.hu/images/logo/adalogo_379x143.png" style="width:80px;" />
+                                                    <img src="https://adatom.hu/images/logo/adalogo_379x143.png" style="width:80px;" alt="ADA" />
                                                     <h2>Anonim Digitális Azonosító</h2>
                                                 </a>
                                             </div>
@@ -348,10 +346,8 @@ if ($input->get('cookieenable','3') == 0) {
 
 								</div><!--/.row-->    
 							</div><!--/.container-->
-							</center>
 						</section><!--/#temak-->
 
-						<center>
 						<div id="recent-works">
 								<div class="center wow fadeInDown">
 									<h2>Ajánlott oldalak</h2>
@@ -363,7 +359,7 @@ if ($input->get('cookieenable','3') == 0) {
 												<div class="recent-work-inner">
 													<h3><a href="#">Szellemi termelési mód</a> </h3>
 													<p>Kapitány Ágnes és Gábor könyve egy lehetséges új termelési mód körvonalait vázolja.</p>
-													<a href="https://hu.wikipedia.org/wiki/Szellemi_termel%C3%A9si_m%C3%B3d"><i class="fa fa-eye"></i>Megnézem</a>
+													<a href="https://hu.wikipedia.org/wiki/Szellemi_termel%C3%A9si_m%C3%B3d"><em class="fa fa-eye"></em>Megnézem</a>
 												</div> 
 											</div>
 											<img src="templates/utopszkij/images/portfolio/recent/item1.png" alt="">
@@ -373,7 +369,7 @@ if ($input->get('cookieenable','3') == 0) {
 												<div class="recent-work-inner">
 													<h3><a href="#">Internet filozófia</a></h3>
 													<p></p>
-													<a href="http://internetfilozofia.blog.hu/"><i class="fa fa-eye"></i>Megnézem</a>
+													<a href="http://internetfilozofia.blog.hu/"><em class="fa fa-eye"></em>Megnézem</a>
 												</div> 
 											</div>
 											<img src="templates/utopszkij/images/portfolio/recent/item2.png" alt="">
@@ -383,7 +379,7 @@ if ($input->get('cookieenable','3') == 0) {
 												<div class="recent-work-inner">
 													<h3><a href="#">Információs társadalom</a></h3>
 													<p>Wikipedia szó cikk.</p>
-													<a href="https://hu.wikipedia.org/wiki/Inform%C3%A1ci%C3%B3s_t%C3%A1rsadalom_(fogalom)"><i class="fa fa-eye"></i>Megnézem</a>
+													<a href="https://hu.wikipedia.org/wiki/Inform%C3%A1ci%C3%B3s_t%C3%A1rsadalom_(fogalom)"><em class="fa fa-eye"></em>Megnézem</a>
 												</div> 
 											</div>
 											<img src="templates/utopszkij/images/portfolio/recent/item3.png" alt="">
@@ -393,7 +389,7 @@ if ($input->get('cookieenable','3') == 0) {
 												<div class="recent-work-inner">
 													<h3><a href="#">Katedrális és bazár</a></h3>
 													<p>A "szabadszoftver" világ alapműve.</p>
-													<a href="http://magyar-irodalom.elte.hu/robert/szovegek/bazar/"><i class="fa fa-eye"></i>Megnézem</a>
+													<a href="http://magyar-irodalom.elte.hu/robert/szovegek/bazar/"><em class="fa fa-eye"></em>Megnézem</a>
 												</div> 
 											</div>
 											<img src="templates/utopszkij/images/portfolio/recent/item4.png" alt="">
@@ -403,7 +399,7 @@ if ($input->get('cookieenable','3') == 0) {
 												<div class="recent-work-inner">
 													<h3><a href="#">Szelid pénz</a></h3>
 													<p>Egy alternatív pénzrendszer....</p>
-													<a href="http://edok.lib.uni-corvinus.hu/284/1/Szalay93.pdf"><i class="fa fa-eye"></i>Megnézem</a>
+													<a href="http://edok.lib.uni-corvinus.hu/284/1/Szalay93.pdf"><em class="fa fa-eye"></em>Megnézem</a>
 												</div> 
 											</div>
 											<img src="templates/utopszkij/images/portfolio/recent/item5.png" alt="">
@@ -413,7 +409,7 @@ if ($input->get('cookieenable','3') == 0) {
 												<div class="recent-work-inner">
 													<h3><a href="#">Likvid demokrácia</a></h3>
 													<p>A napjainkra már teljesen kiüresedett, funkcióját vesztett képviseleti demokrácia egy lehetséges utóda.</p>
-													<a href="http://hu.alternativgazdasag.wikia.com/wiki/Likvid_demokr%C3%A1cia"><i class="fa fa-eye"></i>Megnézem</a>
+													<a href="http://hu.alternativgazdasag.wikia.com/wiki/Likvid_demokr%C3%A1cia"><em class="fa fa-eye"></em>Megnézem</a>
 												</div> 
 											</div>
 											<img src="templates/utopszkij/images/portfolio/recent/item6.png" alt="">
@@ -423,8 +419,8 @@ if ($input->get('cookieenable','3') == 0) {
 												<div class="recent-work-inner">
 													<h3><a href="#">Vénusz projekt</a></h3>
 													<p>Egy átfogó jövő kép...</p>
-													<a href="https://www.youtube.com/watch?v=Uh9VxaO12zY&list=PL255C39DA73A5F10B&index=149"><i class="fa fa-eye"></i>Röviditett video</a><br>
-													<a href="https://www.youtube.com/watch?v=JcbMW5Y5HxY"><i class="fa fa-eye"></i>Teljes video</a>
+													<a href="https://www.youtube.com/watch?v=Uh9VxaO12zY&list=PL255C39DA73A5F10B&index=149"><em class="fa fa-eye"></em>Röviditett video</a><br>
+													<a href="https://www.youtube.com/watch?v=JcbMW5Y5HxY"><em class="fa fa-eye"></em>Teljes video</a>
 												</div> 
 											</div>
 											<img src="templates/utopszkij/images/portfolio/recent/item7.png" alt="">
@@ -434,7 +430,7 @@ if ($input->get('cookieenable','3') == 0) {
 												<div class="recent-work-inner">
 													<h3><a href="#">Feltétel nélküli alapjövedelem</a></h3>
 													<p>Ezt akár holnap megcsinálhatnánk....</p>
-													<a href="http://alapjovedelem.hu/index.php/gyik"><i class="fa fa-eye"></i>Megnézem</a>
+													<a href="http://alapjovedelem.hu/index.php/gyik"><em class="fa fa-eye"></em>Megnézem</a>
 												</div> 
 											</div>
 											<img src="templates/utopszkij/images/portfolio/recent/item8.png" alt="">
@@ -444,7 +440,7 @@ if ($input->get('cookieenable','3') == 0) {
 												<div class="recent-work-inner">
 													<h3><a href="#">Alternatív gazdaság</a></h3>
 													<p>Nem a piacgazdaság az egyetlen elképzelhető mód a társadalmi munkamegosztás megszervezésére.</p>
-													<a href="http://hu.alternativgazdasag.wikia.com/wiki/Alternat%C3%ADv_Gazdas%C3%A1g_lexikon"><i class="fa fa-eye"></i>Megnézem</a>
+													<a href="http://hu.alternativgazdasag.wikia.com/wiki/Alternat%C3%ADv_Gazdas%C3%A1g_lexikon"><em class="fa fa-eye"></em>Megnézem</a>
 												</div> 
 											</div>
 											<img src="templates/utopszkij/images/portfolio/recent/finger-3139200_640.jpg" alt="">
@@ -454,7 +450,7 @@ if ($input->get('cookieenable','3') == 0) {
 												<div class="recent-work-inner">
 													<h3><a href="#">Megosztás alapú gazdaság</a></h3>
 													<h4>Ez is egy komcepció...</h4>
-													<a href="https://medium.com/envienta-magyarorsz%C3%A1g/envienta-%C3%BAtban-egy-%C3%BAj-t%C3%A1rsadalom-fel%C3%A9-43e6b72c3a2c"><i class="fa fa-eye"></i>Megnézem</a>
+													<a href="https://medium.com/envienta-magyarorsz%C3%A1g/envienta-%C3%BAtban-egy-%C3%BAj-t%C3%A1rsadalom-fel%C3%A9-43e6b72c3a2c"><em class="fa fa-eye"></em>Megnézem</a>
 												</div> 
 											</div>
 											<img src="templates/utopszkij/images/portfolio/recent/human-1157116_640.jpg" alt="">
@@ -464,10 +460,8 @@ if ($input->get('cookieenable','3') == 0) {
 										
 								</div><!--/.row-->
 						</div><!--/#recent-works-->
-						</center>
 						
 				</div><!-- container -->	
-				</center>
 			</div> <!-- main -->
 		</div><!-- navbar-full -->
 
@@ -477,18 +471,18 @@ if ($input->get('cookieenable','3') == 0) {
 					<jdoc:include type="modules" name="position-14" />
 					<?php $shareLink = urlencode(JURI::current()); ?>
 					<p class="shareIcons">			
-						<i class="fa fa-share-alt"></i>&nbsp;
+						<em class="fa fa-share-alt"></em>&nbsp;
 						<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $shareLink; ?>">
-							<i class="fa fa-facebook" title="facebook"
-							style="display:inline-block; background-color:blue; color:white; width:16px; text-align:center"></i>
+							<em class="fa fa-facebook" title="facebook"
+							style="display:inline-block; background-color:blue; color:white; width:16px; text-align:center"></em>
 						</a>&nbsp;									
 						<a href="https://twitter.com/home?status=<?php echo $shareLink; ?>">
-							<i class="fa fa-twitter"  title="twitter"
-							style="background-color:cyan;"></i>
+							<em class="fa fa-twitter"  title="twitter"
+							style="background-color:cyan;"></em>
 						</a>&nbsp;
 						<a href="https://plus.google.com/share?url=<?php echo $shareLink; ?>">
-							<i class="fa fa-google-plus"  title="google+"
-							style="background-color:orange;"></i>
+							<em class="fa fa-google-plus"  title="google+"
+							style="background-color:orange;"></em>
 						</a>									
 					</p>									
 				</footer>

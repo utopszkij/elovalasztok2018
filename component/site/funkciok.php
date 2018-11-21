@@ -26,7 +26,7 @@ defined('_JEXEC') or die;
 
 function szavazasraJogosult($user, $szavazas_id) {
 	global $evConfig;
-    if ($evConfig->pollDefs[$szavazas_id]->testUzemmod) {
+    if ($evConfig->pollDefs[$szavazas_id]->testMode) {
         $result = true;
     } else if (($evConfig->pollDefs[$szavazas_id]->canAssurance != '') && (!$evConfig->pollDefs[$szavazas_id]->testUzemmod)) {
         $result = (strpos($user->params,$evConfig->pollDefs[$szavazas_id]->canAssurance) > 0);

@@ -91,7 +91,7 @@ class MyCondorcet extends Condorcet {
       }  
 } // myCondorcet
   
-class szavazokModel {
+class SzavazokModel {
 	private $errorMsg = '';
 	function __construct() {
 		$db = JFactory::getDBO();
@@ -112,7 +112,7 @@ class szavazokModel {
 		try {
 			$db->query();
 		} catch (Exception $e) {
-			;
+			return;
 		}	
 		
 		$db->setQuery('CREATE TABLE IF NOT EXISTS #__eredmeny (
@@ -125,7 +125,7 @@ class szavazokModel {
 		try {
 			$db->query();	
 		} catch (Exception $e) {
-			;
+			return;
 		}	
 	}
 
@@ -135,10 +135,9 @@ class szavazokModel {
     * @return object
     */
     public function getPollRecord($pollId) {
-        $db = JFactory::getDBO();
+      $db = JFactory::getDBO();
 		$db->setQuery('select * from #__categories where id='.$db->quote($pollId));
-		$poll = $db->loadObject();
-        return $poll;
+		return $db->loadObject();
     }
 	
 	/**
@@ -156,7 +155,7 @@ class szavazokModel {
 		try {
 		  $res = $db->loadObject(); 
 		} catch (Exception $e) {
-		  ;	
+		  $res = false;	
 		}  
 		if ($res) {
 			$result->pollName = $res->title;
@@ -169,7 +168,7 @@ class szavazokModel {
 			try {
 				$res = $db->loadObjectList();
 			} catch (Exception $e) {
-			  ;	
+			   $res = [];	
 			}  
 			foreach ($res as $res1) {
 				$w = new stdClass();
@@ -198,13 +197,13 @@ class szavazokModel {
         $szavazoId = (rand(100,999).$user->id)*2;
 		$msg = '';
 
-        if ($evConfig->pollDefs[$pollId]->votingEnable == false) {
+        if (!$evConfig->pollDefs[$pollId]->votingEnable) {
 			  $this->errorMsg .= 'Most nem lehet szavazni.';
 			  return 0;	
         }
 
 		// jogosultság ellenörzés
-		if (teheti($pollId, $user, 'szavazas', $msg) == false) {
+		if (!teheti($pollId, $user, 'szavazas', $msg)) {
 			  $this->errorMsg .= $msg;
 			  return 0;	
 		}
@@ -217,10 +216,11 @@ class szavazokModel {
 		// szavazás kategoria megállapitása
 		$db->setQuery('select * from #__categories where id='.$db->quote($pollId));
 		$res = $db->loadObject();
-		if ($res)
+		if ($res) {
 			$catid = $res->parent_id;
-		else
+		} else {
 			$catid = 0;
+		}	
 		if ($szavazoId > 0) {
 			// string részekre bontása és tárolás ciklusban
 			$w1 = explode(',',$szavazat);
@@ -244,7 +244,7 @@ class szavazokModel {
 					)
 				');
 				try {
-				  if ($db->query() != true) {
+				  if (!$db->query()) {
 					$this->errorMsg .= $db->getErrorMsg().'<br />';
 					$szavazoId = 0;
 				  }
@@ -254,20 +254,17 @@ class szavazokModel {
 			}
 		}
 
-		// delete cached report
+		// save report to cache
 		$db->setQuery('UPDATE #__eredmeny 
 		SET report="" 
 		WHERE pollid='.$db->quote($pollId));
-		try {
-		  $db->query();
-		} catch (Exception $e) {
-		  ;
-		}	
+	   $db->query();
 
-		if ($szavazoId > 0) 
+		if ($szavazoId > 0) {
 			$db->setQuery('COMMIT');
-		else
+		} else {
 			$db->setQuery('ROLLBACK');
+		}	
 		$db->query();
 
 		return $szavazoId;
@@ -279,12 +276,11 @@ class szavazokModel {
     * @return object
     */
     public function getFromCache($pollId) {
-        $db = JFactory::getDBO();
+      $db = JFactory::getDBO();
 		$db->setQuery('select * from 
 					 #__eredmeny 
 					 where pollid='.$db->quote($pollId));
-		$cache = $db->loadObject();
-        return $cache;
+		return $db->loadObject();
     }
 
     /**
@@ -293,7 +289,7 @@ class szavazokModel {
     * @return object
     */
     public function initCache($pollId) {
-        $db = JFactory::getDBO();
+      $db = JFactory::getDBO();
 		$db->setQuery('INSERT INTO #__eredmeny
 		(pollid, report) 
 		value 
@@ -309,7 +305,7 @@ class szavazokModel {
     * @return object
     */
     public function saveToCache($pollId, $vote_count, $report) {
-        $db = JFactory::getDBO();
+      $db = JFactory::getDBO();
 		$db->setQuery('update #__eredmeny 
 		set report='.$db->quote($report).',
 			vote_count = '.$db->quote($vote_count).'
@@ -333,8 +329,7 @@ class szavazokModel {
 		sz.szavazas_id = '.$db->quote($pollId).'
 		order by 1,2,3
 		');
-		$res = $db->loadObjectList();
-        return $res;
+		return $db->loadObjectList();
     }
 
 }	// szavazokModel
