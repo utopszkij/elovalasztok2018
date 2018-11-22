@@ -12,7 +12,7 @@ if (file_exists('../../configuration.php')) {
     define('TESTDBPSW','');
 }
 define('TESTDBPRE','tst_');
-require_once "./testJoomlaFramework.php.php";
+require_once "./testJoomlaFramework.php";
 require_once "../component/site/elovalasztok.php";
 
 class elovalasztokControllerTest extends PHPUnit_Framework_TestCase {
