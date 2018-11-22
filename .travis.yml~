@@ -2,7 +2,7 @@
 language: php
 
 php:
-  - 7.0
+  - nightly
 
 # optionally specify a list of environments, for example to test different RDBMS
 env:
@@ -11,7 +11,7 @@ env:
 # optionally set up exclusions and allowed failures in the matrix
 matrix:
   include:
-    - php: 7.0
+    - php: nightly
       env: WITH_COVERAGE=true
 
 addons:
