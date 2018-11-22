@@ -2,29 +2,25 @@
 language: php
 
 php:
-  - 7.0
+  - 7.0.32
 
-# optionally specify a list of environments, for example to test different RDBMS
 env:
   - DB=mysql
+
+services:
+  - mysql
   
-# optionally set up exclusions and allowed failures in the matrix
 matrix:
   include:
-    - php: 7.0
+    - php: 7.0.32
       env: WITH_COVERAGE=true
 
-addons:
-  sonarcloud:
-    organization: "utopszkij-github" # the key of the org you chose at step #3
-
-#before_script:
- - mysql -e 'create database test'
+before_script:
+ - mysql -e 'create database test;'
   
-# run phpunit test and sonar  
 script: 
  - cd test 
- - phpunit --whitelist . --coverage-clover ../clover.xml --log-junit ../log.xml .
+ - phpunit --whitelist ./ --coverage-clover ../clover.xml --log-junit ../log.xml .
 
 
 
