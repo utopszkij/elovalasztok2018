@@ -1,7 +1,7 @@
 #!/bin/sh
 # rin php unittest and run sonar-scanner
 cd test
-phpunit --whitelist . \
+vendor/bin/phpunit --whitelist . \
 --coverage-clover ../unittest.xml \
 --log-junit ../unittestlog.xml \
 .
