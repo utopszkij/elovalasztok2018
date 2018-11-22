@@ -340,10 +340,10 @@ class elovalasztokControllerTest extends PHPUnit_Framework_TestCase {
         $testUser->params = 'ADA:magyar, budapest';
         $controller = new szavazoController();
         $controller->eredmeny(10, $testUser);
-        $this->expectOutputRegex('/\<td class="pozicio"\>1\<\/td\>\<td class="nev"\>jeloltD/');
-        $this->expectOutputRegex('/\<td class="pozicio"\>2\<\/td\>\<td class="nev"\>jeloltA/');
-        $this->expectOutputRegex('/\<td class="pozicio"\>3\<\/td\>\<td class="nev"\>jeloltC/');
-        $this->expectOutputRegex('/\<td class="pozicio"\>4\<\/td\>\<td class="nev"\>jeloltB/');
+        $this->expectOutputRegex('class="pozicio"\>1\<\/td\>\<td class="nev"\>jeloltD/');
+        $this->expectOutputRegex('class="pozicio"\>2\<\/td\>\<td class="nev"\>jeloltA/');
+        $this->expectOutputRegex('class="pozicio"\>3\<\/td\>\<td class="nev"\>jeloltC/');
+        $this->expectOutputRegex('class="pozicio"\>4\<\/td\>\<td class="nev"\>jeloltB/');
 
     }  
   
