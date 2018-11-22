@@ -29,43 +29,57 @@
 
   // ================ controller ==============================
   class SzavazoController extends JcontrollerLegacy {
+	
+	/**
+	* if testMode then display test info msg
+	*/
+	protected function displayTestMsg($evConfig, $pollId) {
+		if ($evConfig->pollDefs[$pollId]->testMode) {
+			echo '<div class="testInfo"><strong>Teszt üzemód. Bárki szavazhat, többször is lehet szavazni.</strong></div>';			
+		}
+	}	
 	  
 	/**
-    * szavazó képernyő megjelenitése  - új szavazat beküldése
+	* display szavazao Form
+	* @param int $pollId
+	* @param Jmodel
+	*/  
+	protected function displaySzavazoForm($pollId, $model) {	  		
+	   $item = $model->getItem($pollId);	
+		if (count($item->pollOptions) <= 0) {
+				echo '<div class="nincsJelolt infoMsg">Nincs jelölt!</div>';
+		} else {
+			  include dirname(__FILE__).'/views/szavazoform.php';
+		}  
+	}	
+
+	/**
+   * szavazó képernyő megjelenitése  - új szavazat beküldése
 	* @param integer szavazás azonosító
-    * @param JUser user 
-    */ 	
+   * @param JUser user 
+   */ 	
     public function szavazok($pollId, $user) {
 			global $evConfig;
 			$model = new SzavazokModel();
-		
+			$this->displayTestMsg($evConfig, $pollId);	
 			if ($evConfig->pollDefs[$pollId]->testMode) {
-				echo '<div class="testInfo"><strong>Teszt üzemód. Bárki szavazhat, többször is lehet szavazni.</strong></div>';			
-		        $item = $model->getItem($pollId);	
-       		    include dirname(__FILE__).'/views/szavazoform.php';
+				$this->displaySzavazoForm($pollId, $model);
 				return;
-			}
-
+			}		
 			$msg = '';
+			$infoMsg = 'infoMsg';
 			if ($user->id == 0) {
-					echo '<div class="notLogin">Szavazáshoz be kell jelentkezni!</div>';
+					echo echoHtmlDiv('Szavazáshoz be kell jelentkezni!','errorMsg notLogin');
 			} else if (!$evConfig->pollDefs[$pollId]->votingEnable) {
-					echo '<div class="notLogin">Jelenleg nem lehet szavazni.</div>';
+					echo echoHtmlDiv('Jelenleg nem lehet szavazni.',$infoMsg);
 			} else  {
 			  if (szavazottMar($pollId, $user)) {
-					echo '<div class="marSzavazaott infoMsg">Ön már szavazott!</div>';
+					echo echoHtmlDiv('Ön már szavazott!',$infoMsg);
+			  } else  if (teheti($pollId, $user, 'szavazas', $msg)) {
+			  		$this->displaySzavazoForm($pollId, $model);
 			  } else {
-				  if (teheti($pollId, $user, 'szavazas', $msg)) {
-				   $item = $model->getItem($pollId);	
-					if (count($item->pollOptions) <= 0) {
-							echo '<div class="nincsJelolt infoMsg">Nincs jelölt!</div>';
-					} else {
-						  include dirname(__FILE__).'/views/szavazoform.php';
-					}  
-				  } else {
-					echo '<div class="nemSzavazhat infoMsg">'.$msg.'</div>';
-				  }
-			  } // szavazott már?	 
+					echo echoHtmlDiv($msg,'errorMsg');
+			  }
 			}
 	}
 	
@@ -77,23 +91,20 @@
     */ 	
     public function eredmeny($pollId, $user) {
 			global $evConfig;
-			if ($evConfig->pollDefs[$pollId]->testMode) {
-				echo '<div class="testInfo"><strong>Teszt üzemód. Bárki szavazhat, többször is lehet szavazni.</strong></div>';			
-			}
-            $msg = '';
+			$this->displayTestMsg($evConfig, $pollId);		
+         $msg = '';
 			if (!teheti($pollId, $user, 'eredmeny', $msg)) {
     			echo '<div class="errorMsg">'.$msg.'</div>';
                 return;
 			}
 			$model = new SzavazokModel();
 			$backUrl = JURI::root().'/leiras';
-            $pollRecord = $model->getPollRecord($pollId);
 			// nézzük van-e cachelt report?
-            $cache = $model->getFromCache($pollId);
-
+         $cache = $model->getFromCache($pollId);
+        	$pollRecord = $model->getPollRecord($pollId);
 			// ha nincs meg a cache rekord akkor hozzuk most létre, üres tartalommal
 			if (!$cache) {
-                $model->initCache($pollId);
+            $model->initCache($pollId);
 				$cache = new stdClass();
 				$cache->pollid = $pollId;
 				$cache->report = "";
@@ -117,39 +128,40 @@
 		public function szavazatSave($pollId, $user) {
 			global $evConfig;
 			Jsession::checkToken() or die('invalid CSRF protect token');
+			$errorMsg = 'errorMsg';
 			if ($evConfig->pollDefs[$pollId]->testMode) {
 				$user->id = rand(100001,999999);
 			}
 			if ($user->id <= 0) {
-    			echo '<div class="errorMsg">Nincs bejelentkezve vagy lejárt a session</div>';
-                return;
+    				echo echoHtmlDiv('Nincs bejelentkezve vagy lejárt a session',$errorMsg);
+               return;
             }
 			
-            $input = JFactory::getApplication()->input;  
+         $input = JFactory::getApplication()->input;  
 			$szavazat = $input->get('szavazat','','STRING');
 			$msg = '';
 			$msgClass = '';
 			if ($pollId > 0) {
 				if (teheti($pollId, $user, 'szavazas', $msg)) {
-					$model = new szavazokModel();
-                    $szavazoId = $model->save($pollId, $szavazat, $user);
+					$model = new SzavazokModel();
+               $szavazoId = $model->save($pollId, $szavazat, $user);
 					if ($szavazoId > 0) {
 						$msg = 'Köszönjük szavazatát. Az ön szavazatának azonosítója az adatbázisban: <strong>'.$szavazoId.'</strong><br />'; 	
-                        $msg .= '<small>Ennek az azonositónak a segitségével Ön ellenörizheti a letárolt szavazatát.';
-                        $msg .=' Az eredmény menüpontban a "szavazatok" linkre kattintva láthatja a letárolt szavazatokat.</small>';
+                  $msg .= '<small>Ennek az azonositónak a segitségével Ön ellenörizheti a letárolt szavazatát.';
+                  $msg .=' Az eredmény menüpontban a "szavazatok" linkre kattintva láthatja a letárolt szavazatokat.</small>';
 						$msgClass = 'infoMsg';
 					} else {
-						$msg = 'Hiba a szavazat tárolása közben. A szavazat nem lett tárolva '.$model->getErrorMsg();
-						$msgClass = 'errorMsg';
+						$msg = 'Hiba a szavazat tárolása közben. A szavazat nem lett tárolva.'.$model->getErrorMsg();
+						$msgClass = $errorMsg;
 					}	
 				} else {
-					$msgClass = 'errorMsg';
+					$msgClass = $errorMsg;
 				}	
 			} else {
 				$msg = 'Nincs kiválasztva a szavazás';
-				$msgClass = 'errorMsg';
+				$msgClass = $errorMsg;
 			}
-			echo '<div class="'.$msgClass.'">'.$msg.'</div>';
+			echo echoHtmlDiv($msg, $msgClass);
 		}
 	
 		/**

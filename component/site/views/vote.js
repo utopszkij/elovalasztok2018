@@ -63,15 +63,6 @@ function resort_row(i) {
 
 
 jQuery(function() {
-    var preftable = document.getElementById("preftable");
-    var prefsection = preftable.rows[0].parentNode;
-    var num_choices = preftable.rows.length - 1;
-
-    var cur_top = 1;
-    var cur_bot = num_choices;
-
-    //sort_rows();
-	 var current = false;
 
 	/**
 	* preftable tbody sortable bekapcsolása és drag_update2 hozzá rendelése
@@ -115,8 +106,7 @@ jQuery(function() {
 						errorMsg = 'A "többit ellenzem" vonalnál nem lehet "holtverseny"! ';
 					}	
 				}
-				if ((i > 0) && (row.cells[3].firstChild.selectedIndex === 
-							rows[i-1].cells[3].firstChild.selectedIndex)) {
+				if (row.cells[3].firstChild.selectedIndex === rows[i-1].cells[3].firstChild.selectedIndex) {
 						errorMsg = 'A "többit ellenzem" vonalnál nem lehet "holtverseny"! ';
 				}
 		  }

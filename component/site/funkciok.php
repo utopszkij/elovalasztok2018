@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 * @param string id
 * @return string HTML code
 */
-function echoHtmlTag($tagName, $body='', $class='', $id='') {
+function echoHtmlTag($tagName, $body='', $class='', $id='', $style='') {
 	$result = '<'.$tagName;
 	if ($id != '') {
 		$result .= ' id="'.$id.'"';	
@@ -19,9 +19,21 @@ function echoHtmlTag($tagName, $body='', $class='', $id='') {
 	if ($class != '') {
 		$result .= ' class="'.$class.'"';	
 	}
+	if ($style != '') {
+		$result .= ' style="'.$style.'"';	
+	}
 	$result .= '>'.$body;
 	return $result.'</'.$tagName.'>'; 
 }
+
+function echoHtmlDiv($body='', $class='', $id='', $style='') {
+	return echoHtmlTag('div', $body, $class, $id, $style);
+}
+
+function echoHtmlTd($body='', $class='', $id='', $style='') {
+	return echoHtmlTag('td', $body, $class, $id, $style);
+}
+
 
 /**
    * adott user, már szavazott?

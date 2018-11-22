@@ -20,7 +20,7 @@ class MyCondorcet extends Condorcet {
 		      where  catid='.$db->quote($this->poll).' and state=1';
           $db->setQuery($candidates_sql);
           $this->candidates=array();
-		  $this->condorcetGyoztes = array();
+		 	 $this->condorcetGyoztes = array();
           foreach($db->loadObjectList() as $row) {
               $this->candidates[$row->id] = $row->megnevezes;
           }
@@ -39,7 +39,7 @@ class MyCondorcet extends Condorcet {
                        group by a.alternativa_id, b.alternativa_id';
           $db->setQuery($diff_sql);
           $this->dMatrix=array();
-		  $rows = $db->loadObjectList();
+		 	 $rows = $db->loadObjectList();
           foreach($rows as $row ) {
               $id1 = $row->id1;
               $id2 = $row->id2;
@@ -151,12 +151,7 @@ class SzavazokModel {
 		$result->pollId = $pollId;
 		$result->pollNamev = '';
 		$result->pollOptions = array();
-		$db->setQuery('select * from #__categories where id='.$db->quote($pollId));
-		try {
-		  $res = $db->loadObject(); 
-		} catch (Exception $e) {
-		  $res = false;	
-		}  
+		$res = $this->getPollRecord($pollId);
 		if ($res) {
 			$result->pollName = $res->title;
 			$db->setQuery('select RAND(10) as rnd,
@@ -194,13 +189,13 @@ class SzavazokModel {
 	*/  
 	public function save($pollId, $szavazat, $user) {
 		global $evConfig;
-        $szavazoId = (rand(100,999).$user->id)*2;
+      $szavazoId = (rand(100,999).$user->id)*2;
 		$msg = '';
-
-        if (!$evConfig->pollDefs[$pollId]->votingEnable) {
+		$SEPARATOR=',';
+      if (!$evConfig->pollDefs[$pollId]->votingEnable) {
 			  $this->errorMsg .= 'Most nem lehet szavazni.';
 			  return 0;	
-        }
+      }
 
 		// jogosultság ellenörzés
 		if (!teheti($pollId, $user, 'szavazas', $msg)) {
@@ -208,14 +203,12 @@ class SzavazokModel {
 			  return 0;	
 		}
 
-
 		$db = JFactory::getDBO();
 		$db->setQuery('START TRANSACTION');
 		$db->query();
 
 		// szavazás kategoria megállapitása
-		$db->setQuery('select * from #__categories where id='.$db->quote($pollId));
-		$res = $db->loadObject();
+		$res = $this->getPollRecord($pollId);
 		if ($res) {
 			$catid = $res->parent_id;
 		} else {
@@ -235,14 +228,12 @@ class SzavazokModel {
 					`pozicio`
 					)
 					VALUES
-					('.$db->quote($catid).', 
-					'.$db->quote($pollId).', 
-					'.$db->quote($szavazoId).', 
-					'.$db->quote($user->id).', 
-					'.$db->quote($w2[0]).', 
-					'.$db->quote($w2[1]).'
-					)
-				');
+					('.$db->quote($catid).$SEPARATOR. 
+					$db->quote($pollId).$SEPARATOR. 
+					$db->quote($szavazoId).$SEPARATOR. 
+					$db->quote($user->id).$SEPARATOR. 
+					$db->quote($w2[0]).$SEPARATOR. 
+					$db->quote($w2[1]).')');
 				try {
 				  if (!$db->query()) {
 					$this->errorMsg .= $db->getErrorMsg().'<br />';
