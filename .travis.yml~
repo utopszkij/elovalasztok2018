@@ -15,6 +15,7 @@ matrix:
     - php: 7.1
       env: WITH_COVERAGE=true
 
+
 before_script:
  - mysql -e 'create database test;'
   
