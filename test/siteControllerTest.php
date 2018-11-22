@@ -7,7 +7,7 @@ if (file_exists('../../configuration.php')) {
     define('TESTDBUSER',$jconfig->user);
     define('TESTDBPSW',$jconfig->password);
 } else {
-    define('TESTDB','elovalasztok2');
+    define('TESTDB','test');
     define('TESTDBUSER','root');
     define('TESTDBPSW','');
 }
