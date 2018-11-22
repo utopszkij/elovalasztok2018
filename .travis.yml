@@ -1,12 +1,8 @@
 # see http://about.travis-ci.org/docs/user/languages/php/ for more hints
 language: php
 
-# list any PHP version you want to test against
 php:
-  # aliased to a recent 7.x version
-  - 7.0
-  # aliased to a recent hhvm version
-  - hhvm
+  - nightly
 
 # optionally specify a list of environments, for example to test different RDBMS
 env:
@@ -15,20 +11,16 @@ env:
 # optionally set up exclusions and allowed failures in the matrix
 matrix:
   include:
-    - php: 7.0
+    - php: nightly
       env: WITH_COVERAGE=true
 
 addons:
   sonarcloud:
     organization: "utopszkij-github" # the key of the org you chose at step #3
 
-# execute any number of scripts before the test run, custom env's are available as variables
-# 1. install phunit
-# 2. create test database
-before_script:
-- composer require phpunit/phpunit:5.1.3 satooshi/php-coveralls:dev-master
-- composer install --dev
- 
+#before_script:
+ - mysql -e 'create database test'
+  
 # run phpunit test and sonar  
 script: 
  - cd test 
