@@ -17,12 +17,6 @@ matrix:
   include:
     - php: 7.0
       env: WITH_COVERAGE=true
-  exclude:
-    - php: hhvm
-      env: DB=mysql  # PDO driver for mysql is unsupported by HHVM (3rd party install for support)
-  allow_failures:
-    - php: 7.0
-    - php: hhvm
 
 addons:
   sonarcloud:
@@ -32,15 +26,13 @@ addons:
 # 1. install phunit
 # 2. create test database
 before_script:
- - composer self-update
- - mysql -e "create database IF NOT EXISTS test;" -uroot; 
-  
+- composer require phpunit/phpunit:5.1.3 satooshi/php-coveralls:dev-master
+- composer install --dev
+ 
 # run phpunit test and sonar  
 script: 
  - cd test 
- - phpunit --whitelist test/ --coverage-clover ../unittest.xml --log-junit ../unittestlog.xml ./
- - cd ..
- - sonar-scanner -Dsonar.projectKey=utopszkij_elovalasztok2018 -Dsonar.organization=utopszkij-github -Dsonar.sources=component/site -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=47b18c5eb028e4cd9651f98af0eed7f6f070d419;  
+ - phpunit --whitelist . --coverage-clover ../clover.xml --log-junit ../log.xml .
 
 
 
