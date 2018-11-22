@@ -29,12 +29,11 @@ addons:
     organization: "utopszkij-github" # the key of the org you chose at step #3
 
 # execute any number of scripts before the test run, custom env's are available as variables
+# 1. install phunit
+# 2. create test database
 before_script:
-  - composer self-update
-  - composer install --prefer-source --no-interaction --dev
-  - if [[ "$DB" == "mysql" ]]; then mysql -e "create database IF NOT EXISTS test;" -uroot; fi
+  - curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-7.0.phar
+  - mysql -e "create database IF NOT EXISTS test;" -uroot; 
   
-
-# omitting "script:" will default to phpunit
-# use the $DB env variable to determine the phpunit.xml to use
+# run phpunit test and sonar  
 script: ./build.sh
