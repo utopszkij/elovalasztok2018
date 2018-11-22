@@ -3,6 +3,37 @@ defined('_JEXEC') or die;
 
 // elõválasztok rendszer globális funkciók, objektumok
 
+/**
+* echo html tag
+* @param string htm tag name example: 'div', 'td'
+* @param string body HTML string
+* @param string className
+* @param string id
+* @return string HTML code
+*/
+function echoHtmlTag($tagName, $body='', $class='', $id='', $style='') {
+	$result = '<'.$tagName;
+	if ($id != '') {
+		$result .= ' id="'.$id.'"';	
+	}
+	if ($class != '') {
+		$result .= ' class="'.$class.'"';	
+	}
+	if ($style != '') {
+		$result .= ' style="'.$style.'"';	
+	}
+	$result .= '>'.$body;
+	return $result.'</'.$tagName.'>'; 
+}
+
+function echoHtmlDiv($body='', $class='', $id='', $style='') {
+	return echoHtmlTag('div', $body, $class, $id, $style);
+}
+
+function echoHtmlTd($body='', $class='', $id='', $style='') {
+	return echoHtmlTag('td', $body, $class, $id, $style);
+}
+
 
 /**
    * adott user, már szavazott?
@@ -26,7 +57,7 @@ defined('_JEXEC') or die;
 
 function szavazasraJogosult($user, $szavazas_id) {
 	global $evConfig;
-    if ($evConfig->pollDefs[$szavazas_id]->testUzemmod) {
+    if ($evConfig->pollDefs[$szavazas_id]->testMode) {
         $result = true;
     } else if (($evConfig->pollDefs[$szavazas_id]->canAssurance != '') && (!$evConfig->pollDefs[$szavazas_id]->testUzemmod)) {
         $result = (strpos($user->params,$evConfig->pollDefs[$szavazas_id]->canAssurance) > 0);

@@ -20,7 +20,7 @@ class MyCondorcet extends Condorcet {
 		      where  catid='.$db->quote($this->poll).' and state=1';
           $db->setQuery($candidates_sql);
           $this->candidates=array();
-		  $this->condorcetGyoztes = array();
+		 	 $this->condorcetGyoztes = array();
           foreach($db->loadObjectList() as $row) {
               $this->candidates[$row->id] = $row->megnevezes;
           }
@@ -39,7 +39,7 @@ class MyCondorcet extends Condorcet {
                        group by a.alternativa_id, b.alternativa_id';
           $db->setQuery($diff_sql);
           $this->dMatrix=array();
-		  $rows = $db->loadObjectList();
+		 	 $rows = $db->loadObjectList();
           foreach($rows as $row ) {
               $id1 = $row->id1;
               $id2 = $row->id2;
@@ -91,7 +91,7 @@ class MyCondorcet extends Condorcet {
       }  
 } // myCondorcet
   
-class szavazokModel {
+class SzavazokModel {
 	private $errorMsg = '';
 	function __construct() {
 		$db = JFactory::getDBO();
@@ -112,7 +112,7 @@ class szavazokModel {
 		try {
 			$db->query();
 		} catch (Exception $e) {
-			;
+			return;
 		}	
 		
 		$db->setQuery('CREATE TABLE IF NOT EXISTS #__eredmeny (
@@ -125,7 +125,7 @@ class szavazokModel {
 		try {
 			$db->query();	
 		} catch (Exception $e) {
-			;
+			return;
 		}	
 	}
 
@@ -135,10 +135,9 @@ class szavazokModel {
     * @return object
     */
     public function getPollRecord($pollId) {
-        $db = JFactory::getDBO();
+      $db = JFactory::getDBO();
 		$db->setQuery('select * from #__categories where id='.$db->quote($pollId));
-		$poll = $db->loadObject();
-        return $poll;
+		return $db->loadObject();
     }
 	
 	/**
@@ -152,12 +151,7 @@ class szavazokModel {
 		$result->pollId = $pollId;
 		$result->pollNamev = '';
 		$result->pollOptions = array();
-		$db->setQuery('select * from #__categories where id='.$db->quote($pollId));
-		try {
-		  $res = $db->loadObject(); 
-		} catch (Exception $e) {
-		  ;	
-		}  
+		$res = $this->getPollRecord($pollId);
 		if ($res) {
 			$result->pollName = $res->title;
 			$db->setQuery('select RAND(10) as rnd,
@@ -169,7 +163,7 @@ class szavazokModel {
 			try {
 				$res = $db->loadObjectList();
 			} catch (Exception $e) {
-			  ;	
+			   $res = [];	
 			}  
 			foreach ($res as $res1) {
 				$w = new stdClass();
@@ -195,32 +189,31 @@ class szavazokModel {
 	*/  
 	public function save($pollId, $szavazat, $user) {
 		global $evConfig;
-        $szavazoId = (rand(100,999).$user->id)*2;
+      $szavazoId = (rand(100,999).$user->id)*2;
 		$msg = '';
-
-        if ($evConfig->pollDefs[$pollId]->votingEnable == false) {
+		$SEPARATOR=',';
+      if (!$evConfig->pollDefs[$pollId]->votingEnable) {
 			  $this->errorMsg .= 'Most nem lehet szavazni.';
 			  return 0;	
-        }
+      }
 
 		// jogosultság ellenörzés
-		if (teheti($pollId, $user, 'szavazas', $msg) == false) {
+		if (!teheti($pollId, $user, 'szavazas', $msg)) {
 			  $this->errorMsg .= $msg;
 			  return 0;	
 		}
-
 
 		$db = JFactory::getDBO();
 		$db->setQuery('START TRANSACTION');
 		$db->query();
 
 		// szavazás kategoria megállapitása
-		$db->setQuery('select * from #__categories where id='.$db->quote($pollId));
-		$res = $db->loadObject();
-		if ($res)
+		$res = $this->getPollRecord($pollId);
+		if ($res) {
 			$catid = $res->parent_id;
-		else
+		} else {
 			$catid = 0;
+		}	
 		if ($szavazoId > 0) {
 			// string részekre bontása és tárolás ciklusban
 			$w1 = explode(',',$szavazat);
@@ -235,16 +228,14 @@ class szavazokModel {
 					`pozicio`
 					)
 					VALUES
-					('.$db->quote($catid).', 
-					'.$db->quote($pollId).', 
-					'.$db->quote($szavazoId).', 
-					'.$db->quote($user->id).', 
-					'.$db->quote($w2[0]).', 
-					'.$db->quote($w2[1]).'
-					)
-				');
+					('.$db->quote($catid).$SEPARATOR. 
+					$db->quote($pollId).$SEPARATOR. 
+					$db->quote($szavazoId).$SEPARATOR. 
+					$db->quote($user->id).$SEPARATOR. 
+					$db->quote($w2[0]).$SEPARATOR. 
+					$db->quote($w2[1]).')');
 				try {
-				  if ($db->query() != true) {
+				  if (!$db->query()) {
 					$this->errorMsg .= $db->getErrorMsg().'<br />';
 					$szavazoId = 0;
 				  }
@@ -254,20 +245,17 @@ class szavazokModel {
 			}
 		}
 
-		// delete cached report
+		// save report to cache
 		$db->setQuery('UPDATE #__eredmeny 
 		SET report="" 
 		WHERE pollid='.$db->quote($pollId));
-		try {
-		  $db->query();
-		} catch (Exception $e) {
-		  ;
-		}	
+	   $db->query();
 
-		if ($szavazoId > 0) 
+		if ($szavazoId > 0) {
 			$db->setQuery('COMMIT');
-		else
+		} else {
 			$db->setQuery('ROLLBACK');
+		}	
 		$db->query();
 
 		return $szavazoId;
@@ -279,12 +267,11 @@ class szavazokModel {
     * @return object
     */
     public function getFromCache($pollId) {
-        $db = JFactory::getDBO();
+      $db = JFactory::getDBO();
 		$db->setQuery('select * from 
 					 #__eredmeny 
 					 where pollid='.$db->quote($pollId));
-		$cache = $db->loadObject();
-        return $cache;
+		return $db->loadObject();
     }
 
     /**
@@ -293,7 +280,7 @@ class szavazokModel {
     * @return object
     */
     public function initCache($pollId) {
-        $db = JFactory::getDBO();
+      $db = JFactory::getDBO();
 		$db->setQuery('INSERT INTO #__eredmeny
 		(pollid, report) 
 		value 
@@ -309,7 +296,7 @@ class szavazokModel {
     * @return object
     */
     public function saveToCache($pollId, $vote_count, $report) {
-        $db = JFactory::getDBO();
+      $db = JFactory::getDBO();
 		$db->setQuery('update #__eredmeny 
 		set report='.$db->quote($report).',
 			vote_count = '.$db->quote($vote_count).'
@@ -333,8 +320,7 @@ class szavazokModel {
 		sz.szavazas_id = '.$db->quote($pollId).'
 		order by 1,2,3
 		');
-		$res = $db->loadObjectList();
-        return $res;
+		return $db->loadObjectList();
     }
 
 }	// szavazokModel

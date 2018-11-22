@@ -10,6 +10,40 @@
   defined('_JEXEC') or die;
   global $evConfig;
   
+  
+function tehetiEredmeny($evConfig, $pollId, &$msg) {
+   if ($evConfig->pollDefs[$pollId]->resultEnable) {
+        $result = true;
+        $msg = '';
+   } else {
+        $result = false;
+        $msg = 'Jelenleg nem kérhető le az eredmény';
+   }
+	return $result;
+}  
+
+function teheteiSzavazas($evConfig, $pollId, $user, &$msg) {
+   if ($evConfig->pollDefs[$pollId]->testMode) {
+       $msg = '';  
+       $result = true;  
+   } else if ($user->id <= 0) {
+		 $result = false;
+		 $msg = 'Szavazáshoz be kell jelentkezni!';
+	} else if (szavazottMar($pollId, $user)) {  
+	    $result = false;
+		 $msg = 'Ön már szavazott';
+	}  else {
+	    if (szavazasraJogosult($user, $pollId)) {
+			$result = true;
+			$msg = '';
+		  } else {
+			$result = false;
+			$msg = 'Ön ebben a szavazásban nem szavazhat';
+		  }	
+   } 
+   return $result;
+}
+  
 /**
 * engedélyezett/nem egedélyezett az akció?
 * @param integer oevk 
@@ -22,39 +56,11 @@ function teheti($pollId, $user, $akcio, &$msg) {
 	global $evConfig;
 	$result = false;
 	$msg = '';
-	$db = JFactory::getDBO();
-	$db->setQuery('select * from #__categories where id='.$db->quote($pollId).' and published = 1');
-	$szavazas = $db->loadObject();
-	
 	if ($akcio == 'eredmeny') {
-		   if ($evConfig->pollDefs[$pollId]->resultEnable) {
-                $result = true;
-                $msg = '';
-           } else {
-                $result = false;
-                $msg = 'Jelenleg nem kérhető le az eredmény';
-           }
+		$result = tehetiEredmeny($evConfig, $pollId, $msg);
 	}
-	
 	if ($akcio == 'szavazas') {
-          if ($evConfig->pollDefs[$pollId]->testMode) {
-              $msg = '';  
-              $result = true;  
-          } else if ($user->id <= 0) {
-			  $result = false;
-			  $msg = 'Szavazáshoz be kell jelentkezni!';
-	 	  } else if (szavazottMar($pollId, $user)) {  
-			  $result = false;
-			  $msg = 'Ön már szavazott';
-		  }  else {
-			  if (szavazasraJogosult($user, $pollId)) {
-				$result = true;
-				$msg = '';
-			  } else {
-				$result = false;
-				$msg = 'Ön ebben a szavazásban nem szavazhat';
-			  }	
-		  } 
+		$result = teheteiSzavazas($evConfig, $pollId, $user, $msg);
 	}   
 	return $result;
 }

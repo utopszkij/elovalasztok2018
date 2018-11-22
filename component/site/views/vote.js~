@@ -63,6 +63,7 @@ function resort_row(i) {
 
 
 jQuery(function() {
+    var preftable = document.getElementById("preftable");
 
 	/**
 	* preftable tbody sortable bekapcsolása és drag_update2 hozzá rendelése
