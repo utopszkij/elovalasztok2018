@@ -14,6 +14,6 @@ if [ $retVal -eq 0 ]; then
   -Dsonar.sources=component/site \
   -Dsonar.host.url=https://sonarcloud.io \
   -Dsonar.login=47b18c5eb028e4cd9651f98af0eed7f6f070d419;  
-  retval=$?
+  retVal=$?
 fi
-exit $retval
+exit $retVal
