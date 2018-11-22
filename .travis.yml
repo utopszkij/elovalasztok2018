@@ -32,8 +32,15 @@ addons:
 # 1. install phunit
 # 2. create test database
 before_script:
-  - curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-7.0.phar
-  - mysql -e "create database IF NOT EXISTS test;" -uroot; 
+ - composer self-update
+ - composer install --prefer-source --no-interaction --dev
+ - mysql -e "create database IF NOT EXISTS test;" -uroot; 
   
 # run phpunit test and sonar  
-script: ./build.sh
+script: 
+ - phpunit --whitelist test/ --coverage-clover unittest.xml --log-junit unittestlog.xml test/
+ - sonar-scanner -Dsonar.projectKey=utopszkij_elovalasztok2018 -Dsonar.organization=utopszkij-github -Dsonar.sources=component/site -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=47b18c5eb028e4cd9651f98af0eed7f6f070d419;  
+
+
+
+
