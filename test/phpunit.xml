@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit>
+    <testsuites>
+        <testsuite name="elovalasztok2018">
+            <directory>.</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../component/site</directory>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-clover" target="../build/tests-clover.xml"/>
+        <log type="junit"           target="../build/tests-junit.xml" logIncompleteSkipped="false"/>
+    </logging>
+</phpunit>

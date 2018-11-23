@@ -7,7 +7,7 @@ if (file_exists('../../configuration.php')) {
     define('TESTDBUSER',$jconfig->user);
     define('TESTDBPSW',$jconfig->password);
 } else {
-    define('TESTDB','elovalasztok2');
+    define('TESTDB','test');
     define('TESTDBUSER','root');
     define('TESTDBPSW','');
 }
@@ -334,16 +334,16 @@ class elovalasztokControllerTest extends PHPUnit_Framework_TestCase {
         /* user_id rendbe tétele */
         $db->exec('UPDATE #__szavazatok SET user_id = szavazo_id WHERE user_id = 0');
 	
-	    global $evConfig,$testData,$componentName,$testUser;
-		$this->setupConfig();
+	     global $evConfig,$testData,$componentName,$testUser;
+		  $this->setupConfig();
         $testUser->id = 1;
         $testUser->params = 'ADA:magyar, budapest';
         $controller = new szavazoController();
         $controller->eredmeny(10, $testUser);
-        $this->expectOutputRegex('/\<td class="pozicio"\>1\<\/td\>\<td class="nev"\>jeloltD/');
-        $this->expectOutputRegex('/\<td class="pozicio"\>2\<\/td\>\<td class="nev"\>jeloltA/');
-        $this->expectOutputRegex('/\<td class="pozicio"\>3\<\/td\>\<td class="nev"\>jeloltC/');
-        $this->expectOutputRegex('/\<td class="pozicio"\>4\<\/td\>\<td class="nev"\>jeloltB/');
+        $this->expectOutputRegex('/class="pozicio"\>1\<\/td\>\<td class="nev"\>jeloltD/');
+        $this->expectOutputRegex('/class="pozicio"\>2\<\/td\>\<td class="nev"\>jeloltA/');
+        $this->expectOutputRegex('/class="pozicio"\>3\<\/td\>\<td class="nev"\>jeloltC/');
+        $this->expectOutputRegex('/class="pozicio"\>4\<\/td\>\<td class="nev"\>jeloltB/');
 
     }  
   
