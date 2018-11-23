@@ -87,4 +87,25 @@ Szavazat modosítása
 1. A programban nincs ilyen funkció,
 2. mysql trigger megakályozza
 
+Néhány képernyő kép
+-------------------
+
+![](images/eloval1.png)
+
+![](images/eloval2.png)
+
+![](images/eloval3.png)
+
+![](images/eloval4.png)
+
+Joomla checker
+--------------
+
+![](images/eloval-check1.png)
+
+![](images/eloval-check2.png)
+
+![](images/eloval-check3.png)
+
+
 
