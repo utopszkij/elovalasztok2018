@@ -1,0 +1,16 @@
+sonar.projectKey=utopszkij_elovalasztok2018
+sonar.projectName=elovalasztok2018
+sonar.projectVersion=1.0
+
+sonar.language=php
+
+sonar.sources=component/site
+sonar.sourceEncoding=UTF-8
+
+sonar.exclusions=/test/*.php
+
+sonar.tests=test
+sonar.php.coverage.reportPath=build/tests-clover.xml
+sonar.php.tests.reportPath=build/tests-junit.xml
+
+sonar.coverage.exclusions=test/*.php
