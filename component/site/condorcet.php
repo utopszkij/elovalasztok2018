@@ -33,39 +33,40 @@ class CondorcetObj {
     // ======================================
     // abstract methods
     // ======================================
-
-     /**
+    /*
+      *
       * database --> $this->candidates
       * @output $this->candidates 
-      */
+      *
       protected function getCandidates() {
           return $this->candidates;
       }
 
-      /**
+      *
       * database --> $this->dmatrix
       * @return $dMatrix   dMatrix[i,j]  The 'i' candidate will prematurely precede the "j" candidate
       * where "i" and "j" candidate.id
-      */
+      *
       protected function loadDiffMatrix() {
           return $this->dMatrix;
       }
 
-      /**
+      *
       * database --> $this->inFirst
       * @return array 
-      */    
+      *    
       protected function loadInFirst() {
         return $this->inFirst;
       }  
 
-	  /**
+	   *
       * database --> $this->vote_count
       * @return integer
-      */  
+      *  
       protected function loadVoteCount() {  
         return $this->vote_count;
       }  
+      */
       
 		// ============================
       //     standard methods

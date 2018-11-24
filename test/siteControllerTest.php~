@@ -383,7 +383,7 @@ class elovalasztokControllerTest extends PHPUnit_Framework_TestCase {
         $evConfig->pollId = 1;
         $evConfig->pollDefs[1]->testMode = false;
         $controller = new szavazoController();
-        $controller->szavazatok(10, $testUser);
+        $controller->szavazatok($evConfig->pollId, $testUser);
 		$this->expectOutputRegex('/Leadott szavazatok/');   
     }
 

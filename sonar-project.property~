@@ -13,4 +13,4 @@ sonar.tests=test
 sonar.php.coverage.reportPath=test/tests-clover.xml
 sonar.php.tests.reportPath=test/tests-junit.xml
 
-sonar.coverage.exclusions=test/*.php, component/site/views/*.js
+sonar.coverage.exclusions=test/*.php

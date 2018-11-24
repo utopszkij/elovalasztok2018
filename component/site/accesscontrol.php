@@ -23,13 +23,7 @@ function tehetiEredmeny($evConfig, $pollId, &$msg) {
 }  
 
 function teheteiSzavazas($evConfig, $pollId, $user, &$msg) {
-   if ($evConfig->pollDefs[$pollId]->testMode) {
-       $msg = '';  
-       $result = true;  
-   } else if ($user->id <= 0) {
-		 $result = false;
-		 $msg = 'Szavazáshoz be kell jelentkezni!';
-	} else if (szavazottMar($pollId, $user)) {  
+	if (szavazottMar($pollId, $user)) {  
 	    $result = false;
 		 $msg = 'Ön már szavazott';
 	}  else {

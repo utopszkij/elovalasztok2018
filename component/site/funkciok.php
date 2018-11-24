@@ -11,16 +11,13 @@ defined('_JEXEC') or die;
 * @param string id
 * @return string HTML code
 */
-function echoHtmlTag($tagName, $body='', $class='', $id='', $style='') {
+function echoHtmlTag($tagName, $body='', $class='', $id='') {
 	$result = '<'.$tagName;
 	if ($id != '') {
 		$result .= ' id="'.$id.'"';	
 	}
 	if ($class != '') {
 		$result .= ' class="'.$class.'"';	
-	}
-	if ($style != '') {
-		$result .= ' style="'.$style.'"';	
 	}
 	$result .= '>'.$body;
 	return $result.'</'.$tagName.'>'; 
