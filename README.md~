@@ -1,18 +1,8 @@
 # elovalasztok2018
 Ez a 2018 -as főpolgármester előválasztásra készülő Joomla 3 alapú szoftver
 
-Tulajdonságok
--------------
-
-- Preferenciális szavazás,
-- Condorcet kritérium szerinti kiértékelés,
-- Taktikai szavazás szempontjából a legelfogadottabb jelölt kimutatása,
-- Joomla MVC program struktúra
-- Biztonságos
 
 Telepités:
-----------
-
 - Normál Joomla 3 telepités
 - bfstop, securitycheck kiegészitések telepitése a jooma extension könyvtárból, ezek konfigurálása
 - com_adalogin kiegészitő telepitése (github repoból) és konfigurálása
