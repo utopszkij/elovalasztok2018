@@ -93,11 +93,15 @@
 			global $evConfig;
 			$this->displayTestMsg($evConfig, $pollId);		
          $msg = '';
+         $input = JFactory::getApplication()->input;  
+			$table = '#__'.$input->get('table','szavazatok','STRING');
+         
 			if (!teheti($pollId, $user, 'eredmeny', $msg)) {
     			echo '<div class="errorMsg">'.$msg.'</div>';
                 return;
 			}
 			$model = new SzavazokModel();
+			$model->szavazatokTable = $table;
 			$backUrl = JURI::root().'/leiras';
 			// nézzük van-e cachelt report?
          $cache = $model->getFromCache($pollId);
@@ -112,6 +116,7 @@
 			if ($cache->report == "") {
 				// ha nincs; most  kell condorcet/Shulze feldolgozás feldolgozás
 				$schulze = new MyCondorcet($pollId);
+				$schulze->szavazatokTable = $table;
 				$report = $schulze->report();
             $model->saveToCache($pollId, $schulze->vote_count, $report);
 			} else {  

@@ -42,11 +42,11 @@ if ($input->get('cookieenable','3') == 0) {
 		<meta charset="utf-8" />
 		<link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
 		<link rel="icon" type="image/png" href="assets/img/favicon.png">	
-		<title>Elovalasztas</title>
+		<title>Netpolgar</title>
 		<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
 		<meta name="viewport" content="width=device-width" />
 
-		<meta name="generator" content="Bluefish 2.2.10" />
+		<meta name="generator" content="Joomla! - Open Source Content Management" />
 		<base href="<?php echo JURI::base(); ?>" />
 		<link href="/netpolgar/templates/utopszkij/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
 
@@ -63,7 +63,14 @@ if ($input->get('cookieenable','3') == 0) {
 		<script>
 			var RESTRICTED = {};
 		</script>
-	
+
+		<!-- JCE editor  -->
+		<link rel="stylesheet" href="/netpolgar/components/com_jce/editor/libraries/css/editor.min.css?8726a60f39dcca083ba5b187a3a17660" type="text/css" />
+		<script data-cfasync="false" type="text/javascript" src="/netpolgar/components/com_jce/editor/tiny_mce/tiny_mce.js?d1c5a7bac2961e243c8bdd2d22d920fa"></script>
+		<script data-cfasync="false" type="text/javascript" src="/netpolgar/components/com_jce/editor/libraries/js/editor.min.js?80c35e9b2d90eada5818b539ba18acba"></script>
+		<script data-cfasync="false" type="text/javascript" src="/netpolgar/index.php?option=com_jce&view=editor&task=loadlanguages&lang=en&context=10011&d0042d083da18682a781d23471ad4a25=1"></script>
+		<script data-cfasync="false" type="text/javascript">try{WFEditor.init({"token":"d0042d083da18682a781d23471ad4a25","etag":"dff17275c25f117c9a0a71ecd05748e2","context":10011,"base_url":"http://robitc/netpolgar/","language":"en","directionality":"ltr","theme":"advanced","plugins":"core,autolink,cleanup,code,format,importcss,colorpicker,upload,formatselect,styleselect,fontselect,fontsizeselect,fontcolor,clipboard,lists,textcase,charmap,hr,directionality,fullscreen,print,searchreplace,table,style,xhtmlxtras,visualchars,visualblocks,nonbreaking,anchor,link,imgmanager,spellchecker,article,browser,contextmenu,inlinepopups,media,preview,source,advlist,wordcount","language_load":false,"theme_advanced_buttons1":"help,newdocument,undo,redo,|,bold,italic,underline,strikethrough,justifyfull,justifycenter,justifyleft,justifyright,|,blockquote,formatselect,styleselect,removeformat,cleanup","theme_advanced_buttons2":"fontselect,fontsizeselect,forecolor,backcolor,|,cut,copy,paste,pastetext,indent,outdent,numlist,bullist,sub,sup,textcase,charmap,hr","theme_advanced_buttons3":"ltr,rtl,fullscreen,print,search,|,table_insert,delete_table,row_props,cell_props,row_before,row_after,delete_row,col_before,col_after,delete_col,split_cells,merge_cells,style,cite,abbr,acronym,del,ins,attribs","theme_advanced_buttons4":"visualaid,visualchars,visualblocks,nonbreaking,anchor,unlink,link,imgmanager,spellchecker,readmore,pagebreak","theme_advanced_resizing":true,"content_css":"/netpolgar/templates/protostar/css/template.css?1524061659","schema":"mixed","invalid_elements":",iframe,script,style,applet,body,bgsound,base,basefont,frame,frameset,head,html,id,ilayer,layer,link,meta,name,title,xml","remove_script_host":false,"imgmanager_upload":{"max_size":1024,"filetypes":["jpg","jpeg","png","gif"]},"spellchecker_engine":"browser","extension_id":10011,"compress":{"javascript":false,"css":false}});}catch(e){console.debug(e);}</script>
+		
 		<!-- awesome font -->	
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<!-- font -->
@@ -73,33 +80,28 @@ if ($input->get('cookieenable','3') == 0) {
 
 	</head>
 	<body>
-        <noscript>
-            <div class="noscript>">
-                <h3>A böngészőjében nincs engedélyezve a javascript használata.</h3>
-                <p>Ennek a rendszernek a használatához szükség van a javascript engedélyezésére.</p>
-                <p>Engedélyezze a böngésző beállításoknál, majd frissitse ezt az oldalt!</p>
-            </div>
-        </noscript>	
-
-		<div id="popup" style="position:absolute; left:80px; top:80px; width:400px; height:650px; z-index:1000; padding:10px; border-style:solid; border-width:2px; background-color:#E0E0F0; display:none">
-			<iframe width="100%" height="630" id="popupIfrm"></iframe>
-		</div>	
-	
 		<div class="menuContainer" id="topMenuContainer">
 			<div id="topMenuIcon">
 				<i class="fa fa-bars" onclick="$('#topMenu').toggle()" style="cursor:pointer"></i>
 			</div>
 			<div id="logo">
 				<a href="index.php">
-					<var style="color:white; font-size:10pt; margin:3px;"><strong>Főpolgármester előválasztás 2018</strong></var>
+					<img src="templates/utopszkij/images/logo.jpg">
+					<var style="color:white; font-size:10pt; margin:3px;">Fejlesztés alatt, ßteszt készültség:1%</var>
 				</a>
 			</div>
 			<?php 
 				// userinfo
 				$user = JFactory::getUser();
+				$avatar = 'http://gravatar.com/avatar/'.md5($user->email).'.jpg?s=80';
 				if ($user) {
 					if ($user->id > 0)
-						echo '<div id="userInfo"><i class="fa fa-key"></i></div>';
+						echo '<div id="userInfo">
+						<a href="'.JURI::base().'adatlap">
+						<img src="'.$avatar.'.php" 
+							title="'.$user->username.'" />
+						</div>
+						</a>';
 				}			
 			?>
 			<div id="topMenu">
@@ -111,7 +113,7 @@ if ($input->get('cookieenable','3') == 0) {
 		<div id="navbar-full">
 			
 			<div class="homePage">
-			<?php if (JFactory::getApplication()->input->get('Itemid') == 106) : ?>
+			<?php if (JFactory::getApplication()->input->get('Itemid') == 101) : ?>
 			<div id="carouselIndicators" class="carousel slide" data-ride="carousel">
 			  <ol class="carousel-indicators">
 				<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -120,37 +122,36 @@ if ($input->get('cookieenable','3') == 0) {
 			  </ol>
 			  <div class="carousel-inner">
 				<div class="carousel-item active">
-				  <img class="d-block w-100" src="./templates/utopszkij/assets/img/entrepreneur-3245868_1920.jpg" alt="">
+				  <img class="d-block w-100" src="./templates/utopszkij/assets/img/cover_4.jpg" alt="Szabad emberek szabad társulása">
 				  <div class="carousel-caption d-none d-md-block">
-					<h5>Élhető, modern világvárost!</h5>
+					<h5>Szabad emberek szabad társulása</h5>
 					<p>
-						<a class="btn" href="<?php echo JURI::base()?>leiras">Ismertető</a>
-						<a class="btn" href="<?php echo JURI::base()?>login">Bejelentkezés</a>
+						<a class="btn" href="<?php echo JURI::base()?>netpolgar/ismerteto">Ismertető</a>
+						<a class="btn" href="<?php echo JURI::base()?>bejelentkezes">Bejelentkezés</a>
 					</p>
 				  </div>
 				</div>
 				<div class="carousel-item">
-				  <img class="d-block w-100" src="./templates/utopszkij/assets/img/city-1215052.jpg" alt="Csináljunk egy jobb világot!">
+				  <img class="d-block w-100" src="./templates/utopszkij/assets/img/entrepreneur-3245868_1920.jpg" alt="Csináljunk egy jobb világot!">
 				  <div class="carousel-caption d-none d-md-block">
-					<h5>Fejlett közszolgáltatásokat!</h5>
+					<h5>Csináljunk egy jobb világot!</h5>
 					<p>
-						<a class="btn" href="<?php echo JURI::base()?>leiras">Ismertető</a>
-						<a class="btn" href="<?php echo JURI::base()?>login">Bejelentkezés</a>
+						<a class="btn" href="<?php echo JURI::base()?>netpolgar/ismerteto">Ismertető</a>
+						<a class="btn" href="<?php echo JURI::base()?>bejelentkezes">Bejelentkezés</a>
 					</p>
 				  </div>
 				</div>
 				<div class="carousel-item">
 				  <img class="d-block w-100" src="./templates/utopszkij/assets/img/windmill-3322529_1920.jpg" alt="Nem az a szabadság, hogy négy évente megválasztjuk ki uralkodjon felettünk.">
 				  <div class="carousel-caption d-none d-md-block">
-					<h5>Jó levegőt, kultúrált környzetet!</h5>
+					<h5>Egyenrangú, autonóm egyének kölcsönösen előnyös együttműködése.</h5>
 					<p>
-						<a class="btn" href="<?php echo JURI::base()?>leiras">Ismertető</a>
-						<a class="btn" href="<?php echo JURI::base()?>login">Bejelentkezés</a>
+						<a class="btn" href="<?php echo JURI::base()?>netpolgar/ismerteto">Ismertető</a>
+						<a class="btn" href="<?php echo JURI::base()?>bejelentkezes">Bejelentkezés</a>
 					</p>
 				  </div>
 				</div>
 			  </div>
-              <!--  
 			  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
 				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
 				<span class="sr-only">&lt;&lt;&lt;</span>
@@ -159,7 +160,6 @@ if ($input->get('cookieenable','3') == 0) {
 				<span class="carousel-control-next-icon" aria-hidden="true"></span>
 				<span class="sr-only">&gt;&gt;&gt;</span>
 			  </a>
-              -->  
 			</div>			
 			
 			
@@ -195,7 +195,7 @@ if ($input->get('cookieenable','3') == 0) {
 								</div>
 							</div>
 						</div>
-						<?php if (JFactory::getApplication()->input->get('Itemid') != 106) : ?>
+						<?php if (JFactory::getApplication()->input->get('Itemid') != 101) : ?>
 						<div class="row" id="component">
 							<div class="col-md-12 col-sd-12">
 									<jdoc:include type="component" />
@@ -236,116 +236,101 @@ if ($input->get('cookieenable','3') == 0) {
 						
 						<section id="temak">
 							<center>
-    							<div class="container">
-                                    <div class="row">
-										<div class="col-md-3 col-sm-6">
-											<div class="tema-wrap">
-											  <a href="login">
-												<i class="fa fa-sign-in <?php if ($user->id > 0) echo ' disabled'; ?>"></i>
-												<h2>Bejelentkezek</h2>
-											  </a>	
-											</div>
-										</div><!--/.col-md-3-->
-										<div class="col-md-3 col-sm-6">
-											<div class="tema-wrap">
-											  <a href="https://adatom.hu/fiokom.html?section=register">
-												<i class="fa fa-key  <?php if ($user->id > 0) echo ' disabled'; ?>"></i>
-												<h2>Regisztrálok</h2>
-											  </a>	
-											</div>
-										</div><!--/.col-md-3-->
-										<div class="col-md-3 col-sm-6">
-											<div class="tema-wrap">
-											  <a href="logout">
-												<i class="fa fa-sign-out <?php if ($user->id <= 0) echo ' disabled'; ?>"></i>
-												<h2>Kijelentkezek</h2>
-											  </a>	
-											</div>
-										</div><!--/.col-md-3-->
-										<div class="col-md-3 col-sm-6">
-											<div class="tema-wrap">
-											  <a href="component/elovalasztok">
-												<i class="fa fa-envelope  <?php if ($user->id <= 0) echo ' disabled'; ?>"></i>
-												<h2>Szavazok</h2>
-											  </a>	
-											</div>
-										</div><!--/.col-md-3-->
-                                </div>
-
+							<div class="container">
 								<div class="row">
-										<div class="col-md-3 col-sm-6">
-											<div class="tema-wrap">
-											  <a href="jelöltek">
-												<i class="fa fa-users"></i>
-												<h2>Jelöltek</h2>
-											  </a>	
-											</div>
-										</div><!--/.col-md-3-->
 
-										<div class="col-md-3 col-sm-6">
+										<div class="col-md-4 col-sm-6">
 											<div class="tema-wrap">
-											  <a href="component/elovalasztok?task=eredmeny">
-												<i class="fa fa-signal"></i>
-												<h2>Eredmény</h2>
+											  <a href="./netpolgar/groups">
+												<i class="fa fa-group"></i>
+												<h2>Csoportok</h2>
+												<h3>Együttmüködő csoportok</h3>
 											  </a>	
 											</div>
-										</div><!--/.col-md-3-->
+										</div><!--/.col-md-4-->
 
-										<div class="col-md-3 col-sm-6">
+										<div class="col-md-4 col-sm-6">
 											<div class="tema-wrap">
-											  <a href="leiras">
-												<i class="fa fa-info"></i>
-												<h2>Leírás</h2>
-												<h3>Az előválasztás célja, müködése</h3>
+											  <a href="./netpolgar/projektek">
+												<i class="fa fa-comments"></i>
+												<h2>Üzenetek</h2>
+												<h3>Privát üzenetek olvasása, küldése</h3>
 											  </a>	
 											</div>
-										</div><!--/.col-md-3-->
+										</div><!--/.col-md-4-->
 
-										<div class="col-md-3 col-sm-6">
+										<div class="col-md-4 col-sm-6">
 											<div class="tema-wrap">
-											  <a href="adatkezeles">
-												<i class="fa fa-lock"></i>
-												<h2>Adatkezelési leírás</h2>
+											  <a href="./netpolgar/projektek">
+												<i class="fa fa-child"></i>
+												<h2>Tagok</h2>
+												<h3>A csoport vagy a web oldal regisztrált felhasználói</h3>
 											  </a>	
 											</div>
-										</div><!--/.col-md-3-->
-								</div><!--/.row-->    
-                                <div class="row">
-										<div class="col-md-3 col-sm-6">
-											<div class="tema-wrap">
-											  <a href="http://www.gnu.org/licenses/quick-guide-gplv3.html">
-												<i class="fa fa-copyright"></i>
-												<h2>Licensz</h2>
-												<h3>GNU/GPL</h3>
-												<a href="http://gnu.hu/gplv3.html">Magyar fordítás</a>
-											  </a>	
-											</div>
-										</div><!--/.col-md-3-->
-										<div class="col-md-3 col-sm-6">
-											<div class="tema-wrap">
-											  <a href="impresszum">
-												<i class="fa fa-id-card"></i>
-												<h2>Impresszum</h2>
-											  </a>	
-											</div>
-										</div><!--/.col-md-3-->
-										<div class="col-md-3 col-sm-6">
-											<div class="tema-wrap">
-											  <a href="https://github.com/utopszkij/elovalasztok2018">
-												<i class="fa fa-code"></i>
-												<h2>Forrás programm</h2>
-											  </a>	
-											</div>
-										</div><!--/.col-md-3-->
-										<div class="col-md-3 col-sm-6">
-											<div class="tema-wrap">
-                                                <a href="http://adatom.hu">
-                                                    <img src="https://adatom.hu/images/logo/adalogo_379x143.png" style="width:80px;" />
-                                                    <h2>Anonim Digitális Azonosító</h2>
-                                                </a>
-                                            </div>
-                                        </div>
+										</div><!--/.col-md-4-->
 
+										<div class="col-md-4 col-sm-6">
+											<div class="tema-wrap">
+											  <a href="./netpolgar/projektek">
+												<i class="fa fa-calendar"></i>
+												<h2>Események</h2>
+												<h3>Globális, csoport, projekt események.</h3>
+											  </a>	
+											</div>
+										</div><!--/.col-md-4-->
+
+										<div class="col-md-4 col-sm-6">
+											<div class="tema-wrap">
+											  <a href="./netpolgar/projektek">
+												<i class="fa fa-folder-open-o"></i>
+												<h2>Fájl könyvtár</h2>
+												<h3>Fájl mellékletek.</h3>
+											  </a>	
+											</div>
+										</div><!--/.col-md-4-->
+
+										<div class="col-md-4 col-sm-6">
+											<div class="tema-wrap">
+											  <a href="./netpolgar/projektek">
+												<i class="fa fa-cogs"></i>
+												<h2>Projektek</h2>
+												<h3>javasolt, folyamatban lévő, lezárt projektek </h3>
+											  </a>	
+											</div>
+										</div><!--/.col-md-4-->
+										
+										<div class="col-md-4 col-sm-6">
+											<div class="tema-wrap">
+											  <a href="./netpolgar/projektek">
+												<i class="fa fa-shopping-basket"></i>
+												<h2>Alternatív piactér</h2>
+												<h3>Szellemi és anyagi termékek megosztása, cseréje</h3>
+											  </a>	
+											</div>
+										</div><!--/.col-md-4-->
+										
+										<div class="col-md-4 col-sm-6">
+											<div class="tema-wrap">
+											  <a href="./netpolgar/projektek">
+												<i class="fa fa-map-signs"></i>
+												<h2>Eszmecserék</h2>
+												<h3>Beszélgetések, viták, szavazások</h3>
+											  </a>	
+											</div>
+										</div><!--/.col-md-4-->
+										
+										<div class="col-md-4 col-sm-6">
+											<div class="tema-wrap">
+											  <a href="./netpolgar/projektek">
+												<i class="fa fa-book"></i>
+												<h2>Tudásbázis</h2>
+												<h3>Cikkek, linkek, jegyzetek, segédletek</h3>
+											  </a>	
+											</div>
+										</div><!--/.col-md-4-->
+										
+										
+									
 								</div><!--/.row-->    
 							</div><!--/.container-->
 							</center>
@@ -355,6 +340,7 @@ if ($input->get('cookieenable','3') == 0) {
 						<div id="recent-works">
 								<div class="center wow fadeInDown">
 									<h2>Ajánlott oldalak</h2>
+									<p class="lead">A szerkesztők ajánlata</p>
 								</div>
 
 								<div class="row">
@@ -372,7 +358,7 @@ if ($input->get('cookieenable','3') == 0) {
 											<div class="overlay">
 												<div class="recent-work-inner">
 													<h3><a href="#">Internet filozófia</a></h3>
-													<p></p>
+													<p>A 'blogoló' a tulajdonképpeni, a teljes jogú, a teljes fegyverzetében előttünk álló hálópolgár, a kiberkultúra eminens létrehozója.</p>
 													<a href="http://internetfilozofia.blog.hu/"><i class="fa fa-eye"></i>Megnézem</a>
 												</div> 
 											</div>
@@ -423,8 +409,8 @@ if ($input->get('cookieenable','3') == 0) {
 												<div class="recent-work-inner">
 													<h3><a href="#">Vénusz projekt</a></h3>
 													<p>Egy átfogó jövő kép...</p>
-													<a href="https://www.youtube.com/watch?v=Uh9VxaO12zY&list=PL255C39DA73A5F10B&index=149"><i class="fa fa-eye"></i>Röviditett video</a><br>
-													<a href="https://www.youtube.com/watch?v=JcbMW5Y5HxY"><i class="fa fa-eye"></i>Teljes video</a>
+													<a href="https://www.youtube.com/watch?v=Uh9VxaO12zY&list=PL255C39DA73A5F10B&index=149"><i class="fa fa-eye"></i>Röviditett magyar szinkronos video</a><br>
+													<a href="https://www.youtube.com/watch?v=JcbMW5Y5HxY"><i class="fa fa-eye"></i>Teljes magyar feliratos video</a>
 												</div> 
 											</div>
 											<img src="templates/utopszkij/images/portfolio/recent/item7.png" alt="">
@@ -443,7 +429,7 @@ if ($input->get('cookieenable','3') == 0) {
 											<div class="overlay">
 												<div class="recent-work-inner">
 													<h3><a href="#">Alternatív gazdaság</a></h3>
-													<p>Nem a piacgazdaság az egyetlen elképzelhető mód a társadalmi munkamegosztás megszervezésére.</p>
+													<p>Nem a (kapitalista) piacgazdaság az egyetlen elképzelhető technológia a társadalmi munkamegosztás megszervezésére.</p>
 													<a href="http://hu.alternativgazdasag.wikia.com/wiki/Alternat%C3%ADv_Gazdas%C3%A1g_lexikon"><i class="fa fa-eye"></i>Megnézem</a>
 												</div> 
 											</div>
@@ -476,18 +462,17 @@ if ($input->get('cookieenable','3') == 0) {
 				<footer id="footer">
 					<jdoc:include type="modules" name="position-14" />
 					<?php $shareLink = urlencode(JURI::current()); ?>
-					<p class="shareIcons">			
-						<i class="fa fa-share-alt"></i>&nbsp;
+					<p class="shareIcons">									
 						<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $shareLink; ?>">
-							<i class="fa fa-facebook" title="facebook"
-							style="display:inline-block; background-color:blue; color:white; width:16px; text-align:center"></i>
+							<i class="fa fa-facebook" 
+							style="background-color:blue;"></i>
 						</a>&nbsp;									
 						<a href="https://twitter.com/home?status=<?php echo $shareLink; ?>">
-							<i class="fa fa-twitter"  title="twitter"
+							<i class="fa fa-twitter" 
 							style="background-color:cyan;"></i>
 						</a>&nbsp;
 						<a href="https://plus.google.com/share?url=<?php echo $shareLink; ?>">
-							<i class="fa fa-google-plus"  title="google+"
+							<i class="fa fa-google-plus" 
 							style="background-color:orange;"></i>
 						</a>									
 					</p>									
@@ -496,10 +481,6 @@ if ($input->get('cookieenable','3') == 0) {
 		</div>
 
 		<div style="background-color:white; color:black; z-index:10; opacity:0.99">
-            <a href="./impresszum">Impresszum</a>&nbsp;&nbsp;
-            <a href="https://github.com/utopszkij/elovalasztok2018">Forrás program</a>&nbsp;&nbsp;
-        </div>
-        <div class="swInfo" style="background-color:#d0d0d0">
 			<a target="new" href="https://fontawesome.com/icons?d=gallery">Awesome</a>&nbsp;
 			<a target="new"  href="https://getbootstrap.com/docs/4.1/getting-started/introduction/">Bootstrap</a>&nbsp;
 			<a target="new"  href="http://api.jquery.com/">JQuery</a>&nbsp;
@@ -535,7 +516,7 @@ if ($input->get('cookieenable','3') == 0) {
 			echo '
 			<div id="gdpr">
 				A rendszer használata közben bizonyos esetekben Önnel kapcsolatos adatokat kezelünk és adatokat (cookie -kat) tárolunk az Ön gépén. 
-				&nbsp;<a target="new" href="adatkezeles">
+				&nbsp;<a target="new" href="http://www.magyardiplo.hu/39-diplo-egyeb/egyeb-a-web-oldalon-megjenen-tartalmak/2270-adatkezelesi-nyilatkozat">
 					Erről itt olvashat részletesebben.
 				</a>&nbsp;
 				A vonatkozó rendelkezések értemében
@@ -551,13 +532,6 @@ if ($input->get('cookieenable','3') == 0) {
 			';
 	}	
 	?>
-	
-	<?php if (JFactory::getApplication()->input->get('Itemid') == 104) : ?>
-	<script type="text/javascript">
-		document.getElementById('popupIfrm').src = "<?php echo JURI::root(); ?>index.php?option=com_adalogin&view=adalogin&redi=index.php";
-		jQuery('#popup').toggle();
-	</script>	
-	<?php endif; ?>
 	
 	</body>
 </html>

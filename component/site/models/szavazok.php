@@ -12,6 +12,8 @@
 defined('_JEXEC') or die;
 
 class MyCondorcet extends Condorcet {
+	
+		public $szavazatokTable = '#__szavazatok'; // szükség esetén átirányitható egy view -re
 
       protected function getCandidates() {
           $db = JFactory::getDBO();
@@ -30,8 +32,8 @@ class MyCondorcet extends Condorcet {
       protected function loadDiffMatrix() {
           $db = JFactory::getDBO();
           $diff_sql = 'select a.alternativa_id as id1, b.alternativa_id as id2, count(a.id) as d
-                       from #__szavazatok a,
-                            #__szavazatok b
+                       from '.$this->szavazatokTable.' a,
+                            '.$this->szavazatokTable.' b
                        where  a.szavazas_id='.$db->quote($this->poll).' and
                              b.szavazas_id=a.szavazas_id and
                              a.szavazo_id=b.szavazo_id and
@@ -68,7 +70,7 @@ class MyCondorcet extends Condorcet {
             $this->inFirst[$id1] = 0;        
         }
         $db->setQuery('select a.alternativa_id, count(a.szavazo_id) cc
-        from #__szavazatok a
+        from '.$this->szavazatokTable.' a
         where a.szavazas_id = '.$db->quote($this->poll).' and a.pozicio = 1 
         group by a.alternativa_id
         ');
@@ -82,7 +84,7 @@ class MyCondorcet extends Condorcet {
       protected function loadVoteCount() {  
         $db = JFactory::getDBO();
    	    $db->setQuery('select count(DISTINCT a.szavazo_id) cc
- 		from #__szavazatok a
+ 		from '.$this->szavazatokTable.' a
 		left outer join #__content c2 on c2.id = a.alternativa_id
     	where c2.state = 1 and a.szavazas_id = '.$db->quote($this->poll));		
 		$res = $db->loadObject();
@@ -92,6 +94,9 @@ class MyCondorcet extends Condorcet {
 } // myCondorcet
   
 class SzavazokModel {
+	
+	public $szavazatokTable = '#__szavazatok'; // szükség esetén átirányitható egy view -re
+
 	private $errorMsg = '';
 	function __construct() {
 		$db = JFactory::getDBO();
@@ -119,7 +124,8 @@ class SzavazokModel {
 			  `organization` int(11) NOT NULL DEFAULT 0 COMMENT "témakör ID",
 			  `pollid` int(11) NOT NULL DEFAULT 0 COMMENT "szavazás ID",
 			  `vote_count` int(11) NOT NULL DEFAULT 0 COMMENT "szavazatok száma",
-			  `report` text COMMENT "cachelt report htm kód"
+			  `report` text COMMENT "cachelt report htm kód",
+			  `table` varchar(128) NOT NULL DEFAULT 0 COMMENT "szavazatok tábla vagy view neve"
 			)
 		');
 		try {
@@ -270,7 +276,7 @@ class SzavazokModel {
       $db = JFactory::getDBO();
 		$db->setQuery('select * from 
 					 #__eredmeny 
-					 where pollid='.$db->quote($pollId));
+					 where pollid='.$db->quote($pollId).' and `table`='.$db->quote($this->szavazatokTable));
 		return $db->loadObject();
     }
 
@@ -299,7 +305,8 @@ class SzavazokModel {
       $db = JFactory::getDBO();
 		$db->setQuery('update #__eredmeny 
 		set report='.$db->quote($report).',
-			vote_count = '.$db->quote($vote_count).'
+ 			 vote_count = '.$db->quote($vote_count).',
+			 `table` = '.$db->quote($this->szavazatokTable).'
 		where pollid='.$db->quote($pollId));
 		$db->query();
     }
@@ -313,7 +320,7 @@ class SzavazokModel {
 		$db = JFactory::getDBO();
 		$db->setQuery('select sz.szavazas_id, sz.szavazo_id, sz.pozicio, c2.title altTitle,
 		c1.title szTitle
-		from #__szavazatok sz
+		from '.$this->szavazatokTable.' sz
 		left outer join #__content c2 on c2.id = sz.alternativa_id
 		left outer join #__categories c1 on c1.id = sz.szavazas_id
 		where c2.state = 1 and 
