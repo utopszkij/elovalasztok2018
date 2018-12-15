@@ -30,6 +30,7 @@ class MyCondorcet extends Condorcet {
       }
 
       protected function loadDiffMatrix() {
+     	
           $db = JFactory::getDBO();
           $diff_sql = 'select a.alternativa_id as id1, b.alternativa_id as id2, count(a.id) as d
                        from '.$this->szavazatokTable.' a,

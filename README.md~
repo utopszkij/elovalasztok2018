@@ -7,8 +7,6 @@ Tulajdonságok
 - Preferenciális szavazás,
 - Condorcet kritérium szerinti kiértékelés,
 - Taktikai szavazás szempontjából a legelfogadottabb jelölt kimutatása,
-- jelölt ajánlás,
-- jelölt támogatás,
 - Joomla MVC program struktúra
 - Biztonságos
 
@@ -28,17 +26,12 @@ Telepités:
 A com_adalogin funkciók hívása:
 
 szavazás beküldése:
-```
+
 component/elovalasztok?task=szavazok
-```
+
 eredmény lekérés:
-```
+
 component/elovalasztok?task=eredmeny
-```
-jelölt javaslatok listája:
-```
-component/elovalasztok?task=javaslatok
-```
 
 
 A müködés áttekintése
@@ -46,9 +39,6 @@ A müködés áttekintése
 
 - Egy joomla kategoria képviseli a szavazást,
 - Az ebben lévő cikkek képviselik az egyes jelölteket,
-- Egy másik joomla kategória a jelölt javaslatokat tartalmazza,
-- javaslatot minden regisztrált user beküldhet, admin ellenörzés után kerül publikálásra,
-- javaslatot támogatásához budapest tanusitás kell,
 - A szavazáshoz ADA login és "budapest" tanusitás szükséges,
 - A szavazat beküldése után a képernyőn megjelenik a szavazat gépileg képzett egyedi azonsító száma,
 - A program egy ADA logintól csak egy szavazatot fogad el,

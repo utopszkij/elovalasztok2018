@@ -11,15 +11,14 @@ $evConfig = JSON_decode('{
 
 //  config for pollId=10
 $evConfig->pollDefs[10] = JSON_decode('{
-        "szavazas":true,
-        "eredmeny":true,
-        "canAssurance":"budapest",
-        "testUzemmod":true,
-
         "votingEnable":true,
         "resultEnable":true,
-        "requiredUserParams":"budapest",
-        "testMode":true
+        "canAssurance":"budapest",
+        "testMode":true,
+        "proposals":11,
+        "requestedSupport":100
 }');
+
+
 
 ?>

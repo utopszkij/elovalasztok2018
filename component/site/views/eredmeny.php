@@ -6,7 +6,11 @@ defined('_JEXEC') or die;
 echo '<h2>'.$pollRecord->title.'</h2>
 <div class="pollLeiras">'.$pollRecord->description.'</div>
 ';
-// echo '<h3>Table='.$table.'</h3>';
+if ($table == "#__szavazatok")
+	echo '<p4>Az összes ladott szavzatot figyelembe véve</p4>'; 
+if ($table == "#__budapesti") {
+	echo '<p4>A hitelesitett budapesti szavazók szavazatait figyelembe véve</p4>';
+} 
 ?>
   <form action="index.php?option_com_jumi&view=application&fileid=4" method="get">
 	<input type="hidden" name="option" value="com_jumi" />

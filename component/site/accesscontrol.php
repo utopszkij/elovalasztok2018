@@ -17,7 +17,7 @@ function tehetiEredmeny($evConfig, $pollId, &$msg) {
         $msg = '';
    } else {
         $result = false;
-        $msg = 'Jelenleg nem kérhető le az eredmény';
+        $msg = 'Jelenleg nem kérhető le az eredmény '.JSON_encode($evConfig);
    }
 	return $result;
 }  
