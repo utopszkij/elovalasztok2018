@@ -7,7 +7,11 @@
   * Verzió: V1.00  2016.09.14.
   *
   */
+// echo JSON_encode($evConfig).' '.JSON_encode($user).'<br>';
 
+	$session = JFactory::getSession();
+	$csrToken = $session::getFormToken();
+	$session->set('myCsrToken',$csrToken);
 ?>
 <div id="javaslatok">
 	<h2>Jelölt javaslatok</h2>
@@ -33,12 +37,14 @@
  			<p class="tamogatas" style="clear:both">
 				Támogatottság:<var><?php echo $javaslat->tamogatottsag; ?></var>&nbsp;
 				<?php if ($javaslat->tamogatod <= 0) : ?>
-					<a href="component/elovalasztok?task=tamogatom&id=<?php echo $javaslat->id; ?>" class="btn btn-success">
+					<a href="component/elovalasztok?task=tamogatom&id=<?php echo $javaslat->id; ?>&<?php echo $csrToken; ?>=1"
+						class="btn btn-success">
 						<i class="fa fa-check"></i>Támogatom</a>&nbsp;
 				<?php endif; ?>
 				<?php if ($javaslat->tamogatod > 0) : ?>
 					Támogattad&nbsp;
-					<a href="component/elovalasztok?task=nemtamogatom&id=<?php echo $javaslat->id; ?>" class="btn btn-danger">
+					<a href="component/elovalasztok?task=nemtamogatom&id=<?php echo $javaslat->id; ?>&<?php echo $csrToken; ?>=1"
+						class="btn btn-danger">
 						Mégsem támogatom</a>&nbsp;
 				<?php endif; ?>	
  			</p>

@@ -45,9 +45,9 @@ class JavaslatokModel {
 		sum(if(s.user_id = '.$user->id.',1,0)) tamogatod 
 		from #__content j
 		left outer join #__supports s on s.proposal_id = j.id
-		where j.catid = '.$db->quote($categoryId).'
+		where j.catid = '.$db->quote($categoryId).' and `state`=1
 		group by j.id, j.title, j.introtext
-		order by 3,1
+		order by 4 DESC, 2 ASC
 		');
 		$result = $db->loadObjectList();
 		$this->errorMsg = $db->error();
@@ -124,7 +124,7 @@ class JavaslatokModel {
       $db = JFactory::getDBO();
 		$db->setQuery('select j.id, j.title, j.introtext, j.fulltext, 
 		count(s.id) tamogatottsag, 
-		sum(if(s.user_id = '.$user->id.',1,0)) tamogatottsag 
+		sum(if(s.user_id = '.$user->id.',1,0)) tamogatod 
 		from #__content j
 		left outer join #__supports s on s.proposal_id = j.id
 		where j.id = '.$db->quote($id).'

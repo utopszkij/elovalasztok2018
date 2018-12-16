@@ -37,7 +37,8 @@ echo '
 	<p id="voksHelp">Rangsorold a jelölteket! A legjobbnak tartott kerüljön felülre. Egérrel huzhatod a sorokat,
 	vagy használd a lenyiló menüt. Több jelöltet is azonos pozicióba sorolhatsz. A "-- A többit ellenzem--" fölött legyenek
 	azok a jelöltek akikre hajlandó vagy taktikai okokból szavazni, alatta
-  pedig azok akikre semmiképpen nem vagy hajlandó szavazni.</p>
+  pedig azok akikre semmiképpen nem vagy hajlandó szavazni.Egy ember többször is szavazhat, 
+  ilyenkor az utolsó leadott szavazatát vesszük figyelembe.</p>
 	';
 
 echo '

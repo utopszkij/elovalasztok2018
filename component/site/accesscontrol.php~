@@ -24,9 +24,8 @@ function tehetiEredmeny($evConfig, $pollId, &$msg) {
 
 function teheteiSzavazas($evConfig, $pollId, $user, &$msg) {
 	if (szavazottMar($pollId, $user)) {  
-	    // $result = false;
-		 // $msg = 'Ön már szavazott';
-		 $result = true;  // többször lehet szavazni.
+	    $result = false;
+		 $msg = 'Ön már szavazott';
 	}  else {
 	    if (szavazasraJogosult($user, $pollId)) {
 			$result = true;

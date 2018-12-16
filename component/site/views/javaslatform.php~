@@ -13,9 +13,7 @@
 	<form method="post" action="component/elovalasztok?task=javaslatsave">
 		<p class="help">
 			Az ezen a képernyőn megadott adatok a szerkesztő bizottság
-			technikai ellenörzése, és a jelölt személy hozzájárulása után fognak megjelenni a nyilvános web oldalon.
-			A jelölt képét egy nyilvános kép megosztó olfalra (pl. instagram, facebook) kell feltölteni mindenki
-			számára elérhetően, és itt ennek címét adjuk meg,		
+			technikai ellenörzése, és a jelölt személy hozzájárulása után fognak megjelenni a nyilvános web oldalon.		
 		</p>	
 		<?php
 			$session = JFactory::getSession();

@@ -214,6 +214,17 @@ class SzavazokModel {
 		$db->setQuery('START TRANSACTION');
 		$db->query();
 
+		// korábbi szavazatának törlése
+		if (!$evConfig->pollDefs[$pollId]->testMode) {
+			try { 
+				$db->setQuery('DELETE FROM #__szavazatok
+				WHERE szavazas_id='.$db->quote($pollId).' AND user_id='.$db->quote($user->id));
+				$db->query();
+			} catch (Exception $e) {
+				$szavazoId = 0;
+			}	
+		}
+
 		// szavazás kategoria megállapitása
 		$res = $this->getPollRecord($pollId);
 		if ($res) {
@@ -222,6 +233,8 @@ class SzavazokModel {
 			$catid = 0;
 		}	
 		if ($szavazoId > 0) {
+			
+			
 			// string részekre bontása és tárolás ciklusban
 			$w1 = explode(',',$szavazat);
 			foreach ($w1 as $item) {

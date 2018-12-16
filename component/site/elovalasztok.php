@@ -41,7 +41,7 @@
 	}	
 	  
 	/**
-	* display szavazao Form
+	* display szavazo Form
 	* @param int $pollId
 	* @param Jmodel
 	*/  
@@ -61,6 +61,11 @@
    */ 	
     public function szavazok($pollId, $user) {
 			global $evConfig;
+			$session = JFactory::getSession();
+			if ($session->get('cookie_enable','0') != 1) {
+				echo echoHtmlDiv('Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!','errorMsg');
+				exit();
+			}
 			$model = new SzavazokModel();
 			$this->displayTestMsg($evConfig, $pollId);	
 			if ($evConfig->pollDefs[$pollId]->testMode) {
@@ -74,9 +79,9 @@
 			} else if (!$evConfig->pollDefs[$pollId]->votingEnable) {
 					echo echoHtmlDiv('Jelenleg nem lehet szavazni.',$infoMsg);
 			} else  {
-			  if (szavazottMar($pollId, $user)) {
+			  /* if (szavazottMar($pollId, $user)) {
 					echo echoHtmlDiv('Ön már szavazott!',$infoMsg);
-			  } else  if (teheti($pollId, $user, 'szavazas', $msg)) {
+			  } else*/   if (teheti($pollId, $user, 'szavazas', $msg)) {
 			  		$this->displaySzavazoForm($pollId, $model);
 			  } else {
 					echo echoHtmlDiv($msg,'errorMsg');
@@ -136,6 +141,11 @@
 		*/
 		public function szavazatSave($pollId, $user) {
 			global $evConfig;
+			$session = JFactory::getSession();
+			if ($session->get('cookie_enable','0') != 1) {
+				echo echoHtmlDiv('Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!','errorMsg');
+				exit();
+			}
 			Jsession::checkToken() or die('invalid CSRF protect token');
 			$errorMsg = 'errorMsg';
 			if ($evConfig->pollDefs[$pollId]->testMode) {
@@ -242,9 +252,9 @@
       	global $evConfig;
 			$model = new JavaslatokModel();
 			$user = JFactory::getUser();
-			if ($evConfig->testMode) {
+			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
 				$user->id = 1;
-				$user->params = 'assurances:budapest';			
+				$user->params = 'assurances:magyar,budapest';			
 			}
       	$javaslatok = $model->getJavaslatok($evConfig->pollDefs[$evConfig->pollId]->proposals, $user);
 		   include dirname(__FILE__).'/views/javaslatok.php';
@@ -258,9 +268,9 @@
       	global $evConfig;
 			$model = new JavaslatokModel();
 			$user = JFactory::getUser();
-			if ($evConfig->testMode) {
+			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
 				$user->id = 1;
-				$user->params = 'assurances:budapest';			
+				$user->params = 'assurances:magyar,budapest';			
 			}
 			$input = JFactory::getApplication()->input;
 			$id = $input->get('id','');
@@ -273,17 +283,36 @@
 		*/
 		public function tamogatom() {
       	global $evConfig;
+			$session = JFactory::getSession();
+			if ($session->get('cookie_enable','0') != 1) {
+				echo echoHtmlDiv('Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!','errorMsg');
+				exit();
+			}
 			$model = new JavaslatokModel();
 			$user = JFactory::getUser();
-			if ($evConfig->testMode) {
+			if (!$evConfig->pollDefs[$evConfig->pollId]->supportEnable) {
+ 					echo '<div class="alert alert-dangeon">Jelenleg nem lehet támogatni</div>';
+ 					return;			
+			}
+			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
 				$user->id = 1;
-				$user->params = 'assurances:budapest';			
+				$user->params = 'assurances:magyar,budapest';			
 			}
 			$input = JFactory::getApplication()->input;
 			$id = $input->get('id','');
-			$model->tamogatom($id, $user, true);
-			$this->setRedirect(JURI::base().'component/elovalasztok?task=javaslatok');
-			$this->redirect();
+			if ($input->get($session->get('myCsrToken'),'0') == 1) {
+				if (strpos($user->params, $evConfig->pollDefs[$evConfig->pollId]->supportAssurance) > 0) {
+					$model->tamogatom($id, $user, true);
+					$this->setRedirect(JURI::base().'component/elovalasztok?task=javaslatok');
+				}	else {
+					echo '<p>Nincs megfelelő tanusítása</p>';
+					exit(); 
+				}
+				$this->redirect();
+			} else {
+				echo '<p>Invalid CSR token</p>'; 
+				exit();			
+			}	
 		}
 
 		/**
@@ -291,17 +320,36 @@
 		*/
 		public function nemtamogatom() {
       	global $evConfig;
-			$model = new JavaslatokModel();
-			$user = JFactory::getUser();
-			if ($evConfig->testMode) {
-				$user->id = 1;
-				$user->params = 'assurances:budapest';			
+			$session = JFactory::getSession();
+			if ($session->get('cookie_enable','0') != 1) {
+				echo echoHtmlDiv('Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!','errorMsg');
+				exit();
 			}
 			$input = JFactory::getApplication()->input;
-			$id = $input->get('id','');
-			$model->tamogatom($id, $user, false);
-			$this->setRedirect(JURI::base().'component/elovalasztok?task=javaslatok');
-			$this->redirect();
+			if (!$evConfig->pollDefs[$evConfig->pollId]->supportEnable) {
+ 					echo '<div class="alert alert-dangeon">Jelenleg nem lehet támogatni</div>';
+ 					return;			
+			}
+			if ($input->get($session->get('myCsrToken'),'0') == 1) {
+				$model = new JavaslatokModel();
+				$user = JFactory::getUser();
+				if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
+					$user->id = 1;
+					$user->params = 'assurances:magyar,budapest';			
+				}
+				$id = $input->get('id','');
+				if (strpos($user->params, $evConfig->pollDefs[$evConfig->pollId]->supportAssurance) > 0) {
+					$model->tamogatom($id, $user, false);
+					$this->setRedirect(JURI::base().'component/elovalasztok?task=javaslatok');
+				}	else {
+					echo '<p>Nincs megfelelő tanusítása</p>';
+					exit(); 
+				}
+				$this->redirect();
+			} else {
+				echo '<p>Invalid CSR token</p>'; 
+				exit();			
+			}	
 		}
 
 		/**
@@ -309,13 +357,24 @@
 		*/
 		public function javaslatform() {
       	global $evConfig;
+			$session = JFactory::getSession();
+			if ($session->get('cookie_enable','0') != 1) {
+				echo echoHtmlDiv('Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!','errorMsg');
+				exit();
+			}
+			if (!$evConfig->pollDefs[$evConfig->pollId]->proposalEnable) {
+ 					echo '<div class="alert alert-dangeon">Jelenleg nem lehet javasolni</div>';
+ 					return;			
+			}
       	$user = JFactory::getUser();
-			if ($evConfig->testMode) {
+			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
 				$user->id = 1;
-				$user->params = 'assurances:budapest';			
+				$user->params = 'assurances:magyar, budapest';			
 			}
 			if ($user->id > 0) {
-		   	include dirname(__FILE__).'/views/javaslatform.php';
+				if (strpos($user->params, $evConfig->pollDefs[$evConfig->pollId]->supportAssurance) > 0) {
+			   	include dirname(__FILE__).'/views/javaslatform.php';
+			   }	
 		   }	
 		}
 		
@@ -324,13 +383,28 @@
 		*/
 		public function javaslatSave() {
       	global $evConfig;
-			$model = new JavaslatokModel();
-			$user = JFactory::getUser();
-			if ($evConfig->testMode) {
-				$user->id = 1;
-				$user->params = 'assurances:budapest';			
+			$session = JFactory::getSession();
+			if ($session->get('cookie_enable','0') != 1) {
+				echo echoHtmlDiv('Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!','errorMsg');
+				exit();
 			}
 			$input = JFactory::getApplication()->input;
+			
+			if ($input->get($session->get('myCsrToken')) != 1) {
+				echo 'invalid CSR token';
+				exit();			
+			}			
+			
+			if (!$evConfig->pollDefs[$evConfig->pollId]->proposalEnable) {
+ 					echo '<div class="alert alert-dangeon">Jelenleg nem lehet javasolni</div>';
+ 					return;			
+			}
+			$model = new JavaslatokModel();
+			$user = JFactory::getUser();
+			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
+				$user->id = 1;
+				$user->params = 'assurances:magyar, budapest';			
+			}
 			if ($user->id > 0) {
 				$nev = $input->get('nev','','STRING');
 				$program = $input->get('program','','STRING');

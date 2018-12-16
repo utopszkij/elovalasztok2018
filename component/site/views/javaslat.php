@@ -8,6 +8,10 @@
   *
   */
 
+	$session = JFactory::getSession();
+	$csrToken = $session::getFormToken();
+	$session->set('myCsrToken',$csrToken);
+
 ?>
 <div id="javaslat">
 	<?php if ($javaslat->tamogatottsag == '') $javaslat->tamogatottsag = '0'; ?>
@@ -27,13 +31,15 @@
  			<?php if (($user->id > 0) && (strpos($user->params, 'budapest') > 0)) : ?>
  			<p class="tamogatas" style="clear:both">
 				Támogatottság:<var><?php echo $javaslat->tamogatottsag; ?></var>&nbsp;
-				<?php if ($javaslat->tamogatod == false) : ?>
-					<a href="component/elovalasztok?task=tamogatom&id=<?php echo $javaslat->id; ?>" class="btn btn-success">
+				<?php if ($javaslat->tamogatod == 0) : ?>
+					<a href="component/elovalasztok?task=tamogatom&id=<?php echo $javaslat->id; ?>&<?php echo $csrToken; ?>=1"
+						class="btn btn-success">
 						<i class="fa fa-check"></i>Támogatom</a>&nbsp;
 				<?php endif; ?>
-				<?php if ($javaslat->tamogatod == true) : ?>
+				<?php if ($javaslat->tamogatod > 0) : ?>
 					Támogattad&nbsp;
-					<a href="component/elovalasztok?task=nemtamogatom&id=<?php echo $javaslat->id; ?>" class="btn btn-danger">
+					<a href="component/elovalasztok?task=nemtamogatom&id=<?php echo $javaslat->id; ?>&<?php echo $csrToken; ?>=1"
+						class="btn btn-danger">
 						Mégsem támogatom</a>&nbsp;
 				<?php endif; ?>	
  			</p>
