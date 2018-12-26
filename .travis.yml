@@ -25,7 +25,7 @@ before_script:
   
 script: 
  - cd test
- - phpunit --whitelist . --coverage-clover clover.xml --log-junit junit-logfile.xml .
+ - ../vendor/bin/phpunit --whitelist . --coverage-clover clover.xml --log-junit junit-logfile.xml .
  
  - cd ..
  - sonar-scanner 
