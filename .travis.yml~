@@ -9,7 +9,9 @@ env:
 
 addons:
   sonarcloud:
-    organization: "utopszkij-github"
+    organization: "sonarcloud_organization_key" # the key of the org you chose at step #3
+    token:
+      secure: ********* # encrypted value of your token
 
 services:
   - mysql
@@ -27,5 +29,6 @@ before_script:
 script: 
  - cd test 
  - ../vendor/bin/phpunit .
- - sonar-scanner -X -Dsonar.branch=${TRAVIS_BRANCH} -Dsonar.projectVersion=${SONAR_VERSION}
+ - sonar-scanner
+
 
