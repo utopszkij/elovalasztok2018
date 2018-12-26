@@ -7,10 +7,6 @@ php:
 env:
   - DB=mysql
 
-addons:
-  sonarcloud:
-    organization: "utopszkij-github"
-
 services:
   - mysql
   
@@ -19,13 +15,28 @@ matrix:
     - php: 7.0
       env: WITH_COVERAGE=true
 
+addons:
+  sonarcloud:
+    organization: "utopszkij-github"
 
 before_script:
  - composer require "phpunit/phpunit:5.1"
  - mysql -e 'create database test;'
   
 script: 
- - cd test 
- - ../vendor/bin/phpunit .
- - sonar-scanner -X -Dsonar.branch=${TRAVIS_BRANCH} -Dsonar.projectVersion=${SONAR_VERSION}
+ - cd test
+ - phpunit --whitelist . \
+   --coverage-clover clover.xml \
+   --log-junit junit-logfile.xml \
+   .
+ 
+ - cd ..
+ - sonar-scanner \
+  -Dsonar.projectKey=utopszkij_elovalasztok2018 \
+  -Dsonar.organization=utopszkij-github \
+  -Dsonar.sources=component/site \
+  -Dsonar.host.url=https://sonarcloud.io \
+  -Dsonar.php.tests.reportPath=test/junit-logfile.xml \
+  -Dsonar.php.coverage.reportPaths=test/clover.xml \
+  -Dsonar.login=47b18c5eb028e4cd9651f98af0eed7f6f070d419
 
