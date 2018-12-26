@@ -42,6 +42,7 @@ JHtml::_('stylesheet', 'user.css', array('version' => 'auto', 'relative' => true
 <!DOCTYPE html>
 <html lang="<?php echo $this->language; ?>" dir="<?php echo $this->direction; ?>">
 <head>
+	<title></title>
 	<jdoc:include type="head" />
 </head>
 <body class="contentpane">

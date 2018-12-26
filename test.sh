@@ -1,0 +1,4 @@
+cd test;
+phpunit --whitelist . \
+.
+  

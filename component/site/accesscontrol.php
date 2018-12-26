@@ -23,19 +23,14 @@ function tehetiEredmeny($evConfig, $pollId, &$msg) {
 }  
 
 function teheteiSzavazas($evConfig, $pollId, $user, &$msg) {
-	if (szavazottMar($pollId, $user)) {  
-	    // $result = false;
-		 // $msg = 'Ön már szavazott';
-		 $result = true;  // többször lehet szavazni.
-	}  else {
-	    if (szavazasraJogosult($user, $pollId)) {
-			$result = true;
-			$msg = '';
-		  } else {
-			$result = false;
-			$msg = 'Ön ebben a szavazásban nem szavazhat';
-		  }	
-   } 
+	$result = true;
+	if (!$evConfig->pollDefs[$evConfig->pollId]->votingEnable) {
+		$msg = 'Most nem lehet szavazni.';
+		$result = false;
+	} else if (!szavazasraJogosult($user, $pollId)) {
+		$msg = 'Ön ebben a szavazásban nem szavazhat';
+		$result = false;
+	}	
    return $result;
 }
   

@@ -1,11 +1,11 @@
 <?php 
-// elõválasztási rendszer konfuguráció
+// elÅ‘vÃ¡lasztÃ¡si rendszer konfugurÃ¡ciÃ³
 defined('_JEXEC') or die;
 global $evConfig;
 
-// default pollId and configs by polls
+// default pollId = 10
 $evConfig = JSON_decode('{
-    "pollId":10,
+    "pollId":10, 
     "pollDefs":[]
 }');
 
@@ -19,7 +19,7 @@ $evConfig->pollDefs[10] = JSON_decode('{
         "testMode":true,
         "proposals":11,
         "supportAssurance":"budapest",
-        "requestedSupport":100
+        "requestedSupport":500
 }');
 
 

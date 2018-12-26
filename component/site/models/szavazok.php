@@ -187,6 +187,43 @@ class SzavazokModel {
 	  return $this->errorMsg;	
 	}
 	
+
+	/**
+	* check from save, set $this->errorMsg
+	* @param integer pollId
+	* @param Juser logged user
+	* @return boolean
+	*/	
+	private function saveCheck($pollId, $user) {
+		global $evConfig;
+		$result = true;
+      if (!$evConfig->pollDefs[$pollId]->votingEnable) {
+			  $this->errorMsg .= 'Most nem lehet szavazni.';
+			  $result = false;	
+      }
+		// jogosultság ellenörzés
+		if (!teheti($pollId, $user, 'szavazas', $msg)) {
+			  $this->errorMsg .= $msg;
+			  $result = false;	
+		}
+		return $result;
+	}
+	
+	/**	
+	* get catid from pollid
+	* @param integer pollId
+	* @return integer catid
+	*/
+	private function getCatId($pollId) {
+		$res = $this->getPollRecord($pollId);
+		if ($res) {
+			$catid = $res->parent_id;
+		} else {
+			$catid = 0;
+		}	
+		return $catid;		
+	}	
+			
 	/**
 	* szavazat tárolása adatbázisba 
 	* @param integer pollId
@@ -199,17 +236,9 @@ class SzavazokModel {
       $szavazoId = (rand(100,999).$user->id)*2;
 		$msg = '';
 		$SEPARATOR=',';
-      if (!$evConfig->pollDefs[$pollId]->votingEnable) {
-			  $this->errorMsg .= 'Most nem lehet szavazni.';
-			  return 0;	
-      }
-
-		// jogosultság ellenörzés
-		if (!teheti($pollId, $user, 'szavazas', $msg)) {
-			  $this->errorMsg .= $msg;
-			  return 0;	
+		if (!$this->saveCheck($pollId, $user)) {
+			return 0;		
 		}
-
 		$db = JFactory::getDBO();
 		$db->setQuery('START TRANSACTION');
 		$db->query();
@@ -224,17 +253,8 @@ class SzavazokModel {
 				$szavazoId = 0;
 			}	
 		}
-
-		// szavazás kategoria megállapitása
-		$res = $this->getPollRecord($pollId);
-		if ($res) {
-			$catid = $res->parent_id;
-		} else {
-			$catid = 0;
-		}	
+		$catid = $this->getCatId($pollId);
 		if ($szavazoId > 0) {
-			
-			
 			// string részekre bontása és tárolás ciklusban
 			$w1 = explode(',',$szavazat);
 			foreach ($w1 as $item) {

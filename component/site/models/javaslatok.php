@@ -50,8 +50,7 @@ class JavaslatokModel {
 		order by 4 DESC, 2 ASC
 		');
 		$result = $db->loadObjectList();
-		$this->errorMsg = $db->error();
-		//echo JSON_encode($result);		
+		$this->errorMsg = $db->getErrorMsg();
 		return $result;
     }
 	
@@ -62,38 +61,54 @@ class JavaslatokModel {
 
 	/**
 	* javaslat tárolása
-	* @return string errormsg
+	* @return string errorMsg or ''
 	*/ 
 	public function javaslatsave($evConfig, 
 		$nev, $eletrajz, $program, $tamogatok, $kontakt, $kepURL) {
+			
 		function createArticle($data) {
-		    $data['rules'] = array(
-		        'core.edit.delete' => array(),
-		        'core.edit.edit' => array(),
-		        'core.edit.state' => array()
-		    );
-		
-		    $basePath = JPATH_ADMINISTRATOR.'/components/com_content';
-		    require_once $basePath.'/models/article.php';
-		    $article_model =  JModelLegacy::getInstance('Article','ContentModel');
-		    // or  $config= array(); $article_model =  new ContentModelArticle($config);
-		    if (!$article_model->save($data)) {
-		        $err_msg = $article_model->getError();
-		        return false;
+		    $user = JFactory::getUser();
+		    $db = JFactory::getDBO();
+		    $db->setQuery('insert into #__content 
+		    (`id`, `catid`, `alias`, `title`, `introtext`, 
+		    `fulltext`, `state`, `language`, `access`, `created_by`, `created_by_alias`)
+		    values 
+		    (0,'.$db->quote($data['catid']).',
+		    '.$db->quote($data['alias']).',
+			 '.$db->quote($data['title']).',
+			 '.$db->quote($data['introtext']).',
+			 '.$db->quote($data['fulltext']).',
+			 '.$db->quote($data['state']).',
+			 '.$db->quote($data['language']).',
+			 '.$db->quote($data['access']).',
+			 '.$db->quote($user->id).',
+			 '.$db->quote($user->username).'
+			 )');
+		    if ($db->query()) {
+				  $db->setQuery('select max(id) id from #__content');
+				  $res = $db->loadObject();	
+		        return $res->id;
 		    } else {
-		        $id = $article_model->getItem()->id;
-		        return $id;
+		        $err_msg = $db->getErrorMsg();
+		        return false;
 		    }
+		    
 		}
+		
+		global $evConfig;
 		$result = '';	
 		$introText = '<img style="float:left; width:250px;" src="'.$kepURL.'" />'. 
-		'<h3>Program</h3><div class="programIntro">'.substr($program,0,400).'</div>'.
-  		'<div class="tamogatoszervezetekIntro">'.$tamogatok.'</div>';
+		'<h3>Program</h3>'.
+		echoHtmlDiv(substr($program,0,400),'programIntro').
+		echoHtmlDiv($tamogatok,'tamogatok');
 		
-		$fullText = '<div class="programFull">'.substr($program,401,20000).'</div><h3>Életrajz</h3>'.
-  		'<div class="eletrajz">'.$eletrajz.'</div>'.
-  		'<h3>Támogató szervezetek</h3><div class="tamogatoszervezetekFull">'.$tamogatok.'</div>'.
-  		'<h4>Kontakt infó PUBLIKÁLÁS ELŐTT TÖRLENDŐ!!!!</h4><div class="kontakt">'.$kontakt.'</div>';
+		$fullText =
+		echoHtmlDiv(substr($program,401,20000),'programFull').
+		echoHtmlDiv($eletrajz,'eletrajz').
+  		'<h3>Támogató szervezetek</h3>'.
+		echoHtmlDiv($tamogatok,'tamogatoSzervezetekFull').
+  		'<h4>Kontakt infó PUBLIKÁLÁS ELŐTT TÖRLENDŐ!!!!</h4>'.
+		echoHtmlDiv($kontakt,'kontakt');
 		$article_data = array(
 		    'id' => 0,
 		    'catid' => $evConfig->pollDefs[$evConfig->pollId]->proposals,
@@ -106,7 +121,7 @@ class JavaslatokModel {
 		    'access' => 1
 		);
 		$article_id = createArticle($article_data);
-		if (!$article_id) {
+		if ($article_id === false) {
 		    $result = "Article create failed!";
 		} else {
 		    $result = '';
@@ -132,8 +147,7 @@ class JavaslatokModel {
 		order by 3,1
 		');
 		$result = $db->loadObject();
-		$this->errorMsg = $db->error();
-		// echo $db->getQuery();		
+		$this->errorMsg = $db->getErrorMsg();
 		return $result;
 	}
 	
@@ -142,7 +156,7 @@ class JavaslatokModel {
     * @param integet id
     * @param JUser logged user object
     * @param bool support / unsupport
-    * @return array of object
+    * @return true: elérte a szükséges támogatottságot, false: nem
     */
 	public function tamogatom($id,$user, $mode) {
 		if ($user->id > 0) {
@@ -154,8 +168,38 @@ class JavaslatokModel {
 	      	$db->setQuery('insert into #__supports values 
 	      	(0,'.$db->quote($id).','.$db->quote($user->id).')');
 				$db->query();
+				$result = $this->checkSupportCount($id);
 			}	      
 		}
+		return $result;
 	}
-}	// szavazokModel
+	
+	/**
+	* check supportCount > $evConfig->pollDefs[$id]->requestedSupport ?
+	* if true then move proposal --> candidate
+	* @param integer proposalId
+	*/
+	protected function checkSupportCount($id) {
+		global $evConfig;
+		$result = true;
+		$pollId = $evConfig->pollId;
+      $db = JFactory::getDBO();
+      $db->setQuery('select count(user_id) cc 
+      from #__supports
+      where proposal_id = '.$db->quote($id));
+      $res = $db->loadObject();
+      if ($res->cc >= $evConfig->pollDefs[$pollId]->requestedSupport) {
+			$db->setQuery('update #__content
+			set catid = '.$db->quote($pollId).'
+			where id = '.$db->quote($id));
+			if (!$db->query()) {
+				echo '<div class="alert alert-danger">Hiba lépett fel a javaslat jelölté modosítása közben</div>'; 
+				exit();			
+			} else {
+				$result = true;
+			}     
+      }
+      return $result;
+	}
+}	// javaslatokModel
 ?>

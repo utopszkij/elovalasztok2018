@@ -14,7 +14,7 @@
 
 ?>
 <div id="javaslat">
-	<?php if ($javaslat->tamogatottsag == '') $javaslat->tamogatottsag = '0'; ?>
+	<?php if ($javaslat->tamogatottsag == '') { $javaslat->tamogatottsag = '0';}  ?>
 	<h2>Jelölt javaslat</h2>
 	<p class="help">
 		Budapesti lakosok javasolhat jelölteket az előválasztásra. A javaslatok a szerkesztő bizottság ellenörzése után
@@ -26,7 +26,7 @@
 	<div class="javaslatReszletek">
  		<div class="item" style="clear:both">
  			<h4><?php echo $javaslat->title; ?></h4>
- 			<div class="text"><?php echo $javaslat->introtext.$javaslat->fulltext; ?></p>
+ 			<div class="text"><?php echo $javaslat->introtext.$javaslat->fulltext; ?></div>
  			
  			<?php if (($user->id > 0) && (strpos($user->params, 'budapest') > 0)) : ?>
  			<p class="tamogatas" style="clear:both">
@@ -34,7 +34,7 @@
 				<?php if ($javaslat->tamogatod == 0) : ?>
 					<a href="component/elovalasztok?task=tamogatom&id=<?php echo $javaslat->id; ?>&<?php echo $csrToken; ?>=1"
 						class="btn btn-success">
-						<i class="fa fa-check"></i>Támogatom</a>&nbsp;
+						<em class="fa fa-check"></em>Támogatom</a>&nbsp;
 				<?php endif; ?>
 				<?php if ($javaslat->tamogatod > 0) : ?>
 					Támogattad&nbsp;
@@ -50,7 +50,7 @@
 	<?php if (($user->id > 0) && (strpos($user->params, 'budapest') > 0)) : ?>
 	<div class="ujjelolt">
 		<a href="component/elovalasztok?task=javaslatform" class="btn btn-primary">
-			<i class="fa fa-plus-circle"></i>Új javaslat beküldése</a>
+			<em class="fa fa-plus-circle"></em>Új javaslat beküldése</a>
 	</div>
 	<p>&nbsp;</p>
 	<?php endif; ?>

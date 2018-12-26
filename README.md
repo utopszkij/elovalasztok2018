@@ -29,15 +29,18 @@ A com_adalogin funkciók hívása:
 
 szavazás beküldése:
 ```
-component/elovalasztok?task=szavazok
+component/elovalasztok?task=szavazok   
+      szükség esetén a végére &pollId=szám 
 ```
 eredmény lekérés:
 ```
 component/elovalasztok?task=eredmeny
+      szükség esetén a végére &pollId=szám és/vagy &table=viewNev
 ```
 jelölt javaslatok listája:
 ```
 component/elovalasztok?task=javaslatok
+      szükség esetén a végére &pollId=szám
 ```
 
 

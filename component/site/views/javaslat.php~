@@ -31,12 +31,12 @@
  			<?php if (($user->id > 0) && (strpos($user->params, 'budapest') > 0)) : ?>
  			<p class="tamogatas" style="clear:both">
 				Támogatottság:<var><?php echo $javaslat->tamogatottsag; ?></var>&nbsp;
-				<?php if ($javaslat->tamogatod == false) : ?>
+				<?php if ($javaslat->tamogatod == 0) : ?>
 					<a href="component/elovalasztok?task=tamogatom&id=<?php echo $javaslat->id; ?>&<?php echo $csrToken; ?>=1"
 						class="btn btn-success">
-						<i class="fa fa-check"></i>Támogatom</a>&nbsp;
+						<em class="fa fa-check"></em>Támogatom</a>&nbsp;
 				<?php endif; ?>
-				<?php if ($javaslat->tamogatod == 1) : ?>
+				<?php if ($javaslat->tamogatod > 0) : ?>
 					Támogattad&nbsp;
 					<a href="component/elovalasztok?task=nemtamogatom&id=<?php echo $javaslat->id; ?>&<?php echo $csrToken; ?>=1"
 						class="btn btn-danger">

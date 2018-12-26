@@ -21,6 +21,8 @@ global $testModel;
 global $testView;
 global $testDatabase;
 global $testUser;
+global $sessionVars;
+global $message;
 
 class testDataClass {
 
@@ -28,7 +30,7 @@ class testDataClass {
 	* set input parameters for test
 	* $inputs['name1'] = 'value1', $inputs['name2'] = 'value2', .... 
 	*/
-	protected $inputs;
+	public $inputs;
 
 	/**
 	* set Database result, and errorNum, errorMsg for test
@@ -333,7 +335,7 @@ class JDatabase {
 		return $this->errorMsg;
 	}
 	public function quote($str) {
-        return '"'.$str.'"';
+        return '"'.str_replace('"','\"',$str).'"';
 	}
     public function exec($sqlStr) {
         $this->setQuery($sqlStr);
@@ -454,7 +456,8 @@ class JControllerLegacy {
 		echo 'joomla default browse task';
 	}
 	public function setMessage($msg) {
-		
+		global $message;
+		$message = $msg;
 	}
 }
 class JModelLegacy {
@@ -563,10 +566,16 @@ class JViewLegacy {
 
 class JSession {
 	public static function get($name, $default='') {
-		return $default;
+		global $sessionVars;
+		if (isset($sessionVars[$name]))
+			$result = $sessionVars[$name];
+		else
+			$result = $default;
+		return $result;	
 	}
 	public static function set($name,$value) {
-		
+		global $sessionVars;
+		$sessionVars[$name] = $value;		
 	}
 	public static function checkToken() {
 		return true;

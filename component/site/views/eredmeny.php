@@ -6,11 +6,22 @@ defined('_JEXEC') or die;
 echo '<h2>'.$pollRecord->title.'</h2>
 <div class="pollLeiras">'.$pollRecord->description.'</div>
 ';
-if ($table == "#__szavazatok")
-	echo '<p4>Az összes ladott szavzatot figyelembe véve</p4>'; 
-if ($table == "#__budapesti") {
-	echo '<p4>A hitelesitett budapesti szavazók szavazatait figyelembe véve</p4>';
-} 
+if ($table == "#__szavazatok") {
+	echo '<p4>Az összes ladott szavzatot figyelembe véve</p4>';
+}	 
+if ($table == "#__magyar") {
+	echo '<p4>A "személyesen" hitelesitett budapesti szavazók szavazatait figyelembe véve</p4>';
+}
+if ($table == "#__appmagyar") {
+	echo '<p4>Az "appmagyar" hitelesitett budapesti szavazók szavazatait figyelembe véve</p4>';
+}
+if ($table == "#__offline") {
+    echo '<p4>Az "offline" hitelesitett budapesti szavazók szavazatait figyelembe véve</p4>';
+}
+if ($table == "#__hiteles") {
+    echo '<p4>Az "bárhogyan" hitelesitett budapesti szavazók szavazatait figyelembe véve</p4>';
+}
+
 ?>
   <form action="index.php?option_com_jumi&view=application&fileid=4" method="get">
 	<input type="hidden" name="option" value="com_jumi" />
@@ -18,7 +29,7 @@ if ($table == "#__budapesti") {
 	<input type="hidden" name="fileid" value="4" />
 	<input type="hidden" name="pollId" value="<?php echo $pollId; ?>" />
 	<input type="hidden" name="task" value="eredmeny" />
-	   <h3><?php if ($evConfig->pollDefs[$pollId]->szavazas) { 
+	   <h3><?php if ($evConfig->pollDefs[$pollId]->votingEnable) { 
 	   				echo 'Pillanatnyi Részeredmény'; 
 	   			 } else {
 	   			 	echo 'Eredmény';

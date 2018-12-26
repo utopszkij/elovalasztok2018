@@ -7,10 +7,10 @@ sonar.language=php
 sonar.sources=component/site
 sonar.sourceEncoding=UTF-8
 
-sonar.exclusions=/test/*.php
+sonar.exclusions=/test/*.php,views/vote.js
 
 sonar.tests=test
 sonar.php.coverage.reportPath=test/tests-clover.xml
 sonar.php.tests.reportPath=test/tests-junit.xml
 
-sonar.coverage.exclusions=test/*.php, component/site/views/*.js
+sonar.coverage.exclusions=/test/*.php,views/vote.js

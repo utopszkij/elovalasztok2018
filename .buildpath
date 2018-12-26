@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildpath>
+	<buildpathentry kind="src" path="component/site"/>
+	<buildpathentry kind="src" path="templates/utopszkij"/>
+	<buildpathentry kind="src" path="test"/>
+	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
+</buildpath>

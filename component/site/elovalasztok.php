@@ -18,15 +18,30 @@
   include_once dirname(__FILE__).'/models/szavazok.php';
   include_once dirname(__FILE__).'/models/javaslatok.php';
   
+  define('POLIIID','pollId');
+  define('COOKIE_ENABLE','cookie_enable');
+  define('COOKIE_MSG','Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!');
+  define('STRING','string');
+  define('BUDAPESTI','ADA:magyar,budapest');
+  define('MYCSRTOKEN','myCsrToken');
+  define('JAVASLATOKURL','component/elovalasztok?task=javaslatok');
+  define('ERRORMSG','errorMsg');
+  
   $user = JFactory::getUser();
   $msg = '';
-  $input = JFactory::getApplication()->input;  
-  $pollId = $input->get('pollId',$evConfig->pollId);   // szavazás ID (category ID)
-  $task = $input->get('task','szavazok');
-  
+  $input = JFactory::getApplication()->input;
+  $session = JFactory::getSession();  
+  $pollId = $input->get(POLLID,$evConfig->pollId,0);   // szavazás ID (category ID)
   if ($pollId == 0) {
 	  $pollId = $input->get('id',0);
   }
+  if ($pollId == 0) {
+	  $pollId = $session->get(POLLID,$evConfig->pollId);
+  }
+  $session->set(POLLID,$pollId);
+  $evConfig->pollId = $pollId;
+
+  $task = $input->get('task','szavazok');
 
   // ================ controller ==============================
   class SzavazoController extends JcontrollerLegacy {
@@ -55,17 +70,24 @@
 	}	
 
 	/**
+	* check Cookie Enabled, if not enabled exit program
+	*/
+	private function cookieCheck() {
+			$session = JFactory::getSession();
+			if ($session->get(COOKIE_ENABLE,'0') != 1) {
+				echo echoHtmlDiv(COOKIE_MSG,ERRORMSG);
+				exit();
+			}
+	}
+
+	/**
    * szavazó képernyő megjelenitése  - új szavazat beküldése
 	* @param integer szavazás azonosító
    * @param JUser user 
    */ 	
     public function szavazok($pollId, $user) {
 			global $evConfig;
-			$session = JFactory::getSession();
-			if ($session->get('cookie_enable','0') != 1) {
-				echo echoHtmlDiv('Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!','errorMsg');
-				exit();
-			}
+			$this->cookieCheck();
 			$model = new SzavazokModel();
 			$this->displayTestMsg($evConfig, $pollId);	
 			if ($evConfig->pollDefs[$pollId]->testMode) {
@@ -79,12 +101,10 @@
 			} else if (!$evConfig->pollDefs[$pollId]->votingEnable) {
 					echo echoHtmlDiv('Jelenleg nem lehet szavazni.',$infoMsg);
 			} else  {
-			  /* if (szavazottMar($pollId, $user)) {
-					echo echoHtmlDiv('Ön már szavazott!',$infoMsg);
-			  } else*/   if (teheti($pollId, $user, 'szavazas', $msg)) {
+			  if (teheti($pollId, $user, 'szavazas', $msg)) {
 			  		$this->displaySzavazoForm($pollId, $model);
 			  } else {
-					echo echoHtmlDiv($msg,'errorMsg');
+					echo echoHtmlDiv($msg,ERRORMSG);
 			  }
 			}
 	}
@@ -100,7 +120,7 @@
 			$this->displayTestMsg($evConfig, $pollId);		
          $msg = '';
          $input = JFactory::getApplication()->input;  
-			$table = '#__'.$input->get('table','szavazatok','STRING');
+			$table = '#__'.$input->get('table','szavazatok',STRING);
          
 			if (!teheti($pollId, $user, 'eredmeny', $msg)) {
     			echo '<div class="errorMsg">'.$msg.'</div>';
@@ -141,13 +161,9 @@
 		*/
 		public function szavazatSave($pollId, $user) {
 			global $evConfig;
-			$session = JFactory::getSession();
-			if ($session->get('cookie_enable','0') != 1) {
-				echo echoHtmlDiv('Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!','errorMsg');
-				exit();
-			}
+			$this->cookieCheck();
 			Jsession::checkToken() or die('invalid CSRF protect token');
-			$errorMsg = 'errorMsg';
+			$errorMsg = ERRORMSG;
 			if ($evConfig->pollDefs[$pollId]->testMode) {
 				$user->id = rand(100001,999999);
 			}
@@ -157,7 +173,7 @@
             }
 			
          $input = JFactory::getApplication()->input;  
-			$szavazat = $input->get('szavazat','','STRING');
+			$szavazat = $input->get('szavazat','',STRING);
 			$msg = '';
 			$msgClass = '';
 			if ($pollId > 0) {
@@ -228,11 +244,17 @@
 		* @param string
 		*/
 		public function szavazatokcsv($pollId, $user=null) {
-            header('Content-type: text/csv');
-            header('Pragma: no-cache');
-            header('Expires:0');
-            header('Content-Disposition: attachment: szavazatok.csv');
-				$model = new szavazokModel();
+		    if (!defined('UNITTEST')) {
+		        define('UNITTEST',false);
+		    }
+		    if (!UNITTEST) {
+                header('Content-type: text/csv');
+                header('Pragma: no-cache');
+                header('Expires:0');
+                header('Content-Disposition: attachment: szavazatok.csv');
+		    }
+            $model = new szavazokModel();
+				
             $res = $model->getSzavazatok($pollId);
 			if (count($res) > 0) {
 				echo 'szavazas_id;szavazo_id;pozicio;jelolt'."\n";
@@ -240,7 +262,9 @@
                     echo $res1->szavazas_id,';'.$res1->szavazo_id.';'.$res1->pozicio.';'.$res1->altTitle."\n";
 				}
 			}
-            jexit();
+			if (!UNITTEST) {
+                jexit();
+			}
         }
         
 		/**
@@ -254,10 +278,10 @@
 			$user = JFactory::getUser();
 			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
 				$user->id = 1;
-				$user->params = 'assurances:magyar,budapest';			
+				$user->params = BUDAPESTI;			
 			}
-      	$javaslatok = $model->getJavaslatok($evConfig->pollDefs[$evConfig->pollId]->proposals, $user);
-		   include dirname(__FILE__).'/views/javaslatok.php';
+      	    $javaslatok = $model->getJavaslatok($evConfig->pollDefs[$evConfig->pollId]->proposals, $user);
+		    include dirname(__FILE__).'/views/javaslatok.php';
       }	
 
 		/**
@@ -265,17 +289,21 @@
 		* megjeleniti a "Támogatom" / támogatod "Mégsem támogatom" gombokat, az eddigi támogatások számát is.
 		*/
 		public function javaslat() {
-      	global $evConfig;
+      	    global $evConfig;
 			$model = new JavaslatokModel();
 			$user = JFactory::getUser();
 			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
 				$user->id = 1;
-				$user->params = 'assurances:magyar,budapest';			
+				$user->params = BUDAPESTI;			
 			}
 			$input = JFactory::getApplication()->input;
 			$id = $input->get('id','');
-			$javaslat = $model->getJavaslat($id,$user);      	
-		   include dirname(__FILE__).'/views/javaslat.php';
+			$javaslat = $model->getJavaslat($id,$user);
+			if ($javaslat) {
+ 		         include dirname(__FILE__).'/views/javaslat.php';
+			} else {
+			    echo $model->getErrorMsg(); exit();
+			}
 		}
 		
 		/**
@@ -283,11 +311,8 @@
 		*/
 		public function tamogatom() {
       	global $evConfig;
-			$session = JFactory::getSession();
-			if ($session->get('cookie_enable','0') != 1) {
-				echo echoHtmlDiv('Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!','errorMsg');
-				exit();
-			}
+      	$session = JFactory::getSession();
+			$this->cookieCheck();
 			$model = new JavaslatokModel();
 			$user = JFactory::getUser();
 			if (!$evConfig->pollDefs[$evConfig->pollId]->supportEnable) {
@@ -296,14 +321,18 @@
 			}
 			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
 				$user->id = 1;
-				$user->params = 'assurances:magyar,budapest';			
+				$user->params = BUDAPESTI;			
 			}
 			$input = JFactory::getApplication()->input;
 			$id = $input->get('id','');
-			if ($input->get($session->get('myCsrToken'),'0') == 1) {
+			if ($input->get($session->get(MYCSRTOKEN),'0') == 1) {
 				if (strpos($user->params, $evConfig->pollDefs[$evConfig->pollId]->supportAssurance) > 0) {
-					$model->tamogatom($id, $user, true);
-					$this->setRedirect(JURI::base().'component/elovalasztok?task=javaslatok');
+					if ($model->tamogatom($id, $user, true) == false) { 
+						$this->setRedirect(JURI::base().JAVASLATOKURL);
+					} else {
+						$this->setMessage('A jelölt elérte a megkivánt támogatottságot. Át lett helyezve az elfogadott jelöltek közé.');
+						$this->setRedirect(JURI::base().JAVASLATOKURL);
+					} 
 				}	else {
 					echo '<p>Nincs megfelelő tanusítása</p>';
 					exit(); 
@@ -320,27 +349,24 @@
 		*/
 		public function nemtamogatom() {
       	global $evConfig;
-			$session = JFactory::getSession();
-			if ($session->get('cookie_enable','0') != 1) {
-				echo echoHtmlDiv('Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!','errorMsg');
-				exit();
-			}
+      	$session = JFactory::getSession();
+			$this->cookieCheck();
 			$input = JFactory::getApplication()->input;
 			if (!$evConfig->pollDefs[$evConfig->pollId]->supportEnable) {
  					echo '<div class="alert alert-dangeon">Jelenleg nem lehet támogatni</div>';
  					return;			
 			}
-			if ($input->get($session->get('myCsrToken'),'0') == 1) {
+			if ($input->get($session->get(MYCSRTOKEN),'0') == 1) {
 				$model = new JavaslatokModel();
 				$user = JFactory::getUser();
 				if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
 					$user->id = 1;
-					$user->params = 'assurances:magyar,budapest';			
+					$user->params = BUDAPESTI;			
 				}
 				$id = $input->get('id','');
 				if (strpos($user->params, $evConfig->pollDefs[$evConfig->pollId]->supportAssurance) > 0) {
 					$model->tamogatom($id, $user, false);
-					$this->setRedirect(JURI::base().'component/elovalasztok?task=javaslatok');
+					$this->setRedirect(JURI::base().JAVASLATOKURL);
 				}	else {
 					echo '<p>Nincs megfelelő tanusítása</p>';
 					exit(); 
@@ -357,11 +383,7 @@
 		*/
 		public function javaslatform() {
       	global $evConfig;
-			$session = JFactory::getSession();
-			if ($session->get('cookie_enable','0') != 1) {
-				echo echoHtmlDiv('Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!','errorMsg');
-				exit();
-			}
+			$this->cookieCheck();
 			if (!$evConfig->pollDefs[$evConfig->pollId]->proposalEnable) {
  					echo '<div class="alert alert-dangeon">Jelenleg nem lehet javasolni</div>';
  					return;			
@@ -369,79 +391,95 @@
       	$user = JFactory::getUser();
 			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
 				$user->id = 1;
-				$user->params = 'assurances:magyar, budapest';			
+				$user->params = BUDAPESTI;			
 			}
 			if ($user->id > 0) {
-				if (strpos($user->params, $evConfig->pollDefs[$evConfig->pollId]->supportAssurance) > 0) {
-			   	include dirname(__FILE__).'/views/javaslatform.php';
-			   }	
+			    if (strpos($user->params, $evConfig->pollDefs[$evConfig->pollId]->supportAssurance) > 0) {
+			   	 include dirname(__FILE__).'/views/javaslatform.php';
+			    }
 		   }	
 		}
+		
+		/** 
+		* support funtion for javaslatSave
+		* @return bool
+		*/
+		private function javaslatSave0() {
+		        global $evConfig;  
+				$model = new JavaslatokModel();
+				$input = JFactory::getApplication()->input;
+				$nev = $input->get('nev','',STRING);
+				$program = $input->get('program','',STRING);
+				$eletrajz = $input->get('eletrajz','',STRING);
+				$tamogatok = $input->get('tamogatok','',STRING);
+				$kontakt = $input->get('kontakt','',STRING);
+				$kepUrl = $input->get('kepUrl','',STRING);
+				$program = str_replace("\n",'<br />',$program);
+				$eletrajz = str_replace("\n",'<br />',$eletrajz);
+				$result = true;
+				if ($nev == '') {
+ 					echo '<div class="alert alert-dangeon">Jelölt nevét meg kell adni</div>';
+ 					$result = false;			
+				}
+				if ($kepUrl == '') {
+ 					echo '<div class="alert alert-dangeon">Kép URL -t meg kell adni</div>';
+ 					$result = false;			
+				}
+				if ($program == '') {
+ 					echo '<div class="alert alert-dangeon">Programot meg kell adni</div>';
+ 					$result = false;			
+				}
+				if ($kontakt == '') {
+ 					echo '<div class="alert alert-dangeon">Kapcsolat felvételi lehetőséget meg kell adni</div>';
+ 					$result = false;			
+				}
+				if ($result) {
+				    $res = $model->JavaslatSave($evConfig, 
+								$nev, $eletrajz, $program, $tamogatok, $kontakt, $kepUrl);
+				    if ($res == '') {
+				        $result = true;
+				    } else {
+				        $result = false;
+				    }
+				}
+				return $result;				
+		}		
+		
 		
 		/**
 		* Új javaslat tárolása (nem publikált státusszal)
 		*/
 		public function javaslatSave() {
       	global $evConfig;
-			$session = JFactory::getSession();
-			if ($session->get('cookie_enable','0') != 1) {
-				echo echoHtmlDiv('Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!','errorMsg');
-				exit();
-			}
+      	$session = JFactory::getSession();
+			$result = true;
+			$this->cookieCheck();
 			$input = JFactory::getApplication()->input;
-			
-			if ($input->get($session->get('myCsrToken')) != 1) {
+			if ($input->get($session->get(MYCSRTOKEN)) != 1) {
 				echo 'invalid CSR token';
-				exit();			
+				$result = false;			
 			}			
 			
 			if (!$evConfig->pollDefs[$evConfig->pollId]->proposalEnable) {
  					echo '<div class="alert alert-dangeon">Jelenleg nem lehet javasolni</div>';
- 					return;			
+ 					$result = false;			
 			}
-			$model = new JavaslatokModel();
 			$user = JFactory::getUser();
 			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
 				$user->id = 1;
-				$user->params = 'assurances:magyar, budapest';			
+				$user->params = BUDAPESTI;			
 			}
-			if ($user->id > 0) {
-				$nev = $input->get('nev','','STRING');
-				$program = $input->get('program','','STRING');
-				$eletrajz = $input->get('eletrajz','','STRING');
-				$tamogatok = $input->get('tamogatok','','STRING');
-				$kontakt = $input->get('kontakt','','STRING');
-				$kepUrl = $input->get('kepUrl','','STRING');
-				$program = str_replace("\n",'<br />',$program);
-				$eletrajz = str_replace("\n",'<br />',$eletrajz);
-				if ($nev == '') {
- 					echo '<div class="alert alert-dangeon">Jelölt nevét meg kell adni</div>';
- 					return;			
-				}
-				if ($kepUrl == '') {
- 					echo '<div class="alert alert-dangeon">Kép URL -t meg kell adni</div>';
- 					return;			
-				}
-				if ($program == '') {
- 					echo '<div class="alert alert-dangeon">Programot meg kell adni</div>';
- 					return;			
-				}
-				if ($kontakt == '') {
- 					echo '<div class="alert alert-dangeon">Kapcsolat felvételi lehetőséget meg kell adni</div>';
- 					return;			
-				}
-				
-			   $result = $model->JavaslatSave($evConfig, 
-					$nev, $eletrajz, $program, $tamogatok, $kontakt, $kepUrl);
-					 
-			  if ($result == '') {
+			if (($user->id > 0) && ($result)) {
+			  $result = $this->javaslatSave0();				
+			  if ($result) {
  					echo '<div class="alert alert-success">Javaslat tárolva. A szerkesztők ellenörzése után kerül publikálásra.</div>';			
 			  } else {
- 					echo '<div class="alert alert-dangeon">'.$result.'</div>';			
-			  }	
+ 					echo '<div class="alert alert-dangeon">Hiba lépett fel</div>';			
+			  }
 			} else {
 				echo '<div class="alert alert-dangeon">Javaslat tételhez be kell jelentkezni</div>';			
 			}
+			return;
 		}
 
 	} // controller class
