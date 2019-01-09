@@ -278,8 +278,6 @@ class JDatabase {
                     $w = $cursor->fetch_object();
                 }
                 $cursor->close();
-                $this->errorMsg = 'error_in_fetch '.$this->mysqli->error;
-                //$this->errorNum = $this->mysqli->errno;
             }
         }
         return $result;
@@ -300,7 +298,9 @@ class JDatabase {
 	public function query() {
 		global $testData;
 		$result = $testData->getDbResult();	
-        if ($result == '_none_') {
+		$this->errorMsg = '';
+		$this->errorNum = 0;
+		if ($result == '_none_') {
             if (!isset($this->sql)) $this->sql = '';
             try {
                 $result = $this->mysqli->query($this->sql);

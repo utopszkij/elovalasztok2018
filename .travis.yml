@@ -25,17 +25,15 @@ before_script:
   
 script: 
  - cd test
- - ../vendor/bin/phpunit --whitelist . 
-   --coverage-clover ~/clover.xml 
-   --log-junit ~/junit-logfile.xml
-   .
+ - ../vendor/bin/phpunit --whitelist . . 
+   
  
  - cd ..
  - sonar-scanner 
    -Dsonar.projectKey=utopszkij_elovalasztok2018 
    -Dsonar.sources=component/site 
    -Dsonar.host.url=https://sonarcloud.io 
-   -Dsonar.php.tests.reportPath=~/junit-logfile.xml 
-   -Dsonar.php.coverage.reportPaths=~/clover.xml 
+   -Dsonar.php.tests.reportPath=test/junit-logfile.xml 
+   -Dsonar.php.coverage.reportPaths=test/clover.xml 
    -Dsonar.login=47b18c5eb028e4cd9651f98af0eed7f6f070d419
 

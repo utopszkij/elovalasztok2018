@@ -178,28 +178,136 @@ class JavaslatokModel {
 	* check supportCount > $evConfig->pollDefs[$id]->requestedSupport ?
 	* if true then move proposal --> candidate
 	* @param integer proposalId
+	* @return boolean succes or not?
 	*/
 	protected function checkSupportCount($id) {
-		global $evConfig;
-		$result = true;
-		$pollId = $evConfig->pollId;
-      $db = JFactory::getDBO();
-      $db->setQuery('select count(user_id) cc 
-      from #__supports
-      where proposal_id = '.$db->quote($id));
-      $res = $db->loadObject();
-      if ($res->cc >= $evConfig->pollDefs[$pollId]->requestedSupport) {
-			$db->setQuery('update #__content
-			set catid = '.$db->quote($pollId).'
-			where id = '.$db->quote($id));
-			if (!$db->query()) {
-				echo '<div class="alert alert-danger">Hiba lépett fel a javaslat jelölté modosítása közben</div>'; 
-				exit();			
-			} else {
-				$result = true;
-			}     
-      }
+	  global $evConfig;
+	  $result = true;
+	  $pollId = $evConfig->pollId;
+	  if ($evConfig->pollDefs[$pollId]->requestedSupport > 0) {
+    	  $db = JFactory::getDBO();
+          $db->setQuery('select count(user_id) cc 
+          from #__supports
+          where proposal_id = '.$db->quote($id));
+          $res = $db->loadObject();
+          if ($res->cc >= $evConfig->pollDefs[$pollId]->requestedSupport) {
+    			$db->setQuery('update #__content
+    			set catid = '.$db->quote($pollId).'
+    			where id = '.$db->quote($id));
+    			if (!$db->query()) {
+    				echo '<div class="alert alert-danger">Hiba lépett fel a javaslat jelölté modosítása közben</div>'; 
+    				exit();			
+    			} else {
+    				$result = true;
+    			}     
+          }
+	  }
       return $result;
 	}
+	
+	/**
+	 * támogatottság jelölté válásának feltétele
+	 * @param integer $proposalCatId
+	 * @param integer $requeredCandidatesCount
+	 * @return number
+	 */
+	protected function getSupportLimit($proposalCatId, $requeredCandidatesCount) {
+        global $evConfig;
+        $db = JFactory::getDBO();
+        $pollId = $evConfig->pollId;
+	    $supportX = $evConfig->pollDefs[$pollId]->requestedSupport;
+	    if ($supportX == 0) {
+    	    $db->setQuery('SELECT s.proposal_id, COUNT(s.user_id) cc
+                              FROM #__supports s
+                              INNER JOIN #__content c ON s.proposal_id = c.id
+                              WHERE c.catid = '.$db->quote($proposalCatId).' AND c.state = 1
+                              GROUP BY s.proposal_id
+                              ORDER BY 2 DESC;
+               ');
+    	    $res = $db->loadObjectList();
+            if ($db->getErrorNum() != 0) {
+                $this->errorMsg = $db->getErrorMsg();
+            }
+    	    if ($db->getErrorNum() == 0) {
+    	        // konfig szerinti pozición lévő támogatottság
+    	        if ($requeredCandidatesCount < count($res)) {
+    	            $supportX = $res[$requeredCandidatesCount]->cc;
+    	        } else {
+    	            $supportX = 0;
+    	        }
+    	    }
+	    }
+	    return $supportX;
+	}
+	
+	/**
+	 * create workTable for supportEnd
+	 * @param string $workTableName
+	 * @param integer $proposalCatId
+	 * @param integer $supportX
+	 * @return boolean success or not?
+	 */
+	protected function createSupportEndWorkTable($workTableName, $proposalCatId, $supportX) {
+	    $db = JFactory::getDBO();
+	    // munkatábla létrehozása
+	    $db->setQuery('CREATE TABLE `'.$workTableName.'`
+                              SELECT s.proposal_id, COUNT(s.user_id) cc
+                              FROM  #__supports s
+                              INNER JOIN #__content c ON s.proposal_id = c.id
+                              WHERE c.catid = '.$db->quote($proposalCatId).' AND c.state = 1
+                              GROUP BY s.proposal_id
+                              HAVING COUNT(s.user_id) >= '.$db->quote($supportX).'
+                              ORDER BY 2 DESC;
+               ');
+	    $db->query();
+        if ($db->getErrorNum() != 0) {
+            $this->errorMsg = $db->getErrorMsg();
+        }
+	    return ($db->getErrorNum() == 0);
+	}
+	
+	/**
+	 * support time end, proposal --> candides
+	 * @param integer $pollId
+	 * @param integer $proposalCatId
+	 * @param integer $requeredCandidatesCount
+	 * @return boolean success or not?
+	 */
+	public function supportEnd($pollId, $proposalCatId, $requeredCandidatesCount) {
+	    $db = JFactory::getDBO();
+	    $result = true;
+	    $workTableName = '#__supportWork'.$pollId;
+	    $this->errorMsg = '';
+	    
+	    // ha már van munkatábla, akkor már futoott, újre ne fusson
+	    $db->setQuery('SHOW TABLES LIKE '.$db->quote($workTableName));
+	    $res = $db->loadObjectList();
+	    if (count($res) == 0) {
+	       // javaslat jelölté válásának feltételének lekérése
+	       $supportX = $this->getSupportLimit($proposalCatId, $requeredCandidatesCount);
+	       
+	       if (($this->errorMsg == '') && ($this->createSupportEndWorkTable($workTableName, $proposalCatId, $supportX))) {
+	               // proposal --> candidate modosítás
+	               $db->setQuery('UPDATE #__content c, `'.$workTableName.'` w
+                              SET catid = '.$db->quote($pollId).'
+                              WHERE c.id = w.proposal_id;
+                   ');
+	               $db->query();
+	               if ($db->getErrorNum() != 0) {
+    	               $this->errorMsg = $db->getErrorMsg();
+	               }
+	       };
+	       if ($this->errorMsg == '') {
+	           $result = true;
+	       } else {
+	           $result = false;
+	       }
+	    } else {
+	        $result = false;
+	        $this->errorMsg = $workTableName.' worktable exists';
+	    }
+	    return $result;
+	} // supportEnd
+	
 }	// javaslatokModel
 ?>

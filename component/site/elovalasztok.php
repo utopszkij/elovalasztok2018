@@ -11,6 +11,11 @@
   */
   defined('_JEXEC') or die;
   global $evConfig;
+  jimport('joomla.application.component.controller');
+  jimport('joomla.application.component.model');
+  jimport('joomla.application.component.view');
+  jimport('joomla.application.component.helper');
+
   include_once dirname(__FILE__).'/config.php';
   include_once dirname(__FILE__).'/accesscontrol.php';
   include_once dirname(__FILE__).'/funkciok.php';
@@ -24,8 +29,12 @@
   define('STRING','string');
   define('BUDAPESTI','ADA:magyar,budapest');
   define('MYCSRTOKEN','myCsrToken');
+  define('INVALIDCSRTOKEN','Invalid CSR token');
+  define('NOTASSURANCE','Nincs megfelelő tanusítása');
   define('JAVASLATOKURL','component/elovalasztok?task=javaslatok');
   define('ERRORMSG','errorMsg');
+  define('INFOMSG','infoMsg');
+
   
   $user = JFactory::getUser();
   $msg = '';
@@ -63,9 +72,9 @@
 	protected function displaySzavazoForm($pollId, $model) {	  		
 	   $item = $model->getItem($pollId);	
 		if (count($item->pollOptions) <= 0) {
-				echo '<div class="nincsJelolt infoMsg">Nincs jelölt!</div>';
+		    echo echoHtmlDiv('Nincs jelölt', INFOMSG);
 		} else {
-			  include dirname(__FILE__).'/views/szavazoform.php';
+            include dirname(__FILE__).'/views/szavazoform.php';
 		}  
 	}	
 
@@ -95,7 +104,7 @@
 				return;
 			}		
 			$msg = '';
-			$infoMsg = 'infoMsg';
+			$infoMsg = INFOMSG;
 			if ($user->id == 0) {
 					echo echoHtmlDiv('Szavazáshoz be kell jelentkezni!','errorMsg notLogin');
 			} else if (!$evConfig->pollDefs[$pollId]->votingEnable) {
@@ -109,50 +118,142 @@
 			}
 	}
 	
-	
+    /**
+     * check table ot view exists?
+     *
+     * @param string $table
+     * @return bool
+     */
+    protected function checkView($table)
+    {
+        $db = JFactory::getDBO();
+        $db->setQuery('SHOW TABLES LIKE '.$db->quote($table));
+        $res = $db->loadObjectList();
+        return (count($res) > 0); 
+    }
+
+	protected function createView($table)
+	{
+        $db = JFactory::getDBO();
+        if ($table == '#__appmagyar') {
+            $db->setQuery('
+            CREATE VIEW #__appmagyar AS (
+            SELECT
+              `sz`.`id`             AS `id`,
+              `sz`.`temakor_id`     AS `temakor_id`,
+              `sz`.`szavazas_id`    AS `szavazas_id`,
+              `sz`.`szavazo_id`     AS `szavazo_id`,
+              `sz`.`user_id`        AS `user_id`,
+              `sz`.`alternativa_id` AS `alternativa_id`,
+              `sz`.`pozicio`        AS `pozicio`
+            FROM #__szavazatok sz
+            LEFT OUTER JOIN #__users u ON u.id = sz.user_id
+            WHERE (u.params LIKE "%appmagyar%") AND (u.params LIKE "%budapest%")
+            )
+            ');
+        } else if ($table == '#__offline') {
+            $db->setQuery('
+            CREATE VIEW #__offline AS (
+            SELECT
+              `sz`.`id`             AS `id`,
+              `sz`.`temakor_id`     AS `temakor_id`,
+              `sz`.`szavazas_id`    AS `szavazas_id`,
+              `sz`.`szavazo_id`     AS `szavazo_id`,
+              `sz`.`user_id`        AS `user_id`,
+              `sz`.`alternativa_id` AS `alternativa_id`,
+              `sz`.`pozicio`        AS `pozicio`
+            FROM #__szavazatok sz
+            LEFT OUTER JOIN #__users u ON u.id = sz.user_id
+            WHERE (u.params LIKE "%offline%") AND (u.params LIKE "%budapest%")
+            )
+            ');
+        } else if ($table == '#__hiteles') {
+            $db->setQuery('
+            CREATE VIEW #__hiteles AS (
+            SELECT
+              `sz`.`id`             AS `id`,
+              `sz`.`temakor_id`     AS `temakor_id`,
+              `sz`.`szavazas_id`    AS `szavazas_id`,
+              `sz`.`szavazo_id`     AS `szavazo_id`,
+              `sz`.`user_id`        AS `user_id`,
+              `sz`.`alternativa_id` AS `alternativa_id`,
+              `sz`.`pozicio`        AS `pozicio`
+            FROM #__szavazatok sz
+            LEFT OUTER JOIN #__users u ON u.id = sz.user_id
+            WHERE (u.params LIKE "%budapest%")
+            )
+            ');
+        } else if ($table == '#__magyar') {
+            $db->setQuery('
+            CREATE VIEW #__magyar AS (
+            SELECT
+              `sz`.`id`             AS `id`,
+              `sz`.`temakor_id`     AS `temakor_id`,
+              `sz`.`szavazas_id`    AS `szavazas_id`,
+              `sz`.`szavazo_id`     AS `szavazo_id`,
+              `sz`.`user_id`        AS `user_id`,
+              `sz`.`alternativa_id` AS `alternativa_id`,
+              `sz`.`pozicio`        AS `pozicio`
+            FROM #__szavazatok sz
+            LEFT OUTER JOIN #__users u ON u.id = sz.user_id
+            WHERE (u.params LIKE "%magyar%")
+            )
+            ');
+        } else {
+            echo echoHtmlDiv('createView hibas paraméter ' . $table, ERRORMSG);
+            exit();
+        }
+        $db->query();
+        if ($db->getErrorNum() != 0) {
+            echo echoHtmlDiv($db->getErrorMsg(), ERRORMSG);
+            exit();
+        }
+	}
+
 	/**
-    * szavazás eredményének megjelenitése
+   * szavazás eredményének megjelenitése
 	* @param integer szavazás azonosító
-    * @param JUser user 
-    */ 	
-    public function eredmeny($pollId, $user) {
+   * @param JUser user 
+   */ 	
+   public function eredmeny($pollId, $user) {
 			global $evConfig;
 			$this->displayTestMsg($evConfig, $pollId);		
          $msg = '';
-         $input = JFactory::getApplication()->input;  
+         $input = JFactory::getApplication()->input;
+         $input->set('view','eredmeny');  
 			$table = '#__'.$input->get('table','szavazatok',STRING);
          
 			if (!teheti($pollId, $user, 'eredmeny', $msg)) {
-    			echo '<div class="errorMsg">'.$msg.'</div>';
+    			echo echoHtmlDiv($msg, ERRORMSG);
                 return;
 			}
 			$model = new SzavazokModel();
 			$model->szavazatokTable = $table;
 			$backUrl = JURI::root().'/leiras';
 			// nézzük van-e cachelt report?
-         $cache = $model->getFromCache($pollId);
+            $cache = $model->getFromCache($pollId);
         	$pollRecord = $model->getPollRecord($pollId);
 			// ha nincs meg a cache rekord akkor hozzuk most létre, üres tartalommal
 			if (!$cache) {
-            $model->initCache($pollId);
+                $model->initCache($pollId);
 				$cache = new stdClass();
 				$cache->pollid = $pollId;
 				$cache->report = "";
 			}
 			if ($cache->report == "") {
 				// ha nincs; most  kell condorcet/Shulze feldolgozás feldolgozás
+				if (!$this->checkView($table)) {
+					$this->createView($table);				
+				}
 				$schulze = new MyCondorcet($pollId);
-				
-//TEST				$schulze->szavazatokTable = $table;
-				
-				
 				$report = $schulze->report();
-            $model->saveToCache($pollId, $schulze->vote_count, $report);
+                $model->saveToCache($pollId, $schulze->vote_count, $report);
 			} else {  
 				// ha van akkor a cahcelt reportot jelenitjuük meg
 				$report = $cache->report; 
 			}
 		   include dirname(__FILE__).'/views/eredmeny.php';
+		   
 		} // eredmeny function
 
 		/**
@@ -162,7 +263,7 @@
 		public function szavazatSave($pollId, $user) {
 			global $evConfig;
 			$this->cookieCheck();
-			Jsession::checkToken() or die('invalid CSRF protect token');
+			Jsession::checkToken() or die(INVALIDCSRTOKEN);
 			$errorMsg = ERRORMSG;
 			if ($evConfig->pollDefs[$pollId]->testMode) {
 				$user->id = rand(100001,999999);
@@ -172,7 +273,7 @@
                return;
             }
 			
-         $input = JFactory::getApplication()->input;  
+            $input = JFactory::getApplication()->input;  
 			$szavazat = $input->get('szavazat','',STRING);
 			$msg = '';
 			$msgClass = '';
@@ -184,7 +285,7 @@
 						$msg = 'Köszönjük szavazatát. Az ön szavazatának azonosítója az adatbázisban: <strong>'.$szavazoId.'</strong><br />'; 	
                   $msg .= '<small>Ennek az azonositónak a segitségével Ön ellenörizheti a letárolt szavazatát.';
                   $msg .=' Az eredmény menüpontban a "szavazatok" linkre kattintva láthatja a letárolt szavazatokat.</small>';
-						$msgClass = 'infoMsg';
+						$msgClass = INFOMSG;
 					} else {
 						$msg = 'Hiba a szavazat tárolása közben. A szavazat nem lett tárolva.'.$model->getErrorMsg();
 						$msgClass = $errorMsg;
@@ -302,7 +403,8 @@
 			if ($javaslat) {
  		         include dirname(__FILE__).'/views/javaslat.php';
 			} else {
-			    echo $model->getErrorMsg(); exit();
+			    echo echoHtmlDiv($model->getErrorMsg(), ERRORMSG);
+			    exit();
 			}
 		}
 		
@@ -316,7 +418,7 @@
 			$model = new JavaslatokModel();
 			$user = JFactory::getUser();
 			if (!$evConfig->pollDefs[$evConfig->pollId]->supportEnable) {
- 					echo '<div class="alert alert-dangeon">Jelenleg nem lehet támogatni</div>';
+ 					echo echoHtmlDiv('Jelenleg nem lehet támogatni a javaslatokat', ERRORMSG);
  					return;			
 			}
 			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
@@ -334,12 +436,12 @@
 						$this->setRedirect(JURI::base().JAVASLATOKURL);
 					} 
 				}	else {
-					echo '<p>Nincs megfelelő tanusítása</p>';
+				    echo echoHtmlDiv(NOTASSURANCE, ERRORMSG);
 					exit(); 
 				}
 				$this->redirect();
 			} else {
-				echo '<p>Invalid CSR token</p>'; 
+			    echo echoHtmlDiv(INVALIDCSRTOKEN, ERRORMSG);
 				exit();			
 			}	
 		}
@@ -353,8 +455,8 @@
 			$this->cookieCheck();
 			$input = JFactory::getApplication()->input;
 			if (!$evConfig->pollDefs[$evConfig->pollId]->supportEnable) {
- 					echo '<div class="alert alert-dangeon">Jelenleg nem lehet támogatni</div>';
- 					return;			
+			    echo echoHtmlDiv('Jelenleg nem lehet visszavonni a javaslat támogatást', ERRORMSG);
+				return;			
 			}
 			if ($input->get($session->get(MYCSRTOKEN),'0') == 1) {
 				$model = new JavaslatokModel();
@@ -368,12 +470,12 @@
 					$model->tamogatom($id, $user, false);
 					$this->setRedirect(JURI::base().JAVASLATOKURL);
 				}	else {
-					echo '<p>Nincs megfelelő tanusítása</p>';
+				    echo echoHtmlDiv(NOTASSURANCE, ERRORMSG);
 					exit(); 
 				}
 				$this->redirect();
 			} else {
-				echo '<p>Invalid CSR token</p>'; 
+			    echo echoHtmlDiv(INVALIDCSRTOKEN, ERRORMSG);
 				exit();			
 			}	
 		}
@@ -385,18 +487,17 @@
       	global $evConfig;
 			$this->cookieCheck();
 			if (!$evConfig->pollDefs[$evConfig->pollId]->proposalEnable) {
- 					echo '<div class="alert alert-dangeon">Jelenleg nem lehet javasolni</div>';
- 					return;			
+			    echo echoHtmlDiv('Jelenleg nem lehet javaslatot beküldeni', ERRORMSG);
+				return;			
 			}
       	$user = JFactory::getUser();
 			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
 				$user->id = 1;
 				$user->params = BUDAPESTI;			
 			}
-			if ($user->id > 0) {
-			    if (strpos($user->params, $evConfig->pollDefs[$evConfig->pollId]->supportAssurance) > 0) {
+			if (($user->id > 0) && 
+			    (strpos($user->params, $evConfig->pollDefs[$evConfig->pollId]->supportAssurance) > 0)) {
 			   	 include dirname(__FILE__).'/views/javaslatform.php';
-			    }
 		   }	
 		}
 		
@@ -406,8 +507,8 @@
 		*/
 		private function javaslatSave0() {
 		        global $evConfig;  
-				$model = new JavaslatokModel();
-				$input = JFactory::getApplication()->input;
+		        $model = new JavaslatokModel();
+		        $input = JFactory::getApplication()->input;
 				$nev = $input->get('nev','',STRING);
 				$program = $input->get('program','',STRING);
 				$eletrajz = $input->get('eletrajz','',STRING);
@@ -418,19 +519,19 @@
 				$eletrajz = str_replace("\n",'<br />',$eletrajz);
 				$result = true;
 				if ($nev == '') {
- 					echo '<div class="alert alert-dangeon">Jelölt nevét meg kell adni</div>';
+				    echo echoHtmlDiv('Jelölt nevet meg kell adni', ERRORMSG);
  					$result = false;			
 				}
 				if ($kepUrl == '') {
- 					echo '<div class="alert alert-dangeon">Kép URL -t meg kell adni</div>';
+				    echo echoHtmlDiv('Kép URL -t meg kell adni', ERRORMSG);
  					$result = false;			
 				}
 				if ($program == '') {
- 					echo '<div class="alert alert-dangeon">Programot meg kell adni</div>';
+				    echo echoHtmlDiv('Programot meg kell adni', ERRORMSG);
  					$result = false;			
 				}
 				if ($kontakt == '') {
- 					echo '<div class="alert alert-dangeon">Kapcsolat felvételi lehetőséget meg kell adni</div>';
+				    echo echoHtmlDiv('kapcsolat információt meg kell adni', ERRORMSG);
  					$result = false;			
 				}
 				if ($result) {
@@ -456,13 +557,13 @@
 			$this->cookieCheck();
 			$input = JFactory::getApplication()->input;
 			if ($input->get($session->get(MYCSRTOKEN)) != 1) {
-				echo 'invalid CSR token';
+			    echo echoHtmlDiv(INVALIDCSRTOKEN, ERRORMSG);
 				$result = false;			
 			}			
 			
 			if (!$evConfig->pollDefs[$evConfig->pollId]->proposalEnable) {
- 					echo '<div class="alert alert-dangeon">Jelenleg nem lehet javasolni</div>';
- 					$result = false;			
+			    echo echoHtmlDiv('Jelenleg nem lehet új javaslatot beküldeni', ERRORMSG);
+ 				$result = false;			
 			}
 			$user = JFactory::getUser();
 			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
@@ -472,14 +573,36 @@
 			if (($user->id > 0) && ($result)) {
 			  $result = $this->javaslatSave0();				
 			  if ($result) {
- 					echo '<div class="alert alert-success">Javaslat tárolva. A szerkesztők ellenörzése után kerül publikálásra.</div>';			
+			      echo echoHtmlDiv('Javaslat tárolva. Ellenörzés után lesz publikálva', 'alert alert-success');
 			  } else {
- 					echo '<div class="alert alert-dangeon">Hiba lépett fel</div>';			
+			      echo echoHtmlDiv('Hiba lépett fel a tárolás közben', ERRORMSG);
 			  }
 			} else {
-				echo '<div class="alert alert-dangeon">Javaslat tételhez be kell jelentkezni</div>';			
+			    echo echoHtmlDiv('Be kell jelentkezni', ERRORMSG);
 			}
 			return;
+		}
+		
+		/**
+		 * jelölt javaslati szakasz lezárásakor kell EGYSZER futtatni.
+		 * a konfiguráció szerint a legtámogatottabb javaslatokat átteszi jelöltnek
+		 */
+		public function supportEnd() {
+		    global $evConfig;
+		    $pollId = $evConfig->pollId;
+		    if ((!$evConfig->pollDefs[$pollId]->proposalEnable) &&
+		        (!$evConfig->pollDefs[$pollId]->supportEnable)) {
+		            $model = new JavaslatokModel();
+		            if ($model->supportEnd($pollId, 
+		                $evConfig->pollDefs[$pollId]->proposals,
+		                $evConfig->pollDefs[$pollId]->requestedCandidateCount
+		                )) {
+		                echo echoHtmlDiv('jelölt javaslatok áttéve jelöltnek', INFOMSG);
+		            } else {
+		                echo echoHtmlDiv($model->getErrorMsg(), ERRORMSG);
+		                
+		            };
+		     }
 		}
 
 	} // controller class

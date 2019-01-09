@@ -565,6 +565,7 @@ if ($input->get('cookieenable','3') == 0) {
 		function popupAlert(txt) {
 			jQuery('#popupMsgTxt').html(txt);
 			jQuery('#popupMsg').toggle();
+			window.scrollTo(0,0);
 		}
 	</script>	
 	

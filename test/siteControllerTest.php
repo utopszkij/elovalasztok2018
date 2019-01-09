@@ -601,8 +601,8 @@ class elovalasztokControllerTest extends PHPUnit_Framework_TestCase {
   	 }
 
   	 public function test_tamogatom_requestedSupport() {
-		global $evConfig,$testData,$componentName,$testUser,$message;
-      $session = JFactory::getSession();
+  	     global $evConfig,$testData,$componentName,$testUser,$message;
+  	     $session = JFactory::getSession();
       $session->set('myCsrToken','tokenAbc');
       $testUser->id = 2;
       $testUser->params = 'ADA:magyar,budapest';
@@ -614,14 +614,129 @@ class elovalasztokControllerTest extends PHPUnit_Framework_TestCase {
   	 	$res = $db->loadObject();
   	 	$proposalId = $res->cc;	
 
-      $evConfig->pollDefs[1]->requestedSupport = 2;
-      $testData->setInput('id',$proposalId);
-      $testData->setInput('tokenAbc','1');
-      $controller = new szavazoController();
-      $controller->tamogatom();
-      $this->assertEquals('A jelölt elérte a megkivánt támogatottságot. Át lett helyezve az elfogadott jelöltek közé.',$message);   
+  	 	$evConfig->pollDefs[1]->requestedSupport = 2;
+  	 	$testData->setInput('id',$proposalId);
+  	 	$testData->setInput('tokenAbc','1');
+  	 	$controller = new szavazoController();
+  	 	$controller->tamogatom();
+  	 	$this->assertEquals('A jelölt elérte a megkivánt támogatottságot. Át lett helyezve az elfogadott jelöltek közé.',$message);
       
   	 }
-
+  	 
+  	 public function test_proposal2Candidate1() {
+  	     /**  bemenet: requestedSupport = 3
+  	      *   még nincs supportWork1
+  	      *   még nincsenek jelöltek
+  	      *   javaslatok support
+  	      *   j1         6
+  	      *   j2         5
+  	      *   j3         3
+  	      *   j4         3
+  	      *   j5         2
+  	      *   elvárt eredmény: j1,j2,j3,j4 átmegy jelöltbe
+  	      */
+  	      global $evConfig,$testData,$componentName,$testUser,$message;
+  	      $db = JFactory::getDBO();
+  	      $db->exec('DELETE FROM #__content WHERE catid=1');
+  	      $db->exec('DELETE FROM #__content WHERE catid=2');
+  	      $db->exec('DELETE FROM #__supports');
+  	      $db->exec('DROP TABLE IF EXISTS  #__supportWork1');
+  	      
+  	      $db->exec('INSERT INTO #__content (id, title, catid, introtext, state) VALUES (1,"j1",2,"",1)');
+  	      $db->exec('INSERT INTO #__content (id, title, catid, introtext, state) VALUES (2,"j2",2,"",1)');
+  	      $db->exec('INSERT INTO #__content (id, title, catid, introtext, state) VALUES (3,"j3",2,"",1)');
+  	      $db->exec('INSERT INTO #__content (id, title, catid, introtext, state) VALUES (4,"j4",2,"",1)');
+  	      $db->exec('INSERT INTO #__content (id, title, catid, introtext, state) VALUES (5,"j5",2,"",1)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,1,111)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,1,112)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,1,113)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,1,114)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,1,115)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,1,116)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,2,111)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,2,112)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,2,113)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,2,114)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,2,115)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,3,111)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,3,112)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,3,113)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,4,111)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,4,112)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,4,113)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,5,111)');
+  	      $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,5,112)');
+  	      
+  	      $evConfig->pollDefs[1]->requestedCandidateCount = 3;
+  	      $evConfig->pollDefs[1]->requestedSupport = 0;
+  	      $evConfig->pollDefs[1]->supportEnable = false;
+  	      $evConfig->pollDefs[1]->proposalEnable = false;
+  	      $evConfig->pollDefs[1]->votingEnable = false;
+  	      
+  	      $controller = new szavazoController();
+  	      $controller->supportEnd();
+  	      
+          $db->setQuery('SELECT COUNT(*) cc FROM #__content WHERE catid=1');
+          $res = $db->loadObject();
+          $this->assertEquals(4, $res->cc);
+          
+  	 }
+  	 
+  	 public function test_proposal2Candidate2() {
+  	     /**  bemenet: requestedSupport = 3
+  	      *   már van supporWork1
+  	      *   még nincsenek jelöltek
+  	      *   javaslatok support
+  	      *   j1         6
+  	      *   j2         5
+  	      *   j3         3
+  	      *   j4         3
+  	      *   j5         2
+  	      *   elvárt eredmény: nincsenek jelöltek
+  	      */
+  	     global $evConfig,$testData,$componentName,$testUser,$message;
+  	     $db = JFactory::getDBO();
+  	     $db->exec('DELETE FROM #__content WHERE catid=1');
+  	     $db->exec('DELETE FROM #__content WHERE catid=2');
+  	     $db->exec('DELETE FROM #__supports');
+  	     
+  	     $db->exec('INSERT INTO #__content (id, title, catid, introtext, state) VALUES (1,"j1",2,"",1)');
+  	     $db->exec('INSERT INTO #__content (id, title, catid, introtext, state) VALUES (2,"j2",2,"",1)');
+  	     $db->exec('INSERT INTO #__content (id, title, catid, introtext, state) VALUES (3,"j3",2,"",1)');
+  	     $db->exec('INSERT INTO #__content (id, title, catid, introtext, state) VALUES (4,"j4",2,"",1)');
+  	     $db->exec('INSERT INTO #__content (id, title, catid, introtext, state) VALUES (5,"j5",2,"",1)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,1,111)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,1,112)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,1,113)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,1,114)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,1,115)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,1,116)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,2,111)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,2,112)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,2,113)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,2,114)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,2,115)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,3,111)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,3,112)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,3,113)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,4,111)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,4,112)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,4,113)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,5,111)');
+  	     $db->exec('INSERT INTO #__supports (id, proposal_id, user_id) VALUES (0,5,112)');
+  	      	     
+  	     $evConfig->pollDefs[1]->requestedCandidateCount = 3;
+  	     $evConfig->pollDefs[1]->supportEnable = false;
+  	     $evConfig->pollDefs[1]->proposalEnable = false;
+  	     $evConfig->pollDefs[1]->votingEnable = false;
+  	     $controller = new szavazoController();
+  	     $controller->supportEnd();
+  	     
+  	     $db->setQuery('SELECT COUNT(*) cc FROM #__content WHERE catid=1');
+  	     $res = $db->loadObject();
+  	     $this->assertEquals(0, $res->cc);
+  	 }
+  	 
+  	 
 }
 ?>

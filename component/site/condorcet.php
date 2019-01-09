@@ -33,12 +33,12 @@ class CondorcetObj {
     // ======================================
     // abstract methods
     // ======================================
-    /*
+    /* requested public funtions definitions in child object:
       *
       * database --> $this->candidates
       * @output $this->candidates 
       *
-      protected function getCandidates() {
+      getCandidates() {
           return $this->candidates;
       }
 
@@ -47,7 +47,7 @@ class CondorcetObj {
       * @return $dMatrix   dMatrix[i,j]  The 'i' candidate will prematurely precede the "j" candidate
       * where "i" and "j" candidate.id
       *
-      protected function loadDiffMatrix() {
+      loadDiffMatrix() {
           return $this->dMatrix;
       }
 
@@ -55,22 +55,22 @@ class CondorcetObj {
       * database --> $this->inFirst
       * @return array 
       *    
-      protected function loadInFirst() {
+      loadInFirst() {
         return $this->inFirst;
       }  
 
-	   *
+	  *
       * database --> $this->vote_count
       * @return integer
       *  
-      protected function loadVoteCount() {  
+      loadVoteCount() {  
         return $this->vote_count;
       }  
       */
       
-		// ============================
+	  // ============================
       //     standard methods
-		// ============================
+	  // ============================
       
 		// sonar friend refactoring from floydWarshal2
 		protected function flowWarshall3($i,$j) {				                  

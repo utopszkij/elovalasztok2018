@@ -10,7 +10,7 @@
 ?>
 <div id="javaslatForm">
 	<h2>Javaslat a 2019-es főpolgármester előválasztás jelöltjére</h2>
-	<form method="post" action="component/elovalasztok?task=javaslatsave">
+	<form method="post" name="form0" action="component/elovalasztok?task=javaslatsave">
 		<p class="help">
 			Az ezen a képernyőn megadott adatok a szerkesztő bizottság
 			technikai ellenörzése, és a jelölt személy hozzájárulása után fognak megjelenni a nyilvános web oldalon.
@@ -33,13 +33,39 @@
 		<p><label>Budapesti politikai program *</label>
 		<textarea rows="10" cols="80" class="program" name="program" /></textarea>
 		<p><label>Támogató szervezetek</label>
-		<input type="text" class="tamogatok" name="tamogatok" /></p>
+		<input type="text" class="tamogatok" name="tamogatok" size="80" /></p>
 		<p><label>Elérhetőség (telfon, email stb) *<br />Ezek az adatok nem kerülnek nyilvános publikálásra,
 		 a rendszer adminisztrátor ezek segitségével kéri ki a jelölt hozzájárulását az adatkezeléshez.</label>
-		<input type="text" class="kontakt" name="kontakt" /></p>
+		<input type="text" class="kontakt" name="kontakt" size="80" /></p>
 		<p></p>
-		<p class="submitBtn"><button type="submit" class="btn btn-primary">Beküldés</button></p>
+		<p class="submitBtn"><button type="button" onclick="okClick()" class="btn btn-primary">
+			Beküldés
+			</button></p>
 		<p>A * -al jelölt mezők kitöltése kötelező.</p>
 		<p></p>
 	</form>
 </div>
+
+
+<script type="text/javascript">
+	function okClick() {
+		var s = '';
+		if (document.forms.form0.nev.value == '') {
+			s += 'Nevet meg kell adni!<br />';
+		}
+		if (document.forms.form0.kepUrl.value == '') {
+			s += 'Kép URL -t meg kell adni!<br />';
+		}
+		if (document.forms.form0.program.value == '') {
+			s += 'Programot meg kell adni!<br />';
+		}
+		if (document.forms.form0.kontakt.value == '') {
+			s += 'Kapcsolat felvételi adatokat meg kell adni!<br />';
+		}
+		if (s == '') {
+			document.forms.form0.submit();
+		} else {
+			popupAlert(s);
+		}	
+	}
+</script>

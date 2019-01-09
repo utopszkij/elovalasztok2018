@@ -233,8 +233,7 @@ class SzavazokModel {
 	*/  
 	public function save($pollId, $szavazat, $user) {
 		global $evConfig;
-      $szavazoId = (rand(100,999).$user->id)*2;
-		$msg = '';
+        $szavazoId = (rand(100,999).$user->id)*2;
 		$SEPARATOR=',';
 		if (!$this->saveCheck($pollId, $user)) {
 			return 0;		

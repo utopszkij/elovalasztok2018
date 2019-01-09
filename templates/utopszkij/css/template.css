@@ -6,6 +6,7 @@ body {font-family: 'Grant Hotel, Roman, Times', serif}
   margin:50px 10px 10px 10px;  padding:10px; text-align:left}
 .nav-tabs .nav-item {margin-bottom: -3px; margin-left: 2px;}
 .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {border-color:black black transparent black;}
+.btn {border-style:solid; border-color:black; border-size:1px;}
 
 /* #component {background-color:#e7efda; opacity:1; width:100% } */
 #component {background-color:#ffffff; opacity:1; margin:0px -15px 0px -15px }
@@ -22,8 +23,8 @@ body {font-family: 'Grant Hotel, Roman, Times', serif}
 #system-message dd.info  {background-color:#b3e2b8}
 #system-message dd.error {background-color:#f4b2ab}
 #system-message ul {list-style:none}
-.alert-message, .infoMsg {background-color:#b3e2b8; text-align:center; padding:20px; margin:5px 30px 5px 20px}
-.alert-dangeon, .errorMsg, .notLogin {background-color:#f4b2ab; text-align:center; padding:20px; margin:5px 30px 5px 20px}
+.infoMsg {background-color:#b3e2b8; text-align:center; padding:20px; margin:5px 30px 5px 20px}
+.errorMsg, .notLogin {background-color:#f4b2ab; text-align:center; padding:20px; margin:5px 30px 5px 20px}
 .testInfo {color:red; font-weight:bold; margin:5px; text-align:right}
 
 /* topmenu */
