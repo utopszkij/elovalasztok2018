@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="." tests="28" assertions="26" failures="0" errors="0" time="8.866274">
-    <testsuite name="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" tests="28" assertions="26" failures="0" errors="0" time="8.866274">
-      <testcase name="test_szavazok_notTestUzemmod_notlogedUser" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="87" assertions="1" time="0.008956"/>
-      <testcase name="test_szavazok_notTestUzemmod_loggedUser_nemBudapesti_nemSzavazottmeg" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="96" assertions="1" time="0.004361"/>
-      <testcase name="test_szavazok_TestUzemmod_loggedUser_nemBudapesti_nemSzavazottmeg" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="110" assertions="1" time="0.005285"/>
-      <testcase name="test_szavazok_notTestUzemmod_loggedUser_budapest_nemSzavazottmeg" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="124" assertions="1" time="0.005047"/>
-      <testcase name="test_szavazok_notTestUzemmod_loggedUser_budapest_lezartSzavazas" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="138" assertions="1" time="0.004330"/>
-      <testcase name="test_eredmeny" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="153" assertions="1" time="0.158464"/>
-      <testcase name="test_reszeredmeny_magyar" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="164" assertions="1" time="0.154700"/>
-      <testcase name="test_reszeredmeny_hiteles" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="176" assertions="1" time="0.040289"/>
-      <testcase name="test_reszeredmeny_offline" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="188" assertions="1" time="0.039791"/>
-      <testcase name="test_reszeredmeny_appmagyar" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="200" assertions="1" time="0.090048"/>
-      <testcase name="test_reszeredmeny_osszes" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="212" assertions="1" time="0.039183"/>
-      <testcase name="test_szavazat_save_notTest_notLoged" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="225" assertions="1" time="0.003023"/>
-      <testcase name="test_szavazat_save_notTest_nemBudapesti_nemSzavazottMeg" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="236" assertions="1" time="0.003872"/>
-      <testcase name="test_szavazat_save_notTest_budapesti_nemSzavazottMeg" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="253" assertions="1" time="0.035102"/>
-      <testcase name="test_szavazat_save_notTest_budapesti_lezartSzavazas" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="269" assertions="1" time="0.040398"/>
-      <testcase name="test_wiki_Shulze_pelda" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="287" assertions="1" time="5.082586"/>
-      <testcase name="test_szavazatok" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="433" assertions="1" time="0.008988"/>
-      <testcase name="test_szavazatokcsv" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="445" assertions="0" time="0.007701">
+  <testsuite name="." tests="28" assertions="26" failures="0" errors="0" time="36.433580">
+    <testsuite name="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" tests="28" assertions="26" failures="0" errors="0" time="36.433580">
+      <testcase name="test_szavazok_notTestUzemmod_notlogedUser" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="87" assertions="1" time="0.006058"/>
+      <testcase name="test_szavazok_notTestUzemmod_loggedUser_nemBudapesti_nemSzavazottmeg" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="96" assertions="1" time="0.057265"/>
+      <testcase name="test_szavazok_TestUzemmod_loggedUser_nemBudapesti_nemSzavazottmeg" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="110" assertions="1" time="0.005008"/>
+      <testcase name="test_szavazok_notTestUzemmod_loggedUser_budapest_nemSzavazottmeg" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="124" assertions="1" time="0.005032"/>
+      <testcase name="test_szavazok_notTestUzemmod_loggedUser_budapest_lezartSzavazas" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="138" assertions="1" time="0.004049"/>
+      <testcase name="test_eredmeny" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="153" assertions="1" time="0.088983"/>
+      <testcase name="test_reszeredmeny_magyar" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="164" assertions="1" time="0.272160"/>
+      <testcase name="test_reszeredmeny_hiteles" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="176" assertions="1" time="0.098706"/>
+      <testcase name="test_reszeredmeny_offline" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="188" assertions="1" time="0.166684"/>
+      <testcase name="test_reszeredmeny_appmagyar" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="200" assertions="1" time="0.289280"/>
+      <testcase name="test_reszeredmeny_osszes" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="212" assertions="1" time="0.531584"/>
+      <testcase name="test_szavazat_save_notTest_notLoged" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="225" assertions="1" time="0.003025"/>
+      <testcase name="test_szavazat_save_notTest_nemBudapesti_nemSzavazottMeg" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="236" assertions="1" time="0.003892"/>
+      <testcase name="test_szavazat_save_notTest_budapesti_nemSzavazottMeg" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="253" assertions="1" time="0.150749"/>
+      <testcase name="test_szavazat_save_notTest_budapesti_lezartSzavazas" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="269" assertions="1" time="0.245237"/>
+      <testcase name="test_wiki_Shulze_pelda" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="287" assertions="1" time="23.591188"/>
+      <testcase name="test_szavazatok" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="433" assertions="1" time="0.273667"/>
+      <testcase name="test_szavazatokcsv" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="445" assertions="0" time="0.005748">
         <system-out>szavazas_id;szavazo_id;pozicio;jelolt
 10;801;1;jeloltA
 10;801;2;jeloltC
@@ -107,13 +107,13 @@
 10;821;4;jeloltA
 </system-out>
       </testcase>
-      <testcase name="test_szavazok_notTestUzemmod_loggedUser_budapest_nincs_jelolt" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="457" assertions="1" time="0.158591"/>
-      <testcase name="test_javaslatForm" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="472" assertions="1" time="0.003904"/>
-      <testcase name="test_javaslat_save" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="487" assertions="1" time="0.033505"/>
-      <testcase name="test_javaslatok" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="507" assertions="1" time="0.040818"/>
-      <testcase name="test_nemtamogatom_pollIdInput" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="532" assertions="1" time="0.004664"/>
-      <testcase name="test_tamogatom_1" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="557" assertions="1" time="0.066949"/>
-      <testcase name="test_getJavaslat" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="580" assertions="0" time="0.004717">
+      <testcase name="test_szavazok_notTestUzemmod_loggedUser_budapest_nincs_jelolt" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="457" assertions="1" time="0.987731"/>
+      <testcase name="test_javaslatForm" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="472" assertions="1" time="0.004855"/>
+      <testcase name="test_javaslat_save" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="487" assertions="1" time="0.474110"/>
+      <testcase name="test_javaslatok" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="507" assertions="1" time="0.237383"/>
+      <testcase name="test_nemtamogatom_pollIdInput" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="532" assertions="1" time="0.009981"/>
+      <testcase name="test_tamogatom_1" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="557" assertions="1" time="0.299227"/>
+      <testcase name="test_getJavaslat" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="580" assertions="0" time="0.012790">
         <system-out>&lt;div id="javaslat"&gt;
 		&lt;h2&gt;Jelölt javaslat&lt;/h2&gt;
 	&lt;p class="help"&gt;
@@ -147,14 +147,14 @@
 	&lt;/div&gt;
 </system-out>
       </testcase>
-      <testcase name="test_tamogatom_requestedSupport" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="603" assertions="1" time="0.073888">
+      <testcase name="test_tamogatom_requestedSupport" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="603" assertions="1" time="0.631082">
         <system-out>redirect:http://localhost/component/elovalasztok?task=javaslatok message=
 </system-out>
       </testcase>
-      <testcase name="test_proposal2Candidate1" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="626" assertions="1" time="1.631950">
+      <testcase name="test_proposal2Candidate1" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="626" assertions="1" time="4.251304">
         <system-out>&lt;div class="infoMsg"&gt;jelölt javaslatok áttéve jelöltnek&lt;/div&gt;</system-out>
       </testcase>
-      <testcase name="test_proposal2Candidate2" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="685" assertions="1" time="1.115164">
+      <testcase name="test_proposal2Candidate2" class="elovalasztokControllerTest" file="/var/www/html/elovalasztok2/github/test/siteControllerTest.php" line="685" assertions="1" time="3.726802">
         <system-out>&lt;div class="errorMsg"&gt;#__supportWork1 worktable exists&lt;/div&gt;</system-out>
       </testcase>
     </testsuite>

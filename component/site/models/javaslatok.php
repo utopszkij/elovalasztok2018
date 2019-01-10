@@ -296,7 +296,7 @@ class JavaslatokModel {
 	               if ($db->getErrorNum() != 0) {
     	               $this->errorMsg = $db->getErrorMsg();
 	               }
-	       };
+	       }
 	       if ($this->errorMsg == '') {
 	           $result = true;
 	       } else {

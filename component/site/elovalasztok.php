@@ -429,7 +429,7 @@
 			$id = $input->get('id','');
 			if ($input->get($session->get(MYCSRTOKEN),'0') == 1) {
 				if (strpos($user->params, $evConfig->pollDefs[$evConfig->pollId]->supportAssurance) > 0) {
-					if ($model->tamogatom($id, $user, true) == false) { 
+					if (!$model->tamogatom($id, $user, true)) { 
 						$this->setRedirect(JURI::base().JAVASLATOKURL);
 					} else {
 						$this->setMessage('A jelölt elérte a megkivánt támogatottságot. Át lett helyezve az elfogadott jelöltek közé.');
@@ -580,7 +580,6 @@
 			} else {
 			    echo echoHtmlDiv('Be kell jelentkezni', ERRORMSG);
 			}
-			return;
 		}
 		
 		/**
@@ -601,7 +600,7 @@
 		            } else {
 		                echo echoHtmlDiv($model->getErrorMsg(), ERRORMSG);
 		                
-		            };
+		            }
 		     }
 		}
 
