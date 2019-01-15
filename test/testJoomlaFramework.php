@@ -583,6 +583,9 @@ class JSession {
 	public static function getFormToken() {
 		return "testFormToken";
 	}
+	public static function getId() {
+	    return 'testSessionId';
+	}
 }
 
 class JPagination {

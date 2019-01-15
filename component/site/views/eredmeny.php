@@ -48,11 +48,11 @@ if ($table == "#__hiteles") {
             A <strong>dMatrix</strong> cellái azt mutatják, hogy a sorban szereplő jelölt hányszor elözi meg az oszlopban lévőt.<br />
             A <strong>pMatrix</strong> a Shulze methód második lépésének munka táblázata.
     </div>
-	<?php $url = JURI::root().'component/elovalasztok?task=szavazatok&id='.$pollId; ?>
+	<?php $url = JURI::root().'component/elovalasztok?task=szavazatom&id='.$pollId; ?>
 	<?php $urlcsv = JURI::root().'component/elovalasztok?task=szavazatokcsv&id='.$pollId; ?>
 	<p><button type="button" onclick="infoClick()" id="infoBtn">+</button>
 			Az eredmény részletei&nbsp;&nbsp;
-			<a href="<?php echo $url; ?>">szavazatok</a>&nbsp;&nbsp;
+			<a href="<?php echo $url; ?>">szavazatom</a>&nbsp;&nbsp;
 			<a href="<?php echo $urlcsv; ?>">szavazatok CSV formában</a>&nbsp;&nbsp;
 	</p>
 	

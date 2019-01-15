@@ -430,7 +430,7 @@ class elovalasztokControllerTest extends PHPUnit_Framework_TestCase {
 
     }  
     
-    public function test_szavazatok()  {
+    public function test_szavazatom()  {
         global $evConfig,$testData,$componentName,$testUser;
         $this->setupConfig();
         $testUser->id = 1;
@@ -438,8 +438,20 @@ class elovalasztokControllerTest extends PHPUnit_Framework_TestCase {
         $evConfig->pollId = 1;
         $evConfig->pollDefs[1]->testMode = false;
         $controller = new szavazoController();
-        $controller->szavazatok(10, $testUser);
-        $this->expectOutputRegex('/Leadott szavazatok/');
+        $controller->szavazatom(10, $testUser);
+        $this->expectOutputRegex('/Leadott szavazatom/');
+    }
+    
+    public function test_szavazatom_nincs()  {
+        global $evConfig,$testData,$componentName,$testUser;
+        $this->setupConfig();
+        $testUser->id = 0;
+        $testUser->params = 'ADA:magyar,budapest';
+        $evConfig->pollId = 1;
+        $evConfig->pollDefs[1]->testMode = false;
+        $controller = new szavazoController();
+        $controller->szavazatom(10, $testUser);
+        $this->expectOutputRegex('/Nincs/');
     }
     
     public function test_szavazatokcsv()  {

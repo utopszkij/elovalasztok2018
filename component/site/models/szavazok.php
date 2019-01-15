@@ -346,21 +346,49 @@ class SzavazokModel {
 
     /**
     * get szavazatok lista az adatbázisból
-    * @param integer
+    * @param integer pollId
+    * @param integer magic support variable for random sort
+    * @param integer limitStart
+    * @param integer limit
     * @return array of object
     */
-    public function getSzavazatok($pollId) {
+    public function getSzavazatok($pollId, $magic, $limitStart, $limit) {
 		$db = JFactory::getDBO();
-		$db->setQuery('select sz.szavazas_id, sz.szavazo_id, sz.pozicio, c2.title altTitle,
-		c1.title szTitle
-		from '.$this->szavazatokTable.' sz
+		$db->setQuery('select u.rnd, sz.szavazas_id, sz.szavazo_id, sz.pozicio, c2.title altTitle,
+		c1.title szTitle, sz.user_id
+        from (
+            select distinct user_id, MOD(('.$magic.' * user_id),135) rnd
+            from  '.$this->szavazatokTable.'
+        ) u
+		inner join '.$this->szavazatokTable.' sz on sz.user_id = u.user_id
 		left outer join #__content c2 on c2.id = sz.alternativa_id
 		left outer join #__categories c1 on c1.id = sz.szavazas_id
 		where c2.state = 1 and 
 		sz.szavazas_id = '.$db->quote($pollId).'
-		order by 1,2,3
-		');
+		order by 1,2,3,4
+        limit '.$limitStart.','.$limit);
 		return $db->loadObjectList();
+    }
+    
+    /**
+     * get one user voks
+     * @param integer pollId
+     * @param integer user_id
+     * @return array
+     */
+    public function getSzavazatom($pollId, $user_id) {
+        $db = JFactory::getDBO();
+        $db->setQuery('select sz.szavazas_id, sz.szavazo_id, sz.pozicio, c2.title altTitle,
+		c1.title szTitle, sz.user_id
+		from '.$this->szavazatokTable.' sz 
+		left outer join #__content c2 on c2.id = sz.alternativa_id
+		left outer join #__categories c1 on c1.id = sz.szavazas_id
+		where c2.state = 1 and
+		sz.szavazas_id = '.$db->quote($pollId).' and
+        sz.user_id = '.$db->quote($user_id).'
+		order by 1,2,3');
+        return $db->loadObjectList();
+        
     }
 
 }	// szavazokModel

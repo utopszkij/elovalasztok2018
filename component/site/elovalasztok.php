@@ -23,7 +23,7 @@
   include_once dirname(__FILE__).'/models/szavazok.php';
   include_once dirname(__FILE__).'/models/javaslatok.php';
   
-  define('POLIIID','pollId');
+  define('POLLID','pollId');
   define('COOKIE_ENABLE','cookie_enable');
   define('COOKIE_MSG','Ennek a programnak a használatához engedélyezni kell a csoki (cookie) tárolást!');
   define('STRING','string');
@@ -132,7 +132,7 @@
         return (count($res) > 0); 
     }
 
-	protected function createView($table)
+	protected function createSzavazatokView($table)
 	{
         $db = JFactory::getDBO();
         if ($table == '#__appmagyar') {
@@ -199,6 +199,8 @@
             WHERE (u.params LIKE "%magyar%")
             )
             ');
+        } else if ($table == '#__szavazatok') {
+            ;
         } else {
             echo echoHtmlDiv('createView hibas paraméter ' . $table, ERRORMSG);
             exit();
@@ -243,7 +245,7 @@
 			if ($cache->report == "") {
 				// ha nincs; most  kell condorcet/Shulze feldolgozás feldolgozás
 				if (!$this->checkView($table)) {
-					$this->createView($table);				
+					$this->createSzavazatokView($table);				
 				}
 				$schulze = new MyCondorcet($pollId);
 				$report = $schulze->report();
@@ -282,9 +284,8 @@
 					$model = new SzavazokModel();
                $szavazoId = $model->save($pollId, $szavazat, $user);
 					if ($szavazoId > 0) {
-						$msg = 'Köszönjük szavazatát. Az ön szavazatának azonosítója az adatbázisban: <strong>'.$szavazoId.'</strong><br />'; 	
-                  $msg .= '<small>Ennek az azonositónak a segitségével Ön ellenörizheti a letárolt szavazatát.';
-                  $msg .=' Az eredmény menüpontban a "szavazatok" linkre kattintva láthatja a letárolt szavazatokat.</small>';
+						$msg = 'Köszönjük szavazatát. Ön ellenörizheti a letárolt szavazatát.';
+                        $msg .=' Az eredmény menüpontban a "szavazatom" linkre kattintva láthatja a letárolt szavazatát.</small>';
 						$msgClass = INFOMSG;
 					} else {
 						$msg = 'Hiba a szavazat tárolása közben. A szavazat nem lett tárolva.'.$model->getErrorMsg();
@@ -306,37 +307,29 @@
 		* @param JUser
 		* @param string
 		*/
-		public function szavazatok($pollId, $user=null) {
-			$model = new szavazokModel();
-            $res = $model->getSzavazatok($pollId);
-			if (count($res) > 0) {
-				echo '<div class="szavazatok">
+		public function szavazatom($pollId, $user=null) {
+		    $user = JFactory::getUser();
+		    $model = new szavazokModel();
+			$limitStart = 0;
+			$limit = 200;
+			$res = $model->getSzavazatom($pollId, $user->id);
+			echo '<div class="szavazatom">
 				<h2>'.$res[0]->szTitle.'</h2>
-				<h3>Leadott szavazatok</h3>
+				<h3>Leadott szavazatom</h3>
 				<ul>';
-				$elozoSzavazo = 0;
-				$elozoPozicio = 0;
-				$pozicio = 0;
+			$pozicio = 0;
+			if (count($res) > 0) {
 				foreach ($res as $res1) {
-						if ($elozoSzavazo != $res1->szavazo_id) {
-							echo '<li style="list-style:none" class="sparator">
-							--------------'.$res1->szavazo_id.'------------
-							</li>';
-							$pozicio = 0;
-							$elozoPozicio = 0;
-						}
-						if ($res1->pozicio <> $elozoPozicio) {
-							$pozicio++;
-						}
-						echo '<li class="szavazat">'.$pozicio.'. '.$res1->altTitle.'</li>';
-						$elozoSzavazo = $res1->szavazo_id;
-						$elozoPozicio = $res1->pozicio;
-				}
-				echo '</ul>
-				</div>
-				';
-			}
-        }
+						echo '<li class="szavazat">'.$res1->pozicio.'. '.$res1->altTitle.'</li>';
+				} // foreach
+			}  else {
+			    echo echoHtmlDiv('Nincs tárolt szavazat', ERRORMSG);
+			    
+			}// count($res) > 0
+			echo '</ul>
+			</div>
+			';
+		}
 
 		/**
 		* leadott szavazatok listája CSV formátumban
@@ -348,23 +341,66 @@
 		    if (!defined('UNITTEST')) {
 		        define('UNITTEST',false);
 		    }
-		    if (!UNITTEST) {
-                header('Content-type: text/csv');
-                header('Pragma: no-cache');
-                header('Expires:0');
-                header('Content-Disposition: attachment: szavazatok.csv');
-		    }
-            $model = new szavazokModel();
+		    $input = JFactory::getApplication()->input;
+		    $limitStart = $input->get('limitStart',0);
+		    $limit = 2000;
+		    $szavazoNo = $input->get('szavazoNo',0);
+		    $elozoSzavazoId = $input->get('elozoSzavazoId','');
+		    $model = new szavazokModel();
+            
+		    $db = JFactory::getDBO();
+		    $db->setQuery('select count(*) cc from #__szavazatok');
+		    $res = $db->loadObject();
+		    $total = $res->cc;
+		    
+		    // session változó lekérdezése
+		    $session = JFactory::getSession();
+		    $SI = $session->getId();
+		    
+	    
+            // ha limitStart == 0 új csv file létrehozása sessionId felhasználásával
+            // egyébként csf file append
+            if ($limitStart == 0) {
+                $magic = rand(1,134); // random sort support variable
+                $session->set('magic',$random);
+                $fp = fopen('tmp/'.$SI.'.csv','w');
+                fwrite($fp,'szavazas_id;szavazo_no;pozicio;jelolt'."\n");
+            } else {
+                $fp = fopen('tmp/'.$SI.'.csv','a');
+                $magic = $session->get('magic',100); // random sort support variable
+            }
 				
-            $res = $model->getSzavazatok($pollId);
+            $res = $model->getSzavazatok($pollId, $magic, $limitStart, $limit);
 			if (count($res) > 0) {
-				echo 'szavazas_id;szavazo_id;pozicio;jelolt'."\n";
 				foreach ($res as $res1) {
-                    echo $res1->szavazas_id,';'.$res1->szavazo_id.';'.$res1->pozicio.';'.$res1->altTitle."\n";
+				    if ($res1->szavazo_id != $elozoSzavazoId) {
+				        $szavazoNo++;
+				    }
+				    fwrite($fp, $res1->szavazas_id.';'.$szavazoNo.';'.$res1->pozicio.';'.$res1->altTitle."\n");
+				    // echo $res1->szavazas_id.';'.$szavazoNo.';'.$res1->pozicio.';'.$res1->altTitle."<br />";
+				    $elozoSzavazoId = $res1->szavazo_id;
 				}
 			}
-			if (!UNITTEST) {
-                jexit();
+			fclose($fp);
+			$limitStart = $limitStart + $limit;
+			if ((count($res) > 0) && ($limitStart < $total)) {
+			    echo '
+                    <p></p>
+                    <p>Türelmet kérek, csv file készül ... ('.$limitStart.'/'.$total.')</p>
+                    <p></p>
+                    <p>Ne zárd be a böngészőt, ne pozicionálj el innen!</p>
+                    <p></p>
+                    <script type="text/javascript">
+                        location="index.php?option=com_elovalasztok&task=szavazatokcsv&limitStart='.$limitStart.
+                            '&szavazoNo='.$szavazoNo.
+                            '&elozoSzavazoId='.$elozoSzavazoId.'";
+                    </script>
+                ';
+			} else {
+			    // link a csv file-ra
+			    echo '<p></p>
+                      <p><a href="tmp/'.$SI.'.csv">szavaztaok CSV formában</a></p>
+                      <p></p>';
 			}
         }
         
@@ -490,7 +526,7 @@
 			    echo echoHtmlDiv('Jelenleg nem lehet javaslatot beküldeni', ERRORMSG);
 				return;			
 			}
-      	$user = JFactory::getUser();
+      	    $user = JFactory::getUser();
 			if ($evConfig->pollDefs[$evConfig->pollId]->testMode) {
 				$user->id = 1;
 				$user->params = BUDAPESTI;			
